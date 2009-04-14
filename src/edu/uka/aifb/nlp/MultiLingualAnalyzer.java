@@ -13,9 +13,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 import org.tartarus.snowball.SnowballStemmer;
+import org.tartarus.snowball.ext.dutchStemmer;
 import org.tartarus.snowball.ext.englishStemmer;
 import org.tartarus.snowball.ext.frenchStemmer;
 import org.tartarus.snowball.ext.germanStemmer;
+import org.tartarus.snowball.ext.spanishStemmer;
 
 import edu.uka.aifb.api.nlp.ITokenAnalyzer;
 import edu.uka.aifb.api.nlp.ITokenStream;
@@ -30,6 +32,8 @@ public class MultiLingualAnalyzer implements ITokenAnalyzer {
 		STEMMER_CLASSES.put( Language.EN, englishStemmer.class );
 		STEMMER_CLASSES.put( Language.DE, germanStemmer.class );
 		STEMMER_CLASSES.put( Language.FR, frenchStemmer.class );
+		STEMMER_CLASSES.put( Language.NL, dutchStemmer.class );
+		STEMMER_CLASSES.put( Language.SP, spanishStemmer.class );
 	}
 	
 	private Map<Language, Set<String>> m_stopwordSets;

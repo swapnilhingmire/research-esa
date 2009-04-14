@@ -11,13 +11,13 @@ import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.nlp.MultiLingualAnalyzer;
 import edu.uka.aifb.tools.ConfigurationManager;
 
-public class BuildWikipedia {
+public class BuildWikipediaIndex {
 
 	static final String[] REQUIRED_PROPERTIES = {
 		"language"
 	};
 	
-	static Logger logger = Logger.getLogger( BuildWikipedia.class );
+	static Logger logger = Logger.getLogger( BuildWikipediaIndex.class );
 	
 	static public void main( String[] args ) throws Exception {
 		Configuration config = ConfigurationManager.parseArgs( args );
