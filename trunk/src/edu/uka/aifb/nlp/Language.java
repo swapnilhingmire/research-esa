@@ -22,6 +22,7 @@ public class Language {
 	public static Language SE = new Language( "se", "swedish", "schwedisch" );
 	public static Language SORB = new Language( "sorb", "sorbian", "sorbisch" );
 	public static Language TR = new Language( "tr", "turkish", "tuerkisch" );
+	public static Language SP = new Language( "sp", "spanish", "spanisch" );
 	public static Language UNKNOWN = new Language( "unknown" );
 	
 	private static Map<String,Language> s_labelToLanguage;
