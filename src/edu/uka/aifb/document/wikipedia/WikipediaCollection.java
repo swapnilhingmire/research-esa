@@ -64,13 +64,17 @@ public class WikipediaCollection implements ICollection {
 			title = WikipediaTools.extractPlainTitle( title );
 			
 			// remove wiki markup
-			text = WikipediaTools.extractPlainText( text );
+			if( text != null ) {
+				text = WikipediaTools.extractPlainText( text );
+			} else {
+				text = "";
+			}
 			
 			doc.setText( "title", m_language, title );
 			doc.setText( "body", m_language, text );
 		}
 		catch( Exception e ) {
-			logger.error( "Error while retrieving article: " + e );
+			logger.error( "Error while retrieving article " + articleId + ": " + e );
 			e.printStackTrace();
 		}	
 		
