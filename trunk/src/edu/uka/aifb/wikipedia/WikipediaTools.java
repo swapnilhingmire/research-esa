@@ -39,8 +39,7 @@ public class WikipediaTools {
 	
 	static public String extractPlainText( String wikiText ) {
 		logger.trace( wikiText );
-		//System.out.println( wikiText );
-		
+
 		/*
 		 * find all templates and only keep argument values
 		 */
