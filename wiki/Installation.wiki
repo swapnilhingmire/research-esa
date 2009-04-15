@@ -1,0 +1,26 @@
+#summary Documentation of the installation of research-esa.
+
+=Installation=
+
+==Java sources==
+The project is provided as Java source files that can be downloaded from the project SVN.
+
+==External libraries==
+
+The implementation is based on the following external libaries:
+
+  * [http://ressim.berlios.de/ Matrix Toolkits for Java (MTJ)]
+  * [http://snowball.tartarus.org/ Snowball Stemmer]
+  * [http://ir.dcs.gla.ac.uk/terrier/ Terrier]
+  * [http://commons.apache.org/cli/ Apache Commons CLI]
+  * [http://commons.apache.org/collections/ Apache Commons Collections]
+  * [http://commons.apache.org/configuration/ Apache Commons Configuration]
+  * [http://commons.apache.org/lang/ Apache Commons Lang]
+  * [http://commons.apache.org/logging/ Apache Commons Logging]
+  * [http://logging.apache.org/log4j/1.2/index.html Apache log4j]
+  * [http://trove4j.sourceforge.net/ GNU Trove]
+
+For access to the Wikipedia database a JDBC driver is needed. In most cases this will be the Java MySQL connector.
+
+==Running the demo==
+After compiling the sources the demo can be started as described in the [Tutorial].
