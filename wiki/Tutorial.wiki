@@ -1,0 +1,26 @@
+#summary A short turorial for an example use of the ESA framework.
+
+=Tutorial=
+
+==Install local Wikipedia database==
+  * Download the Wikipedia XML dump for a specific language: [http://download.wikipedia.org/]
+  * Import SQL to a local database server according to [http://www.mediawiki.org/wiki/Manual:Importing_XML_dumps]
+
+==Create property file==
+The file `config/demo.properties` contains all relevant properties with default values. Some of these properties, e.g. for database access, have to be adjusted to the local system. This file is then needed for the demo applications.
+
+==Create Wikipedia Index==
+Terrier has to be configured according to the Terrier documentation.
+
+The file `config/demo.properties` contains sample values for all properties. Some of them have to be adjusted to the local settings, e.g. access to the Wikipedia database.
+
+Command line for building the inverted index:
+{{{
+java -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> <configuration file>
+}}}
+
+==Use Explicit Semantic Analysis for semantic relatedness==
+Command line for computing semantic relatedness using ESA:
+{{{
+java -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>" <configuration file>
+}}}
