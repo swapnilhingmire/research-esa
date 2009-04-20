@@ -24,12 +24,10 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 
 	private String m_docName;
 
-	private IConceptVectorData m_data;
+	transient private IConceptVectorData m_data;
 
-	public class MTJConceptVectorData implements IConceptVectorData, Serializable {
+	private class MTJConceptVectorData implements IConceptVectorData {
 	
-		private static final long serialVersionUID = 8995754838359534740L;
-
 		public String getDocName() {
 			return m_docName;
 		}
@@ -102,6 +100,8 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 		int[] index = (int[])in.readObject();
 		double[] data = (double[])in.readObject();
 		m_v = new SparseVector( size, index, data, false );
+		
+		m_data = new MTJConceptVectorData();
 	}
 
 	public int hashCode() {
