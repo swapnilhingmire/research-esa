@@ -1,5 +1,8 @@
 package edu.uka.aifb.concept;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import no.uib.cipr.matrix.Vector;
@@ -84,7 +87,7 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 		return m_v.size();
 	}
 	
-	/*private void writeObject(ObjectOutputStream out) throws IOException {
+	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
 
 		out.writeInt( m_v.size() );
@@ -98,8 +101,8 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 		int size = in.readInt();
 		int[] index = (int[])in.readObject();
 		double[] data = (double[])in.readObject();
-		m_v = new SparseVector( size, index, data );
-	}*/
+		m_v = new SparseVector( size, index, data, false );
+	}
 
 	public int hashCode() {
 		return m_docName.hashCode();
