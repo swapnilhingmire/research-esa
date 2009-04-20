@@ -26,7 +26,7 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 
 	private IConceptVectorData m_data;
 
-	private class MTJConceptVectorData implements IConceptVectorData, Serializable {
+	public class MTJConceptVectorData implements IConceptVectorData, Serializable {
 	
 		private static final long serialVersionUID = 8995754838359534740L;
 
