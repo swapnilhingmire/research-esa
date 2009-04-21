@@ -24,8 +24,6 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 
 	private String m_docName;
 
-	transient private IConceptVectorData m_data;
-
 	private class MTJConceptVectorData implements IConceptVectorData {
 	
 		public String getDocName() {
@@ -49,8 +47,6 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 		m_docName = docName;
 		
 		m_v = new SparseVector( dim );
-		
-		m_data = new MTJConceptVectorData();
 	}
 	
 	public double get(int key) {
@@ -99,9 +95,9 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 		int size = in.readInt();
 		int[] index = (int[])in.readObject();
 		double[] data = (double[])in.readObject();
-		m_v = new SparseVector( size, index, data, false );
 		
-		m_data = new MTJConceptVectorData();
+		m_v = new SparseVector( size, index, data, false );
+		m_v.compact();
 	}
 
 	public int hashCode() {
@@ -109,7 +105,7 @@ public class MTJConceptVector implements IConceptVector, Serializable {
 	}
 
 	public IConceptVectorData getData() {
-		return m_data;
+		return new MTJConceptVectorData();
 	}
 
 	public int count() {
