@@ -10,17 +10,28 @@
 The file `config/demo.properties` contains all relevant properties with default values. Some of these properties, e.g. for database access, have to be adjusted to the local system. This file is then needed for the demo applications.
 
 ==Create Wikipedia Index==
+
+=== Configure Terrier ===
 Terrier has to be configured according to the Terrier documentation.
+
+If you want to use a local terrier directory, perform the following steps:
+  # Create a directory containing the sub directory `etc/` and `var/index/`
+  # Copy the file `config/terrier.properties` to `etc/`
+  # In the following steps, run java with the JVM argument: `-Dterrier.home=<terrier dir>`
+
+=== Confuration ===
 
 The file `config/demo.properties` contains sample values for all properties. Some of them have to be adjusted to the local settings, e.g. access to the Wikipedia database.
 
+=== Execution ===
+
 Command line for building the inverted index:
 {{{
-java -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> <configuration file>
+java <JVM arguments> -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> <configuration file>
 }}}
 
 ==Use Explicit Semantic Analysis for semantic relatedness==
 Command line for computing semantic relatedness using ESA:
 {{{
-java -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>" <configuration file>
+java <JVM arguments> -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>" <configuration file>
 }}}
