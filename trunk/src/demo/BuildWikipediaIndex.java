@@ -14,7 +14,8 @@ import edu.uka.aifb.tools.ConfigurationManager;
 public class BuildWikipediaIndex {
 
 	static final String[] REQUIRED_PROPERTIES = {
-		"language"
+		"language",
+		"single_pass"
 	};
 	
 	static Logger logger = Logger.getLogger( BuildWikipediaIndex.class );
@@ -31,14 +32,24 @@ public class BuildWikipediaIndex {
 						language );
 		
 		ITokenAnalyzer analyzer = new MultiLingualAnalyzer( config );
-		
 		TerrierIndexFactory factory = new TerrierIndexFactory();
-		factory.buildIndex(
-				"wikipedia",
-				language,
-				analyzer,
-				collection,
-				false );
+		
+		if( config.getBoolean( "single_pass" ) ) {
+			factory.buildIndexSinglePass(
+					"wikipedia",
+					language,
+					analyzer,
+					collection,
+					false );
+		}
+		else {
+			factory.buildIndex(
+					"wikipedia",
+					language,
+					analyzer,
+					collection,
+					false );
+		}
 	}
 
 }
