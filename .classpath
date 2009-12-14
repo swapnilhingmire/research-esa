@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="old"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/ir_framework_v3/lib/bzip2.jar"/>
 	<classpathentry kind="lib" path="/ir_framework_v3/lib/colt.jar"/>
@@ -27,5 +26,6 @@
 	<classpathentry kind="lib" path="/ir_framework_v3/lib/terrier-2.2.1.jar"/>
 	<classpathentry kind="lib" path="/ir_framework_v3/lib/trove-2.0.4.jar"/>
 	<classpathentry kind="lib" path="/ir_framework_v3/lib/xercesImpl.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ir_framework_v3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
