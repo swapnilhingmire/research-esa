@@ -30,6 +30,9 @@ Command line for building the inverted index:
 java <JVM arguments> -cp bin:lib/ir_framework_v3.jar:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> -Dsingle_pass=true <configuration file>
 }}}
 
+  *Comment:* Some users reported problem when building the Wikipedia index. While building an inverted index, Terrier stucks into an infinite loop (e.g. "INFO - Iteration 111910 of 42 iterations"). This is a bug in the Terrier framework, which I reported at the Terrier forum: [http://ir.dcs.gla.ac.uk/terrier/forum//read.php?3,1172,1179]. The only solution up to now is to use single pass indexing, which is enabled by the command line option "-Dsingle_pass=true".
+
+
 ==Use Explicit Semantic Analysis for semantic relatedness==
 Command line for computing semantic relatedness using ESA:
 {{{
