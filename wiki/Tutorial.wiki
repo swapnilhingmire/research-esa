@@ -27,7 +27,7 @@ The file `config/demo.properties` contains sample values for all properties. Som
 
 Command line for building the inverted index:
 {{{
-java <JVM arguments> -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> <configuration file>
+java <JVM arguments> -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> -Dsingle_pass=true <configuration file>
 }}}
 
 ==Use Explicit Semantic Analysis for semantic relatedness==
