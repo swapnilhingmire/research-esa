@@ -10,9 +10,9 @@ import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.concept.search.ConceptVectorSimilarity;
 import edu.uka.aifb.concept.search.CosineScorer;
 import edu.uka.aifb.document.TextDocument;
-import edu.uka.aifb.ir.terrier.TerrierESAIndex;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.nlp.MultiLingualAnalyzer;
+import edu.uka.aifb.terrier.TerrierESAIndex;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 

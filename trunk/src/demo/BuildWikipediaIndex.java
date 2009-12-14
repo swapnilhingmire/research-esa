@@ -32,7 +32,7 @@ public class BuildWikipediaIndex {
 		
 		ITokenAnalyzer analyzer = new MultiLingualAnalyzer( config );
 		
-		TerrierIndexFactory factory = new TerrierIndexFactory( config );
+		TerrierIndexFactory factory = new TerrierIndexFactory();
 		factory.buildIndex(
 				"wikipedia",
 				language,
