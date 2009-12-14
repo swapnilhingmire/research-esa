@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="old"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/mtj.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/snowball-stemmer.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/commons-cli-1.1.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/commons-collections-3.2.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/commons-configuration-1.4.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/commons-lang-2.3.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/trove-2.0.4.jar"/>
-	<classpathentry kind="lib" path="D:/Dokumente und Einstellungen/pso/Eigene Dateien/Development/eclipse_workspace/ir_framework_v3/lib/terrier-2.2.1.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/bzip2.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/colt.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/commons-configuration-1.4.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/js.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/jtidyservlet-r8-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/libsvm.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/lingpipe-3.7.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://alias-i.com/lingpipe/docs/api/index.html"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/mtj.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/mysql-connector-java-5.0.4-bin.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/ojdbc5.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/pal-1.4.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/snowball-stemmer.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/terrier-2.2.1.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/trove-2.0.4.jar"/>
+	<classpathentry kind="lib" path="/ir_framework_v3/lib/xercesImpl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
