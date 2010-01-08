@@ -18,12 +18,13 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	static Logger logger = Logger.getLogger( FixedSizeConceptVectorBuilder.class );
 	
 	int m_size;
+	IConceptVector cv;
 	
-	public void initialize( Configuration config ) {
+	public FixedSizeConceptVectorBuilder() {
+		Configuration config = ConfigurationManager.getCurrentConfiguration();
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
 		
 		m_size = config.getInt( "concepts.builder.fixed_size.size" );
-		
 		logger.info( "Initializing: size=" + m_size );
 	}
 
@@ -32,31 +33,31 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		logger.info( "New settings: size=" + m_size );
 	}
 	
-	public IConceptVector create( String docName, int[] conceptIds, double[] conceptScores, int maxConceptId ) {
-		IConceptVector cv = new MTJConceptVector( docName, maxConceptId );
-		
+	@Override
+	public void reset( String docName, int maxConceptId ) {
+		cv = new MTJConceptVector( docName, maxConceptId );
+	}
+	
+	@Override
+	public void addScores( int[] conceptIds, double[] conceptScores ) {
 		for( int i=0; i<m_size && i<conceptIds.length; i++ ) {
 			if( conceptScores[i] > 0 ) {
 				cv.set( conceptIds[i], conceptScores[i] );
 			}
 		}
-		
-		return cv;
 	}
 
 	@Override
-	public IConceptVector restrict( IConceptVector cv ) {
-		if( cv.count() <= m_size ) {
-			return cv;
-		}
-
-		IConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
-		
+	public void addScores( IConceptVector cv ) {
 		IConceptIterator it = cv.orderedIterator();
 		for( int i=0; it.next() && i<m_size; i++ ) {
-			newCv.add( it.getId(), it.getValue() );
+			cv.add( it.getId(), it.getValue() );
 		}
-		return newCv;
 	}
-
+	
+	@Override
+	public IConceptVector getConceptVector() {
+		return cv;
+	}
+	
 }

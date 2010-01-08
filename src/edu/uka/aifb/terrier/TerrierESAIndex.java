@@ -14,11 +14,11 @@ public class TerrierESAIndex implements IConceptIndex {
 
 	static Logger logger = Logger.getLogger( TerrierESAIndex.class );
 	
-	private Index index;
-	private DocumentIndex documentIndex;
+	Index index;
+	DocumentIndex documentIndex;
 
-	private Configuration m_config;
-	private Language m_language;
+	Configuration m_config;
+	Language m_language;
 	
 	public TerrierESAIndex( Configuration config, String indexId, Language language ) {
 		TerrierIndexFactory factory = new TerrierIndexFactory();

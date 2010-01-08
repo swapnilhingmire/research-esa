@@ -1,14 +1,15 @@
 package edu.uka.aifb.api.concept;
 
-import org.apache.commons.configuration.Configuration;
 
 
 public interface IConceptVectorBuilder {
 
-	public void initialize( Configuration config );
+	public void reset( String docName, int maxConceptId );
 	
-	public IConceptVector create( String docName, int[] conceptIds, double[] conceptScores, int maxConceptId );
+	public void addScores( int[] conceptIds, double[] conceptScores );
 
-	public IConceptVector restrict( IConceptVector cv );
+	public void addScores( IConceptVector cv );
+	
+	public IConceptVector getConceptVector();
 
 }

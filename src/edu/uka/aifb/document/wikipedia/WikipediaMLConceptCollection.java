@@ -46,10 +46,11 @@ public class WikipediaMLConceptCollection implements ICollection {
 		
 		m_wp = new SQLWikipediaDatabase( config, language );
 		
-		logger.info( "Reading concept ids" );
+		logger.info( "Reading concept ids from " + m_mlcTable );
 		m_conceptIds = new TIntArrayList();
-		ResultSet rs = m_jsb.getStatement().executeQuery(
+		PreparedStatement pst = m_jsb.getPreparedStatement(
 				"select distinct mlc_id from " + m_mlcTable + " order by mlc_id;" );
+		ResultSet rs = pst.executeQuery();
 		while( rs.next() ) {
 			m_conceptIds.add( rs.getInt( 1 ) );
 		}
