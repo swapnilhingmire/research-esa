@@ -61,7 +61,6 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		
 		logger.info( "Setting concept vector builder: " + config.getString( "concepts.builder_class" ) );
 		conceptVectorBuilder = (IConceptVectorBuilder)Class.forName( config.getString( "concepts.builder_class" ) ).newInstance();
-		conceptVectorBuilder.initialize( config );
 		
 		String[] documentScoreModifierClasses = config.getStringArray( "terrier.esa.document_scores_modifier_classes" );
 		documentScoreModifiers = new ArrayList<DocumentScoreModifier>();
@@ -124,9 +123,9 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		ResultSet rs = m_matching.getResultSet();
 		logger.info( "Found " + rs.getResultSize() + " matches in index." );
 		
-		IConceptVector cv = conceptVectorBuilder.create(
-				doc.getName(), rs.getDocids(), rs.getScores(), m_maxConceptId );
-		return cv;
+		conceptVectorBuilder.reset( doc.getName(), m_maxConceptId );
+		conceptVectorBuilder.addScores( rs.getDocids(), rs.getScores() );
+		return conceptVectorBuilder.getConceptVector();
 	}
 
 	public void setTokenAnalyzer( ITokenAnalyzer tokenAnalyzer ) {

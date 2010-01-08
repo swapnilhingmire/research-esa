@@ -16,20 +16,20 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 	};
 
 	static Logger logger = Logger.getLogger( SlidingWindowConceptVectorBuilder.class );
+	IConceptVector cv;
 	
 	int m_windowSize;
 	double m_relThreshold;
 	
-	public void initialize( Configuration config ) {
+	public SlidingWindowConceptVectorBuilder() {
+		Configuration config = ConfigurationManager.getCurrentConfiguration();
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
-		
 		m_windowSize = config.getInt( "concepts.builder.sliding_window.window_size" );
 		m_relThreshold = config.getDouble( "concepts.builder.sliding_window.rel_threshold" );
 	}
 
-	public IConceptVector create( String docName, int[] conceptIds, double[] conceptScores, int maxConceptId ) {
-		IConceptVector cv = new MTJConceptVector( docName, maxConceptId );
-		
+	@Override
+	public void addScores(int[] conceptIds, double[] conceptScores) {
 		for( int i=0; i<m_windowSize && i<conceptIds.length; i++ ) {
 			cv.set( conceptIds[i], conceptScores[i] );
 		}
@@ -51,14 +51,22 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 				logger.trace( i + ": difference=" + difference );
 			}
 		}
-		
+	}
+
+	@Override
+	public void addScores(IConceptVector cv) {
+		logger.error( "addScore( IConceptVector) is not implemented!" );
+		//TODO Implementation
+	}
+
+	@Override
+	public IConceptVector getConceptVector() {
 		return cv;
 	}
 
 	@Override
-	public IConceptVector restrict(IConceptVector cv) {
-		// TODO Auto-generated method stub
-		return null;
+	public void reset(String docName, int maxConceptId) {
+		cv = new MTJConceptVector( docName, maxConceptId );
 	}
 
 
