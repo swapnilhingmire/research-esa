@@ -40,24 +40,27 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	
 	@Override
 	public void addScores( int[] conceptIds, double[] conceptScores ) {
-		for( int i=0; i<m_size && i<conceptIds.length; i++ ) {
-			if( conceptScores[i] > 0 ) {
-				cv.set( conceptIds[i], conceptScores[i] );
-			}
+		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
+			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
 	@Override
-	public void addScores( IConceptVector cv ) {
-		IConceptIterator it = cv.orderedIterator();
-		for( int i=0; it.next() && i<m_size; i++ ) {
+	public void addScores( IConceptVector oldCv ) {
+		IConceptIterator it = oldCv.iterator();
+		while( it.next() ) {
 			cv.add( it.getId(), it.getValue() );
 		}
 	}
 	
 	@Override
 	public IConceptVector getConceptVector() {
-		return cv;
+		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+		IConceptIterator it = cv.orderedIterator();
+		for( int count =0; count<m_size && it.next(); count++ ) {
+			newCv.set( it.getId(), it.getValue() );
+		}
+		return newCv;
 	}
 	
 }
