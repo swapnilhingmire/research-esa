@@ -36,5 +36,5 @@ java <JVM arguments> -cp bin:lib/ir_framework_v3.jar:<external libraries> demo.B
 ==Use Explicit Semantic Analysis for semantic relatedness==
 Command line for computing semantic relatedness using ESA:
 {{{
-java <JVM arguments> -cp bin:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>" <configuration file>
+java <JVM arguments> -cp bin:lib/ir_framework_v3.jar:<external libraries> demo.BuildWikipediaIndex -Dlanguage=<language> "-Dtext_a=<first text>" "-Dtext_b=<second text>" <configuration file>
 }}}
