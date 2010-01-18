@@ -3,6 +3,7 @@ package edu.uka.aifb.concept;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
+import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
 import edu.uka.aifb.tools.ConfigurationManager;
@@ -30,26 +31,8 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 
 	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores) {
-		for( int i=0; i<m_windowSize && i<conceptIds.length; i++ ) {
-			cv.set( conceptIds[i], conceptScores[i] );
-		}
-
-		double maxScore = conceptScores[0];
-		if( logger.isTraceEnabled() ) {
-			logger.trace( "Max score=" + maxScore );
-		}
-		
-		int i = m_windowSize;
-		double difference = conceptScores[i-m_windowSize] - conceptScores[i]; 
-		
-		while( difference > maxScore * m_relThreshold && i<conceptIds.length ) {
-			cv.set( conceptIds[i], conceptScores[i] );
-			
-			i++;
-			difference = conceptScores[i-m_windowSize] - conceptScores[i];
-			if( logger.isTraceEnabled() ) {
-				logger.trace( i + ": difference=" + difference );
-			}
+		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
+			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
@@ -61,7 +44,34 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 
 	@Override
 	public IConceptVector getConceptVector() {
-		return cv;
+		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+
+		IConceptIterator it = cv.orderedIterator();
+		for( int i=0; i<m_windowSize && it.next(); i++ ) {
+			newCv.set( it.getId(), it.getValue() );
+		}
+
+		IConceptIterator windowIt = cv.orderedIterator();
+		if( windowIt.next() ) {
+			double maxScore = windowIt.getValue();
+			if( logger.isTraceEnabled() ) {
+				logger.trace( "Max score=" + maxScore );
+			}
+
+			while( it.next() && windowIt.next() ) {
+				double difference = windowIt.getValue() - it.getId(); 
+				if( logger.isTraceEnabled() ) {
+					logger.trace( "difference=" + difference );
+				}
+
+				if( difference <= maxScore * m_relThreshold ) {
+					break;
+				}
+				
+				newCv.add( it.getId(), it.getValue() );
+			}
+		}
+		return newCv;
 	}
 
 	@Override

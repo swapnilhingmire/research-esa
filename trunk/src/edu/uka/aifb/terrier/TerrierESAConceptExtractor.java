@@ -95,10 +95,10 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		}
 		
 		while( ts.next() ) {
-			logger.debug( "Setting query term " + ts.getToken() );
+			logger.trace( "Setting query term " + ts.getToken() );
 			query.add( new SingleTermQuery( ts.getToken() ) );
 		}
-		logger.info( query.toString() );
+		logger.debug( query.toString() );
 
 		/*
 		 * Search

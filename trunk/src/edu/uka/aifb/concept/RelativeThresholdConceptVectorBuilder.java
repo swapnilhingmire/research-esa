@@ -25,29 +25,32 @@ public class RelativeThresholdConceptVectorBuilder implements IConceptVectorBuil
 
 	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores) {
-		double maxScore = conceptScores[0];
-		
-		for( int i=0; conceptScores[i] > maxScore * m_threshold && i<conceptIds.length; i++ ) {
-			cv.set( conceptIds[i], conceptScores[i] );
+		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
+			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
 	@Override
-	public void addScores(IConceptVector cv) {
-		IConceptIterator it = cv.orderedIterator();
-		if( it.next() ) {
-			double maxScore = it.getValue();
-			cv.set( it.getId(), it.getValue() );
-			
-			while( it.next() && it.getValue() > maxScore * m_threshold ) {
-				cv.set( it.getId(), it.getValue() );
-			}
+	public void addScores( IConceptVector oldCv ) {
+		IConceptIterator it = oldCv.iterator();
+		while( it.next() ) {
+			cv.add( it.getId(), it.getValue() );
 		}
 	}
 
 	@Override
 	public IConceptVector getConceptVector() {
-		return cv;
+		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+		IConceptIterator it = cv.orderedIterator();
+		if( it.next() ) {
+			double maxScore = it.getValue();
+			newCv.set( it.getId(), it.getValue() );
+			
+			while( it.next() && it.getValue() > maxScore * m_threshold ) {
+				newCv.set( it.getId(), it.getValue() );
+			}
+		}
+		return newCv;
 	}
 
 	@Override

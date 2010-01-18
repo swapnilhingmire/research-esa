@@ -23,31 +23,29 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		m_threshold = config.getDouble( "concepts.builder.threshold.absolute_threshold" );
 	}
 
-	public IConceptVector create( String docName, int[] conceptIds, double[] conceptScores, int maxConceptId ) {
-		
-		
-		return cv;
-	}
-
 	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores) {
-		for( int i=0; conceptScores[i] > m_threshold && i<conceptIds.length; i++ ) {
-			cv.set( conceptIds[i], conceptScores[i] );
+		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
+			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
 	@Override
 	public void addScores(IConceptVector cv) {
-		IConceptIterator it = cv.orderedIterator();
-		
-		while( it.next() && it.getValue() > m_threshold ) {
-			cv.set( it.getId(), it.getValue() );
+		IConceptIterator it = cv.iterator();
+		while( it.next() ) {
+			cv.add( it.getId(), it.getValue() );
 		}
 	}
 
 	@Override
 	public IConceptVector getConceptVector() {
-		return cv;
+		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+		IConceptIterator it = cv.orderedIterator();
+		while( it.next() && it.getValue() > m_threshold ) {
+			newCv.set( it.getId(), it.getValue() );
+		}
+		return newCv;
 	}
 
 	@Override
