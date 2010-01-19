@@ -31,10 +31,4 @@ public class MappedConceptExtractor implements IConceptExtractor {
 		return m_mapper.map( m_extractor.extract( doc, fields ) );
 	}
 
-	@Override
-	public IConceptVectorBuilder getConceptVectorBuilder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

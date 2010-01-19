@@ -132,10 +132,4 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		m_tokenAnalyzer = tokenAnalyzer;
 	}
 
-	@Override
-	public IConceptVectorBuilder getConceptVectorBuilder() {
-		return conceptVectorBuilder;
-	}
-
-	
 }
