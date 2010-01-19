@@ -1,7 +1,11 @@
 package edu.uka.aifb.concept;
 
+import java.util.Arrays;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
+
+import uk.ac.gla.terrier.sorting.HeapSort;
 
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
@@ -18,7 +22,9 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	static Logger logger = Logger.getLogger( FixedSizeConceptVectorBuilder.class );
 	
 	int m_size;
-	IConceptVector cv;
+	String docName;
+	int[] ids;
+	double[] values;
 	
 	public FixedSizeConceptVectorBuilder() {
 		Configuration config = ConfigurationManager.getCurrentConfiguration();
@@ -35,13 +41,23 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	
 	@Override
 	public void reset( String docName, int maxConceptId ) {
-		cv = new MTJConceptVector( docName, maxConceptId );
+		this.docName = docName;
+		if( ids == null || maxConceptId != ids.length ) {
+			ids = new int[maxConceptId];
+			values = new double[maxConceptId];
+		}
+		else {
+			Arrays.fill( values, 0 );
+		}
+		for( int i=0; i<ids.length; i++ ) {
+			ids[i] = i;
+		}
 	}
 	
 	@Override
 	public void addScores( int[] conceptIds, double[] conceptScores ) {
 		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
-			cv.add( conceptIds[i], conceptScores[i] );
+			values[ conceptIds[i] ] += conceptScores[i];
 		}
 	}
 
@@ -49,16 +65,17 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	public void addScores( IConceptVector oldCv ) {
 		IConceptIterator it = oldCv.iterator();
 		while( it.next() ) {
-			cv.add( it.getId(), it.getValue() );
+			values[ it.getId() ] += it.getValue();
 		}
 	}
 	
 	@Override
 	public IConceptVector getConceptVector() {
-		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
-		IConceptIterator it = cv.orderedIterator();
-		for( int count =0; count<m_size && it.next(); count++ ) {
-			newCv.set( it.getId(), it.getValue() );
+		HeapSort.heapSort( values, ids );
+
+		MTJConceptVector newCv = new MTJConceptVector( docName, ids.length );
+		for( int i=ids.length-1; i>=0 && i>=ids.length - m_size; i-- ) {
+			newCv.set( ids[i], values[i] );
 		}
 		return newCv;
 	}

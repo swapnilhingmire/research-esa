@@ -1,56 +1,114 @@
 package edu.uka.aifb.terrier;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
-import uk.ac.gla.terrier.matching.Matching;
-import uk.ac.gla.terrier.matching.MatchingQueryTerms;
-import uk.ac.gla.terrier.matching.ResultSet;
-import uk.ac.gla.terrier.querying.parser.SingleTermQuery;
+import uk.ac.gla.terrier.matching.models.WeightingModel;
+import uk.ac.gla.terrier.structures.CollectionStatistics;
+import uk.ac.gla.terrier.structures.DocumentIndex;
 import uk.ac.gla.terrier.structures.Index;
+import uk.ac.gla.terrier.structures.InvertedIndex;
+import uk.ac.gla.terrier.structures.Lexicon;
+import uk.ac.gla.terrier.structures.LexiconEntry;
+import uk.ac.gla.terrier.utility.HeapSort;
 import edu.uka.aifb.api.concept.IConceptExtractor;
 import edu.uka.aifb.api.concept.IConceptModel;
 import edu.uka.aifb.api.concept.IConceptVector;
-import edu.uka.aifb.api.concept.IConceptVectorBuilder;
 import edu.uka.aifb.api.document.IDocument;
+import edu.uka.aifb.api.ir.ITermEstimateModel;
 import edu.uka.aifb.api.nlp.ITokenAnalyzer;
 import edu.uka.aifb.api.nlp.ITokenStream;
+import edu.uka.aifb.concept.MTJConceptVector;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 public class TerrierConceptModelExtractor implements IConceptExtractor {
 
+	static final int MAX_DOC_SCORE_CACHE = 500;
+	
 	static final String[] REQUIRED_PROPERTIES = {
 		"concepts.model_class",
 	};
 	
 	static Logger logger = Logger.getLogger( TerrierConceptModelExtractor.class );
 	
-	private Matching m_matching;
+	private Language language;
 	
-	private Language m_language;
-	
-	private int m_maxConceptId;
-	
+	private int maxConceptId;
 	private IConceptModel conceptModel;
+	private ITermEstimateModel termEstimateModel;
 	
-	private ITokenAnalyzer m_tokenAnalyzer;
+	private CollectionStatistics collectionStatistics;
+	private Lexicon lexicon;
+	private InvertedIndex invertedIndex;
+	private DocumentIndex docIndex;
+	
+	private ITokenAnalyzer tokenAnalyzer;
+	
+	private double[][] docScores;
+	private double[][] docScoresCache;
+	private double[] smoothingWeights;
+
+	private double[] scores;
+	private int[] ids;
+	private short[] support;
 	
 	protected TerrierConceptModelExtractor( Configuration config, Index index, Language language ) throws Exception {
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
 		
-		m_language = language;
-		m_maxConceptId = index.getDocumentIndex().getNumberOfDocuments();
+		collectionStatistics = index.getCollectionStatistics();
+		lexicon = index.getLexicon();
+		invertedIndex = index.getInvertedIndex();
+		docIndex = index.getDocumentIndex();
+		
+		this.language = language;
+		maxConceptId = index.getDocumentIndex().getNumberOfDocuments();
 		
 		logger.info( "Setting concept model: " + config.getString( "concepts.model_class" ) );
 		conceptModel = (IConceptModel)Class.forName( config.getString( "concepts.model_class" ) ).newInstance();
-
-		m_matching = new Matching( index );
-		m_matching.setModel( conceptModel.getWeightingModel() );
+		termEstimateModel = conceptModel.getTermEstimatModel();
+		
+		docScoresCache = new double[MAX_DOC_SCORE_CACHE][];
+		scores = new double[maxConceptId];
+		ids = new int[maxConceptId];
+		support = new short[maxConceptId];
+		
+		smoothingWeights = new double[maxConceptId];
+		for( int i=0; i<maxConceptId; i++ ) {
+			smoothingWeights[i] = termEstimateModel.getSmoothingWeigth( i );
+		}
+	}
+	
+	private void reset( int numberOfQueryTerms ) {
+		Arrays.fill( scores, 0d );
+		for( int i=0; i<maxConceptId; i++ ) {
+			ids[i] = i;
+		}
+		Arrays.fill( support, (short)0 );
+		
+		docScores = new double[numberOfQueryTerms][];
+		for( int i=0; i<numberOfQueryTerms; i++ ) {
+			if( i>=MAX_DOC_SCORE_CACHE ) {
+				docScores[i] = new double[maxConceptId];
+			}
+			else {
+				if( docScoresCache[i] == null ) {
+					docScoresCache[i] = new double[maxConceptId];
+				}
+				else {
+					Arrays.fill( docScoresCache[i], 0d );
+				}
+				docScores[i] = docScoresCache[i];
+			}
+		}
 	}
 	
 	public IConceptVector extract( IDocument doc ) {
-		return extract( doc, doc.getTokens( m_language ) );
+		return extract( doc, doc.getTokens( language ) );
 	}
 	
 	public IConceptVector extract( IDocument doc, String... fields ) {
@@ -59,54 +117,119 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 
 	private IConceptVector extract( IDocument doc, ITokenStream queryTokenStream ) {
 		logger.info( "Extracting concepts for document " + doc.getName() );
-		
-		IConceptVectorBuilder builder = conceptModel.getConceptVectorBuilder();
-		builder.reset( doc.getName(), m_maxConceptId );
-		
+
 		/*
 		 * Build query
 		 */
 		ITokenStream ts = queryTokenStream;
-		if( m_tokenAnalyzer != null) {
-			ts = m_tokenAnalyzer.getAnalyzedTokenStream( ts );
+		if( tokenAnalyzer != null) {
+			ts = tokenAnalyzer.getAnalyzedTokenStream( ts );
 		}
-		
+
+		Map<String,Integer> queryTermFrequencyMap = new HashMap<String, Integer>();
+		Map<String,LexiconEntry> queryTermLexiconEntryMap = new HashMap<String, LexiconEntry>();
 		while( ts.next() ) {
-			if( ts.getToken() == null || ts.getToken().length() == 0 ) {
+			String token = ts.getToken();
+			if( token == null || token.length() == 0 ) {
 				logger.debug( "Skipping empty token!" );
 				continue;
 			}
 			
-			logger.debug( "Setting query term " + ts.getToken() );
-			SingleTermQuery query = new SingleTermQuery( ts.getToken() );
-
-			/*
-			 * Search
-			 */
-			MatchingQueryTerms mqt = new MatchingQueryTerms();
-			query.obtainQueryTerms( mqt );
-			mqt.addDocumentScoreModifier( conceptModel );
-			
-			m_matching.match( "ESA", mqt );
-			
-			/*
-			 * Create concept vector
-			 */
-			ResultSet rs = m_matching.getResultSet();
-			logger.info( "Found " + rs.getResultSize() + " matches in index." );
-			
-			builder.addScores( rs.getDocids(), rs.getScores() );
+			if( queryTermFrequencyMap.containsKey( token ) ) {
+				queryTermFrequencyMap.put( token, queryTermFrequencyMap.get( token ) + 1 );
+			}
+			else {
+				LexiconEntry lEntry = lexicon.getLexiconEntry( token );
+				if( lEntry == null ) {
+					logger.info( "Term not found: " + token );
+				}
+				else {
+					queryTermFrequencyMap.put( token, 1 );
+					queryTermLexiconEntryMap.put( token, lEntry );
+				}
+			}
 		}
 		
-		return builder.getConceptVector();
+		int numberOfQueryTerms = queryTermFrequencyMap.size();
+		if( numberOfQueryTerms == 0 ) {
+			logger.info( "Empty document: " + doc.getName() );
+			return new MTJConceptVector( doc.getName(), maxConceptId ); 
+		}
+		
+		String[] queryTerms = new String[numberOfQueryTerms];
+		int[] queryTermFrequencies = new int[numberOfQueryTerms];
+		LexiconEntry[] lexiconEntries = new LexiconEntry[numberOfQueryTerms];
+		double[] queryTermEstimates = new double[numberOfQueryTerms];
+		int i=0;
+		for( String queryTerm : queryTermFrequencyMap.keySet() ) {
+			queryTerms[i] = queryTerm;
+			queryTermFrequencies[i] = queryTermFrequencyMap.get( queryTerm );
+			lexiconEntries[i] = queryTermLexiconEntryMap.get( queryTerm );
+			queryTermEstimates[i] = termEstimateModel.getEstimate( queryTerm );
+			i++;
+		}
+		
+		reset( numberOfQueryTerms );
+		
+		/*
+		 * Initialize weighting model
+		 */
+			
+		//inform the weighting model of the collection statistics		
+		WeightingModel wmodel = conceptModel.getWeightingModel();
+		wmodel.setNumberOfTokens((double)collectionStatistics.getNumberOfTokens());
+		wmodel.setNumberOfDocuments((double)collectionStatistics.getNumberOfDocuments());
+		wmodel.setAverageDocumentLength((double)collectionStatistics.getAverageDocumentLength());
+		wmodel.setNumberOfUniqueTerms((double)collectionStatistics.getNumberOfUniqueTerms());
+		wmodel.setNumberOfPointers((double)collectionStatistics.getNumberOfPointers());
+		
+		wmodel.setKeyFrequency( 1 );
+		
+		/*
+		 * Read inverted index and compute doc scores
+		 */
+		
+		//the pointers read from the inverted file
+		int[][] pointers;
+		int activatedConceptCount = 0;
+		
+		for( i=0; i<numberOfQueryTerms; i++ ) {
+			//the weighting model is prepared for assigning scores to documents
+			wmodel.setDocumentFrequency( lexiconEntries[i].n_t);
+			wmodel.setTermFrequency( lexiconEntries[i].TF );
+
+			//the postings are being read from the inverted file.
+			pointers = invertedIndex.getDocuments( lexiconEntries[i] );
+			for( int j=0; j<pointers[0].length; j++ ) {
+				int conceptId = pointers[0][j];
+				double score = wmodel.score(
+						pointers[1][j], 
+						docIndex.getDocumentLength(conceptId));
+				if( score > 0 ) {
+					docScores[i][conceptId] = score;
+					if( support[conceptId] == 0 ) {
+						activatedConceptCount++;
+					}
+					support[conceptId]++;
+				}
+			}
+		}
+		logger.info( "Matched " + activatedConceptCount + " concepts." );
+
+		conceptModel.computeConceptScores( 
+				scores, 
+				queryTerms, queryTermFrequencies,
+				queryTermEstimates, smoothingWeights,
+				docScores, support );
+		
+		HeapSort.descendingHeapSort( scores, ids, support );
+		IConceptVector cv = conceptModel.getConceptVector( doc.getName(), ids, scores );
+		logger.info( "Extracted concept vector with " + cv.count() + " activated concepts." );
+		return cv;
 	}
 
 	public void setTokenAnalyzer( ITokenAnalyzer tokenAnalyzer ) {
-		m_tokenAnalyzer = tokenAnalyzer;
+		this.tokenAnalyzer = tokenAnalyzer;
 	}
 
-	@Override
-	public IConceptVectorBuilder getConceptVectorBuilder() {
-		return conceptModel.getConceptVectorBuilder();
-	}
 }

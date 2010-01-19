@@ -12,6 +12,4 @@ public interface IConceptExtractor {
 	
 	public IConceptVector extract( IDocument doc, String... fields );
 	
-	public IConceptVectorBuilder getConceptVectorBuilder();
-	
 }
