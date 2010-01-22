@@ -1,15 +1,19 @@
 package edu.uka.aifb.concept.model;
 
+import java.util.Arrays;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
 import uk.ac.gla.terrier.matching.models.WeightingModel;
+import uk.ac.gla.terrier.structures.Index;
+import uk.ac.gla.terrier.utility.HeapSort;
 import edu.uka.aifb.api.concept.IConceptModel;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.ir.ITermEstimateModel;
 import edu.uka.aifb.concept.MTJConceptVector;
-import edu.uka.aifb.ir.DummyTermEstimateModel;
-import edu.uka.aifb.ir.terrier.model.RtfIdfModel;
+import edu.uka.aifb.ir.IdfTermEstimateModel;
+import edu.uka.aifb.ir.terrier.model.RtfModel;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 public class RtfIdfFixedSizeConceptModel implements IConceptModel {
@@ -25,6 +29,9 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 
 	int fixedSize;
 	
+	double[] scores;
+	int[] ids;
+	
 	public RtfIdfFixedSizeConceptModel() {
 		Configuration config = ConfigurationManager.getCurrentConfiguration();
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
@@ -32,8 +39,8 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 		fixedSize = config.getInt( "concepts.builder.fixed_size.size" );
 		logger.info( "Initializing: size=" + fixedSize );
 
-		termEstimateModel = new DummyTermEstimateModel();
-		model = new RtfIdfModel();
+		termEstimateModel = new IdfTermEstimateModel();
+		model = new RtfModel();
 	}
 	
 	@Override
@@ -46,30 +53,47 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 		return model;
 	}
 
-	@Override
-	public void computeConceptScores(double[] scores, String[] queryTerms,
-			int[] queryTermFrequencies, double[] queryTermEstimates,
-			double[] smoothingWeights, double[][] docScores, short[] support ) {
-		
-		for( int i=0; i<scores.length; i++ ) {
-			if( support[i] > 0 ) {
-				for( int j=0; j<queryTerms.length; j++ ) {
-					scores[i] += queryTermFrequencies[j] * docScores[j][i];
-				}
-			}
+	private void initialize( int numberOfConcepts ) {
+		if( scores == null || scores.length != numberOfConcepts ) {
+			scores = new double[numberOfConcepts];
+			ids = new int[numberOfConcepts];
+		}
+		else {
+			Arrays.fill( scores, 0d );
+		}
+		for( int i=0; i<numberOfConcepts; i++ ) {
+			ids[i] = i;
 		}
 	}
-
+	
 	@Override
 	public IConceptVector getConceptVector(
 			String docName,
-			int[] ids, double[] values) {
+			String[] queryTerms,
+			int[] queryTermFrequencies, double[] queryTermEstimates,
+			double[] smoothingWeights, double[][] docScores, short[] support )
+	{
+		initialize( support.length );
+		
+		for( int i=0; i<support.length; i++ ) {
+			if( support[i] > 0 ) {
+				for( int termId=0; termId<queryTerms.length; termId++ ) {
+					scores[i] += queryTermFrequencies[termId] * docScores[termId][i] * queryTermEstimates[termId];
+				}
+			}
+		}
+
+		HeapSort.descendingHeapSort( scores, ids, support );
+		
 		MTJConceptVector cv = new MTJConceptVector( docName, ids.length );
 		for( int i=0; i<fixedSize && i<ids.length; i++ ) {
-			 cv.set( ids[i], values[i] );
+			 cv.set( ids[i], scores[i] );
 		}
-		
 		return cv;
+	}
+
+	@Override
+	public void setIndex(Index index) {
 	}
 
 }

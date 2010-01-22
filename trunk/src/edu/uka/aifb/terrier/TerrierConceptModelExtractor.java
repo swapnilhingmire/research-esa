@@ -14,7 +14,6 @@ import uk.ac.gla.terrier.structures.Index;
 import uk.ac.gla.terrier.structures.InvertedIndex;
 import uk.ac.gla.terrier.structures.Lexicon;
 import uk.ac.gla.terrier.structures.LexiconEntry;
-import uk.ac.gla.terrier.utility.HeapSort;
 import edu.uka.aifb.api.concept.IConceptExtractor;
 import edu.uka.aifb.api.concept.IConceptModel;
 import edu.uka.aifb.api.concept.IConceptVector;
@@ -53,8 +52,6 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	private double[][] docScoresCache;
 	private double[] smoothingWeights;
 
-	private double[] scores;
-	private int[] ids;
 	private short[] support;
 	
 	protected TerrierConceptModelExtractor( Configuration config, Index index, Language language ) throws Exception {
@@ -71,23 +68,18 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		logger.info( "Setting concept model: " + config.getString( "concepts.model_class" ) );
 		conceptModel = (IConceptModel)Class.forName( config.getString( "concepts.model_class" ) ).newInstance();
 		termEstimateModel = conceptModel.getTermEstimatModel();
+		conceptModel.setIndex( index );
 		
 		docScoresCache = new double[MAX_DOC_SCORE_CACHE][];
-		scores = new double[maxConceptId];
-		ids = new int[maxConceptId];
 		support = new short[maxConceptId];
 		
 		smoothingWeights = new double[maxConceptId];
 		for( int i=0; i<maxConceptId; i++ ) {
-			smoothingWeights[i] = termEstimateModel.getSmoothingWeigth( i );
+			smoothingWeights[i] = termEstimateModel.getSmoothingWeigth( docIndex.getDocumentNumber( i ) );
 		}
 	}
 	
 	private void reset( int numberOfQueryTerms ) {
-		Arrays.fill( scores, 0d );
-		for( int i=0; i<maxConceptId; i++ ) {
-			ids[i] = i;
-		}
 		Arrays.fill( support, (short)0 );
 		
 		docScores = new double[numberOfQueryTerms][];
@@ -216,14 +208,11 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		}
 		logger.info( "Matched " + activatedConceptCount + " concepts." );
 
-		conceptModel.computeConceptScores( 
-				scores, 
+		IConceptVector cv = conceptModel.getConceptVector( 
+				doc.getName(), 
 				queryTerms, queryTermFrequencies,
 				queryTermEstimates, smoothingWeights,
 				docScores, support );
-		
-		HeapSort.descendingHeapSort( scores, ids, support );
-		IConceptVector cv = conceptModel.getConceptVector( doc.getName(), ids, scores );
 		logger.info( "Extracted concept vector with " + cv.count() + " activated concepts." );
 		return cv;
 	}
