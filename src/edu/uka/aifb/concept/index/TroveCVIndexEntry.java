@@ -41,8 +41,11 @@ public class TroveCVIndexEntry implements Serializable {
 	}
 	
 	public void add( int docId, double value ) {
-		if( value <= 0 ) {
-			logger.error( "Ignoring new CV entry with value <= 0" );
+		if( value < 0 ) {
+			logger.error( "Ignoring new CV entry with value < 0" );
+			return;
+		}
+		else if( value == 0 ) {
 			return;
 		}
 		
