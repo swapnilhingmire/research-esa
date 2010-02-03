@@ -1,4 +1,4 @@
-package edu.uka.aifb.concept;
+package edu.uka.aifb.concept.builder;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
+import edu.uka.aifb.concept.MTJConceptVector;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 

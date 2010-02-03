@@ -1,45 +1,41 @@
-package edu.uka.aifb.concept;
+package edu.uka.aifb.concept.builder;
 
 import org.apache.commons.configuration.Configuration;
 
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
+import edu.uka.aifb.concept.MTJConceptVector;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 
-public class RankConceptVectorBuilder implements IConceptVectorBuilder {
+public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 
 	static final String[] REQUIRED_PROPERTIES = {
-		"concepts.builder.rank.size"
+		"concepts.builder.threshold.absolute_threshold"
 	};
 	
-	int m_size;
+	double m_threshold;
 	IConceptVector cv;
 	
-	public RankConceptVectorBuilder() {
+	public ThresholdConceptVectorBuilder() {
 		Configuration config = ConfigurationManager.getCurrentConfiguration();
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
-		m_size = config.getInt( "concepts.builder.rank.size" );
-	}
-
-	private double rankToScore( int rank ) {
-		return 1 - (double)rank / m_size; 
+		m_threshold = config.getDouble( "concepts.builder.threshold.absolute_threshold" );
 	}
 
 	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores) {
 		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
-			cv.add( conceptIds[i], rankToScore( i ) );
+			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
 	@Override
-	public void addScores(IConceptVector oldCv) {
-		IConceptIterator it = oldCv.orderedIterator();
-		
-		for( int i=0; it.next(); i++ ) {
-			cv.add( it.getId(), rankToScore( i ) );
+	public void addScores(IConceptVector cv) {
+		IConceptIterator it = cv.iterator();
+		while( it.next() ) {
+			cv.add( it.getId(), it.getValue() );
 		}
 	}
 
@@ -47,7 +43,7 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 	public IConceptVector getConceptVector() {
 		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
 		IConceptIterator it = cv.orderedIterator();
-		for( int count =0; count<m_size && it.next(); count++ ) {
+		while( it.next() && it.getValue() > m_threshold ) {
 			newCv.set( it.getId(), it.getValue() );
 		}
 		return newCv;
@@ -57,5 +53,6 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 	public void reset(String docName, int maxConceptId) {
 		cv = new MTJConceptVector( docName, maxConceptId );
 	}
-	
+
+
 }

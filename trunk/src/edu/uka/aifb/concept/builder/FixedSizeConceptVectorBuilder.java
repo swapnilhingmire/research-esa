@@ -1,4 +1,4 @@
-package edu.uka.aifb.concept;
+package edu.uka.aifb.concept.builder;
 
 import java.util.Arrays;
 
@@ -10,6 +10,7 @@ import uk.ac.gla.terrier.sorting.HeapSort;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
+import edu.uka.aifb.concept.MTJConceptVector;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 

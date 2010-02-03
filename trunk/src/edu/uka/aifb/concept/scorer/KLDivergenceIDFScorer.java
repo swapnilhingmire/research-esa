@@ -1,4 +1,4 @@
-package edu.uka.aifb.concept.search;
+package edu.uka.aifb.concept.scorer;
 
 import edu.uka.aifb.api.concept.IConceptVectorData;
 import edu.uka.aifb.api.concept.search.IScorer;
