@@ -1,4 +1,4 @@
-package edu.uka.aifb.concept.search;
+package edu.uka.aifb.concept;
 
 import java.util.ArrayList;
 import java.util.Collections;

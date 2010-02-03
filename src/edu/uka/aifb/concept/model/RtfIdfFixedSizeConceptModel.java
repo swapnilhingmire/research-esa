@@ -12,7 +12,7 @@ import edu.uka.aifb.api.concept.IConceptModel;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.ir.ITermEstimateModel;
 import edu.uka.aifb.concept.MTJConceptVector;
-import edu.uka.aifb.ir.IdfTermEstimateModel;
+import edu.uka.aifb.ir.model.IdfTermEstimateModel;
 import edu.uka.aifb.ir.terrier.model.RtfModel;
 import edu.uka.aifb.tools.ConfigurationManager;
 

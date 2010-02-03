@@ -1,15 +1,12 @@
-package edu.uka.aifb.concept.search;
+package edu.uka.aifb.concept.scorer;
 
 import edu.uka.aifb.api.concept.IConceptVectorData;
 import edu.uka.aifb.api.concept.search.IScorer;
 
 
-public class LMScorer implements IScorer {
+public class CosineScorer implements IScorer {
 
 	double m_sum = 0;
-	int m_numberOfDocuments;
-	
-	double m_docNorm1;
 	
 	public double getScore() {
 		return m_sum;
@@ -17,24 +14,17 @@ public class LMScorer implements IScorer {
 
 	public void reset( IConceptVectorData queryData, IConceptVectorData docData, int numberOfDocuments ) {
 		m_sum = 0;
-		m_numberOfDocuments = numberOfDocuments;
-		
-		m_docNorm1 = docData.getNorm1();
 	}
 
 	public void addConcept(
 			int queryConceptId, double queryConceptScore,
 			int docConceptId, double docConceptScore,
-			int documentFrequency ) {
-	
-		double pAgivenQ = queryConceptScore;
-		double pAgivenD = docConceptScore / m_docNorm1;
-		double pA = (double)documentFrequency / (double)m_numberOfDocuments;
-		
-		m_sum += pAgivenQ * pAgivenD / pA;
+			int conceptFrequency ) {
+		m_sum += queryConceptScore * docConceptScore;
 	}
 
 	public void finalizeScore( IConceptVectorData queryData, IConceptVectorData docData ) {
+		m_sum = m_sum / ( queryData.getNorm2() * docData.getNorm2() );
 	}
 
 	public boolean hasScore() {
