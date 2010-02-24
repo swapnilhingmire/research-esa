@@ -5,7 +5,7 @@ import org.apache.commons.configuration.Configuration;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 
@@ -46,7 +46,7 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 
 	@Override
 	public IConceptVector getConceptVector() {
-		MTJConceptVector newCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+		IConceptVector newCv = new TroveConceptVector( cv.getData().getDocName(), cv.size() );
 		IConceptIterator it = cv.orderedIterator();
 		for( int count =0; count<m_size && it.next(); count++ ) {
 			newCv.set( it.getId(), it.getValue() );
@@ -56,7 +56,7 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 
 	@Override
 	public void reset(String docName, int maxConceptId) {
-		cv = new MTJConceptVector( docName, maxConceptId );
+		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 	
 }

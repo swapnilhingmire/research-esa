@@ -6,11 +6,10 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
 import uk.ac.gla.terrier.sorting.HeapSort;
-
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorBuilder;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 
@@ -74,7 +73,7 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	public IConceptVector getConceptVector() {
 		HeapSort.heapSort( values, ids );
 
-		MTJConceptVector newCv = new MTJConceptVector( docName, ids.length );
+		IConceptVector newCv = new TroveConceptVector( docName, ids.length );
 		for( int i=ids.length-1; i>=0 && i>=ids.length - m_size; i-- ) {
 			newCv.set( ids[i], values[i] );
 		}
