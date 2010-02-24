@@ -32,7 +32,7 @@ java <JVM arguments> -cp bin:lib/ir_framework_v3.jar:<external libraries> demo.B
 
   _Comment:_ Some users reported problem when building the Wikipedia index. While building an inverted index, Terrier stucks into an infinite loop (e.g. "INFO - Iteration 111910 of 42 iterations"). This is a bug in the Terrier framework, which I reported at the Terrier forum: [http://ir.dcs.gla.ac.uk/terrier/forum//read.php?3,1172,1179]. The only solution up to now is to use single pass indexing, which is enabled by the command line option "-Dsingle_pass=true".
 
-  _Comment:_ The indexer needs at least 1.5GB of heap size (-Xmx1536M). Using 1GB will lead to memory exceptions.
+  _Comment:_ The indexer is confirmed to work with 1GB of heap size. Important are Terrier configuration settings _memory.reserved_ and _memory.heap.usage_. Please check the provided Terrier configuration file for appropriate values.
 
 ==Use Explicit Semantic Analysis for semantic relatedness==
 Command line for computing semantic relatedness using ESA:
