@@ -1,5 +1,7 @@
 package edu.uka.aifb.concept;
 
+import java.io.Serializable;
+
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorData;
@@ -7,7 +9,9 @@ import gnu.trove.TDoubleProcedure;
 import gnu.trove.TIntDoubleHashMap;
 import gnu.trove.TIntDoubleIterator;
 
-public class TroveConceptVector implements IConceptVector {
+public class TroveConceptVector implements IConceptVector, Serializable {
+
+	private static final long serialVersionUID = 5228670885044409972L;
 
 	private TIntDoubleHashMap valueMap;
 	private int size;
