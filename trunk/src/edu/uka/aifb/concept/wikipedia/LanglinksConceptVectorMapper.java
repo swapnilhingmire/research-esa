@@ -8,7 +8,7 @@ import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorMapper;
 import edu.uka.aifb.api.wikipedia.ILanglinksMap;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.document.wikipedia.WikipediaCollection;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
@@ -56,7 +56,7 @@ public class LanglinksConceptVectorMapper implements IConceptVectorMapper {
 	public IConceptVector map( IConceptVector cv ) {
 		logger.debug( "Mapping concept vector for document " + cv.getData().getDocName() );
 		
-		IConceptVector mappedCv = new MTJConceptVector( cv.getData().getDocName(), cv.size() );
+		IConceptVector mappedCv = new TroveConceptVector( cv.getData().getDocName(), cv.size() );
 		
 		IConceptIterator it = cv.iterator();
 		while( it.next() )

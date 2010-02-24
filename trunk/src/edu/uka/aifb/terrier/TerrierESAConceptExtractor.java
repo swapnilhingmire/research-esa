@@ -20,7 +20,7 @@ import edu.uka.aifb.api.concept.IConceptVectorBuilder;
 import edu.uka.aifb.api.document.IDocument;
 import edu.uka.aifb.api.nlp.ITokenAnalyzer;
 import edu.uka.aifb.api.nlp.ITokenStream;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
 
@@ -112,7 +112,7 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		
 		if( mqt.getTerms() == null || mqt.getTerms().length == 0 ) {
 			logger.debug( "Document is empty!" );
-			return new MTJConceptVector( doc.getName(), m_maxConceptId );
+			return new TroveConceptVector( doc.getName(), m_maxConceptId );
 		}
 		
 		m_matching.match( "ESA", mqt );

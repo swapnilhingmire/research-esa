@@ -21,7 +21,7 @@ import edu.uka.aifb.api.document.IDocument;
 import edu.uka.aifb.api.ir.ITermEstimateModel;
 import edu.uka.aifb.api.nlp.ITokenAnalyzer;
 import edu.uka.aifb.api.nlp.ITokenStream;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
 
@@ -145,7 +145,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		int numberOfQueryTerms = queryTermFrequencyMap.size();
 		if( numberOfQueryTerms == 0 ) {
 			logger.info( "Empty document: " + doc.getName() );
-			return new MTJConceptVector( doc.getName(), maxConceptId ); 
+			return new TroveConceptVector( doc.getName(), maxConceptId ); 
 		}
 		
 		String[] queryTerms = new String[numberOfQueryTerms];

@@ -11,7 +11,7 @@ import uk.ac.gla.terrier.utility.HeapSort;
 import edu.uka.aifb.api.concept.IConceptModel;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.ir.ITermEstimateModel;
-import edu.uka.aifb.concept.MTJConceptVector;
+import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.ir.model.IdfTermEstimateModel;
 import edu.uka.aifb.ir.terrier.model.RtfModel;
 import edu.uka.aifb.tools.ConfigurationManager;
@@ -85,7 +85,7 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 
 		HeapSort.descendingHeapSort( scores, ids, support );
 		
-		MTJConceptVector cv = new MTJConceptVector( docName, ids.length );
+		IConceptVector cv = new TroveConceptVector( docName, ids.length );
 		for( int i=0; i<fixedSize && i<ids.length; i++ ) {
 			 cv.set( ids[i], scores[i] );
 		}
