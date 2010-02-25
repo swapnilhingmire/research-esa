@@ -46,4 +46,6 @@ public interface ICVIndexReader {
 	 * @return The number of documents that activate the specified concept.
 	 */
 	public int getDocumentFrequency( int conceptId );
+	
+	public int getConceptVectorId( String docName );
 }

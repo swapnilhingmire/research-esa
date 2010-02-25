@@ -2,6 +2,7 @@ package edu.uka.aifb.api.concept.search;
 
 import java.util.List;
 
+import uk.ac.gla.terrier.matching.ResultSet;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.ir.IMatch;
 
@@ -9,6 +10,14 @@ import edu.uka.aifb.api.ir.IMatch;
  * This specifies a class for concept based search. Based on a ceratin scoring model
  * all matches for a specified query are returned.
  * 
+ * @author pso
+ *
+ */
+/**
+ * @author pso
+ *
+ */
+/**
  * @author pso
  *
  */
@@ -31,12 +40,19 @@ public interface IConceptMatcher {
 	
 	/**
 	 * This function performs a complete retrieval step for a specified query which
-	 * is represented by a concept vector. A sorted list of matches is returned that
-	 * contain a ranking of documents relevant to the query based on the retrieval model.  
+	 * is represented by a concept vector.  
 	 * 
 	 * @param queryCV The concept vector of the query that should be searched for.
+	 */
+	public void match( IConceptVector queryCV );
+
+	
+	/**
+	 * This function returns a sorted list of matches found for a previous call of match().
+	 * 
 	 * @return A sorted list of matches containing relevant documents and their scores.
 	 */
-	public List<IMatch> getMatches( IConceptVector queryCV );
-	
+	public List<IMatch> getMatches();
+
+	public ResultSet getResultSet();
 }

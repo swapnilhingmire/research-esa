@@ -74,15 +74,15 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 	}
 	
 	public IConceptVector extract( IDocument doc ) {
-		return extract( doc, doc.getTokens( m_language ) );
+		return extract( doc.getName(), doc.getTokens( m_language ) );
 	}
 	
 	public IConceptVector extract( IDocument doc, String... fields ) {
-		return extract( doc, doc.getTokens( fields ) );
+		return extract( doc.getName(), doc.getTokens( fields ) );
 	}
 
-	private IConceptVector extract( IDocument doc, ITokenStream queryTokenStream ) {
-		logger.info( "Extracting concepts for document " + doc.getName() );
+	public IConceptVector extract( String docName, ITokenStream queryTokenStream ) {
+		logger.info( "Extracting concepts for document " + docName );
 		
 		/*
 		 * Build query
@@ -112,7 +112,7 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		
 		if( mqt.getTerms() == null || mqt.getTerms().length == 0 ) {
 			logger.debug( "Document is empty!" );
-			return new TroveConceptVector( doc.getName(), m_maxConceptId );
+			return new TroveConceptVector( docName, m_maxConceptId );
 		}
 		
 		m_matching.match( "ESA", mqt );
@@ -123,7 +123,7 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		ResultSet rs = m_matching.getResultSet();
 		logger.info( "Found " + rs.getResultSize() + " matches in index." );
 		
-		conceptVectorBuilder.reset( doc.getName(), m_maxConceptId );
+		conceptVectorBuilder.reset( docName, m_maxConceptId );
 		conceptVectorBuilder.addScores( rs.getDocids(), rs.getScores() );
 		return conceptVectorBuilder.getConceptVector();
 	}
