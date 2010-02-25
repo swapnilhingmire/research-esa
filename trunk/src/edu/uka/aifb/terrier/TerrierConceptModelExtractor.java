@@ -100,15 +100,15 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	}
 	
 	public IConceptVector extract( IDocument doc ) {
-		return extract( doc, doc.getTokens( language ) );
+		return extract( doc.getName(), doc.getTokens( language ) );
 	}
 	
 	public IConceptVector extract( IDocument doc, String... fields ) {
-		return extract( doc, doc.getTokens( fields ) );
+		return extract( doc.getName(), doc.getTokens( fields ) );
 	}
 
-	private IConceptVector extract( IDocument doc, ITokenStream queryTokenStream ) {
-		logger.info( "Extracting concepts for document " + doc.getName() );
+	public IConceptVector extract( String docName, ITokenStream queryTokenStream ) {
+		logger.info( "Extracting concepts for document " + docName );
 
 		/*
 		 * Build query
@@ -144,8 +144,8 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		
 		int numberOfQueryTerms = queryTermFrequencyMap.size();
 		if( numberOfQueryTerms == 0 ) {
-			logger.info( "Empty document: " + doc.getName() );
-			return new TroveConceptVector( doc.getName(), maxConceptId ); 
+			logger.info( "Empty document: " + docName );
+			return new TroveConceptVector( docName, maxConceptId ); 
 		}
 		
 		String[] queryTerms = new String[numberOfQueryTerms];
@@ -209,7 +209,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		logger.info( "Matched " + activatedConceptCount + " concepts." );
 
 		IConceptVector cv = conceptModel.getConceptVector( 
-				doc.getName(), 
+				docName, 
 				queryTerms, queryTermFrequencies,
 				queryTermEstimates, smoothingWeights,
 				docScores, support );

@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import uk.ac.gla.terrier.matching.CollectionResultSet;
+import uk.ac.gla.terrier.matching.ResultSet;
+import uk.ac.gla.terrier.utility.HeapSort;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.IConceptVectorData;
@@ -25,10 +28,14 @@ public class ConceptMatcher implements IConceptMatcher {
 	ICVIndexReader m_indexReader;
 	IScorer[] m_documentScorers;
 	
+	ResultSet resultSet;
+	
 	public ConceptMatcher( ICVIndexReader indexReader ) {
 		m_indexReader = indexReader;
 		
 		m_documentScorers = new IScorer[indexReader.getNumberOfDocuments()];
+		
+		resultSet = new CollectionResultSet( indexReader.getNumberOfDocuments() );
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -57,7 +64,7 @@ public class ConceptMatcher implements IConceptMatcher {
 		}
 	}
 
-	public List<IMatch> getMatches( IConceptVector queryCV ) {
+	public void match( IConceptVector queryCV ) {
 		logger.debug( "Matching " + queryCV.getData().getDocName() );
 		
 		logger.debug( "Resetting scorers" );
@@ -97,9 +104,6 @@ public class ConceptMatcher implements IConceptMatcher {
 		}
 		
 		logger.debug( "Finalizing scores and computing ranking" );
-
-		List<IMatch> matchList = new ArrayList<IMatch>();
-		
 		for( int i=0; i<m_documentScorers.length; i++ ) {
 			if( m_documentScorers[i].hasScore() )
 			{
@@ -108,6 +112,17 @@ public class ConceptMatcher implements IConceptMatcher {
 				m_documentScorers[i].finalizeScore(
 						queryCVData,
 						docData );
+			}
+		}
+	}
+
+	public List<IMatch> getMatches() {
+		List<IMatch> matchList = new ArrayList<IMatch>();
+		
+		for( int i=0; i<m_documentScorers.length; i++ ) {
+			if( m_documentScorers[i].hasScore() )
+			{
+				IConceptVectorData docData = m_indexReader.getConceptVectorData( i );
 				
 				matchList.add( new Match(
 						docData.getDocName(),
@@ -122,4 +137,31 @@ public class ConceptMatcher implements IConceptMatcher {
 		return matchList;
 	}
 
+	@Override
+	public ResultSet getResultSet() {
+		resultSet.initialise();
+		
+		int[] ids = resultSet.getDocids();
+		double[] scores = resultSet.getScores();
+		short[] occurences = resultSet.getOccurrences();
+
+		int numberOfRetrievedDocs = 0;
+		for( int i=0; i<m_documentScorers.length; i++ ) {
+			if( m_documentScorers[i].hasScore() ) {
+				scores[i] = m_documentScorers[i].getScore();
+				numberOfRetrievedDocs++;
+			}
+		}
+		
+		//sets the effective size of the result set.
+		resultSet.setExactResultSize( numberOfRetrievedDocs );
+
+		//sets the actual size of the result set.
+		resultSet.setResultSize( numberOfRetrievedDocs );
+
+		HeapSort.descendingHeapSort( scores, ids, occurences, numberOfRetrievedDocs );
+
+		return resultSet;
+	}
+	
 }

@@ -151,5 +151,10 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 	public int getDocumentFrequency( int conceptId ) {
 		return loadEntry( conceptId ).numberOfDocuments();
 	}
+
+	@Override
+	public int getConceptVectorId( String docName ) {
+		return m_cvData.docNameToId.get( docName );
+	}
 	
 }
