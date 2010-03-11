@@ -38,4 +38,6 @@ public interface ICVIndexEntryIterator {
 	 */
 	public double getValue();
 	
+	public double getValueSum();
+	
 }

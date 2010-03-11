@@ -21,14 +21,19 @@ public class TroveCVIndexEntry implements Serializable {
 	private TIntArrayList m_docIds;
 	private TDoubleArrayList m_values;
 	
+	double m_valueSum;
+	
 	public TroveCVIndexEntry() {
+		m_docIds = new TIntArrayList();
+		m_values = new TDoubleArrayList();
 		reset();
 	}
 	
 	public void reset() {
-		m_docIds = new TIntArrayList();
-		m_values = new TDoubleArrayList();
-
+		m_docIds.reset();
+		m_values.reset();
+		m_valueSum = 0;
+		
 		/*
 		 * Marker at end of list
 		 */
@@ -66,11 +71,13 @@ public class TroveCVIndexEntry implements Serializable {
 		
 		m_docIds.insert( index, docId );
 		m_values.insert( index, value );
+		m_valueSum += value;
 	}
 	
 	public void add( TroveCVIndexEntry entry ) {
 		TIntArrayList newDocIds = new TIntArrayList();
 		TDoubleArrayList newValues = new TDoubleArrayList();
+		m_valueSum = 0;
 		
 		int indexThis = 0;
 		int indexEntry = 0;
@@ -80,11 +87,13 @@ public class TroveCVIndexEntry implements Serializable {
 			{
 				newDocIds.add( m_docIds.get( indexThis ) );
 				newValues.add( m_values.get( indexThis ) );
+				m_valueSum += m_values.get( indexThis );
 				indexThis++;
 			}
 			else {
 				newDocIds.add( entry.m_docIds.get( indexEntry ) );
 				newValues.add( entry.m_values.get( indexEntry ) );
+				m_valueSum += entry.m_values.get( indexEntry );
 				indexEntry++;
 			}
 		}
@@ -92,12 +101,14 @@ public class TroveCVIndexEntry implements Serializable {
 		while( indexThis < m_values.size() - 1 ) {
 			newDocIds.add( m_docIds.get( indexThis ) );
 			newValues.add( m_values.get( indexThis ) );
+			m_valueSum += m_values.get( indexThis );
 			indexThis++;
 		}
 
 		while( indexEntry < entry.m_values.size() - 1 ) {
 			newDocIds.add( entry.m_docIds.get( indexEntry ) );
 			newValues.add( entry.m_values.get( indexEntry ) );
+			m_valueSum += entry.m_values.get( indexEntry );
 			indexEntry++;
 		}
 
@@ -117,8 +128,6 @@ public class TroveCVIndexEntry implements Serializable {
 	
 	public static TroveCVIndexEntry readFromDataInput( DataInput in ) throws IOException {
 		TroveCVIndexEntry entry = new TroveCVIndexEntry();
-		entry.m_docIds.reset();
-		entry.m_values.reset();
 		
 		int id = 0;
 		double value;
@@ -129,6 +138,7 @@ public class TroveCVIndexEntry implements Serializable {
 			
 			entry.m_docIds.add( id );
 			entry.m_values.add( value );
+			entry.m_valueSum += value;
 		}
 		
 		return entry;
@@ -137,14 +147,17 @@ public class TroveCVIndexEntry implements Serializable {
 	public class TroveCVIndexEntryIterator implements ICVIndexEntryIterator {
 		private int m_index = -1;
 		
+		@Override
 		public int getDocId() {
 			return m_docIds.get( m_index );
 		}
 
+		@Override
 		public double getValue() {
 			return m_values.get( m_index );
 		}
 
+		@Override
 		public boolean next() {
 			m_index++;
 			if( m_index < m_docIds.size() - 1 ) {
@@ -153,6 +166,11 @@ public class TroveCVIndexEntry implements Serializable {
 			else {
 				return false;
 			}
+		}
+
+		@Override
+		public double getValueSum() {
+			return m_valueSum;
 		}
 		
 	}
