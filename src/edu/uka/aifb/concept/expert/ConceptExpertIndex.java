@@ -1,40 +1,34 @@
-package edu.uka.aifb.concept;
+package edu.uka.aifb.concept.expert;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.ac.gla.terrier.matching.CollectionResultSet;
 import uk.ac.gla.terrier.matching.ResultSet;
 import edu.uka.aifb.api.concept.IConceptExtractor;
+import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.concept.index.ICVIndexReader;
+import edu.uka.aifb.api.expert.IDocumentExpertIterator;
 import edu.uka.aifb.api.expert.IExpertDocumentSet;
 import edu.uka.aifb.api.expert.IExpertIndex;
-import edu.uka.aifb.api.expert.IExpertModel;
 import edu.uka.aifb.document.SingleTermTokenStream;
 import edu.uka.aifb.nlp.Language;
 
 public class ConceptExpertIndex implements IExpertIndex {
 
 	ICVIndexReader indexReader;
-	ConceptMatcher matcher;
-	IExpertDocumentSet expertDocumentSet;
-	IExpertModel expertModel;
+	ResultSet rs;
+	ConceptExpertDocumentSet eds;
 	
 	Map<Language,IConceptExtractor> conceptExtractors;
 	
-	public ConceptExpertIndex(
-			ICVIndexReader indexReader, String scorerClass,
-			IExpertDocumentSet expertDocumentSet,
-			IExpertModel expertModel )
-	{
+	public ConceptExpertIndex( ICVIndexReader indexReader ) {
 		this.indexReader = indexReader;
-		this.expertDocumentSet = expertDocumentSet;
-		this.expertModel = expertModel;
-		
-		matcher = new ConceptMatcher( indexReader );
-		matcher.setScorerClass( scorerClass );
-		
 		conceptExtractors = new HashMap<Language, IConceptExtractor>();
+		
+		rs = new CollectionResultSet( indexReader.getNumberOfDocuments() );
+		eds = new ConceptExpertDocumentSet( indexReader );
 	}
 	
 	@Override
@@ -49,12 +43,7 @@ public class ConceptExpertIndex implements IExpertIndex {
 
 	@Override
 	public IExpertDocumentSet getExpertDocumentSet() {
-		return expertDocumentSet;
-	}
-
-	@Override
-	public IExpertModel getExpertModel() {
-		return expertModel;
+		return eds;
 	}
 
 	@Override
@@ -73,11 +62,28 @@ public class ConceptExpertIndex implements IExpertIndex {
 				"query",
 				new SingleTermTokenStream( token, language ) );
 		
-		matcher.match( cv );
-		return matcher.getResultSet();
+		int[] ids = rs.getDocids();
+		double[] scores = rs.getScores();
+		
+		int count = 0;
+		IConceptIterator it = cv.orderedIterator();
+		while( it.next() ) {
+			ids[count] = it.getId();
+			scores[count] = it.getValue();
+			count++;
+		}
+		rs.setExactResultSize( count );
+		rs.setResultSize( count );
+		return rs;
+	}
+
+	@Override
+	public IDocumentExpertIterator getDocumentExpertIterator( int docId ) {
+		return new ConceptDocumentExpertIterator( indexReader.getIndexEntryIterator( docId ) );
 	}
 
 	public void setConceptExtractor( IConceptExtractor extractor, Language language ) {
 		conceptExtractors.put( language, extractor );
 	}
+
 }
