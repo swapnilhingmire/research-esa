@@ -128,6 +128,8 @@ public class TroveCVIndexEntry implements Serializable {
 	
 	public static TroveCVIndexEntry readFromDataInput( DataInput in ) throws IOException {
 		TroveCVIndexEntry entry = new TroveCVIndexEntry();
+		entry.m_docIds.reset();
+		entry.m_values.reset();
 		
 		int id = 0;
 		double value;

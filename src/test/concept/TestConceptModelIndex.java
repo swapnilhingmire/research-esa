@@ -17,6 +17,7 @@ import edu.uka.aifb.api.concept.IConceptIndex;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
 import edu.uka.aifb.api.ir.terrier.IIndexFactory;
+import edu.uka.aifb.concept.ConceptMatcher;
 import edu.uka.aifb.document.DocumentListCollection;
 import edu.uka.aifb.document.TextDocument;
 import edu.uka.aifb.ir.terrier.TerrierIndexFactory;
@@ -92,13 +93,14 @@ public class TestConceptModelIndex {
 		TextDocument queryDoc = new TextDocument( "query" );
 		queryDoc.setText( "content", Language.DE, "fahrrad verkehr bla" );
 		
-		IConceptIndex conceptModelIndex = new TerrierConceptModelIndex( config, "test", Language.DE );
+		TerrierConceptModelIndex conceptModelIndex = new TerrierConceptModelIndex( config, "test", Language.DE );
 		IConceptVector cv = conceptModelIndex.getConceptExtractor().extract( queryDoc );
 		IConceptIterator it = cv.iterator();
 		while( it.next() ) {
 			System.out.println( conceptModelIndex.getConceptName( it.getId() ) + ": " + it.getValue() );
 		}
 
+		
 		/*
 		 * Test concept index
 		 */

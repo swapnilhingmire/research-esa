@@ -91,7 +91,7 @@ public class ConceptMatcher implements IConceptMatcher {
 			while( documentIt.next() )
 			{
 				int documentId = documentIt.getDocId();
-				
+
 				m_documentScorers[documentId].addConcept(
 						conceptId, conceptIt.getValue(),
 						conceptId, documentIt.getValue(),
