@@ -74,7 +74,7 @@ public class TroveCVIndexEntry implements Serializable {
 		m_valueSum += value;
 	}
 	
-	public void add( TroveCVIndexEntry entry ) {
+	public void merge( TroveCVIndexEntry entry ) {
 		TIntArrayList newDocIds = new TIntArrayList();
 		TDoubleArrayList newValues = new TDoubleArrayList();
 		m_valueSum = 0;
