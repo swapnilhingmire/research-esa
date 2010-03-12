@@ -155,7 +155,7 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 			{
 				TroveCVIndexEntry entry = TroveCVIndexEntry.readFromDataInput( tmpFileDataIn[0] );
 				for( int i=1; i<tmpFileDataIn.length; i++ ) {
-					entry.add( TroveCVIndexEntry.readFromDataInput( tmpFileDataIn[i] ) );
+					entry.merge( TroveCVIndexEntry.readFromDataInput( tmpFileDataIn[i] ) );
 				}
 				
 				currentOffset = writeEntries( conceptFileOut, entry, conceptId, positions, currentOffset );
