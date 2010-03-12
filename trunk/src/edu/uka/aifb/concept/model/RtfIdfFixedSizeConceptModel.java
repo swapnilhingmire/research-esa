@@ -94,6 +94,7 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 
 	@Override
 	public void setIndex(Index index) {
+		termEstimateModel.setIndex( index );
 	}
 
 }

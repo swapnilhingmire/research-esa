@@ -67,8 +67,8 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		
 		logger.info( "Setting concept model: " + config.getString( "concepts.model_class" ) );
 		conceptModel = (IConceptModel)Class.forName( config.getString( "concepts.model_class" ) ).newInstance();
-		termEstimateModel = conceptModel.getTermEstimatModel();
 		conceptModel.setIndex( index );
+		termEstimateModel = conceptModel.getTermEstimatModel();
 		
 		docScoresCache = new double[MAX_DOC_SCORE_CACHE][];
 		support = new short[maxConceptId];
