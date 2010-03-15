@@ -41,6 +41,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	private IConceptModel conceptModel;
 	private ITermEstimateModel termEstimateModel;
 	
+	private Index index;
 	private CollectionStatistics collectionStatistics;
 	private Lexicon lexicon;
 	private InvertedIndex invertedIndex;
@@ -57,6 +58,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	protected TerrierConceptModelExtractor( Configuration config, Index index, Language language ) throws Exception {
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
 		
+		this.index = index;
 		collectionStatistics = index.getCollectionStatistics();
 		lexicon = index.getLexicon();
 		invertedIndex = index.getInvertedIndex();
@@ -108,7 +110,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	}
 
 	public IConceptVector extract( String docName, ITokenStream queryTokenStream ) {
-		logger.info( "Extracting concepts for document " + docName );
+		logger.info( "Extracting concepts for document " + docName + ", language=" + language );
 
 		/*
 		 * Build query
@@ -124,6 +126,10 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 			String token = ts.getToken();
 			if( token == null || token.length() == 0 ) {
 				logger.debug( "Skipping empty token!" );
+				continue;
+			}
+			if( !ts.getLanguage().equals( language ) ) {
+				logger.error( "Skipping token, language=" + ts.getLanguage() );
 				continue;
 			}
 			
@@ -221,4 +227,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		this.tokenAnalyzer = tokenAnalyzer;
 	}
 
+	public Index getIndex() {
+		return index;
+	}
 }
