@@ -22,5 +22,7 @@ The implementation is based on the following external libaries:
 
 For access to the Wikipedia database a JDBC driver is needed. In most cases this will be the Java MySQL connector.
 
+Research-esa is also based on the library _ir_framework_v3.jar_, which is included in the _/lib_ directory. Please refer to the [http://www.aifb.uni-karlsruhe.de/WBS/pso/ir_framework_v3_api/ API of ir_framework_v3] for more information.
+
 ==Running the demo==
 After compiling the sources the demo can be started as described in the [Tutorial].
