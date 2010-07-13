@@ -1,6 +1,6 @@
 package edu.uka.aifb.concept.expert;
 
-import edu.uka.aifb.api.concept.index.ICVIndexReader;
+import edu.kit.aifb.concept.index.ICVIndexReader;
 import edu.uka.aifb.api.expert.IExpertDocumentSet;
 
 public class ConceptExpertDocumentSet implements IExpertDocumentSet {

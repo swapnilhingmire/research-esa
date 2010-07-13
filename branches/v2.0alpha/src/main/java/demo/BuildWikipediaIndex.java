@@ -2,53 +2,46 @@ package demo;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import edu.uka.aifb.api.document.ICollection;
-import edu.uka.aifb.api.nlp.ITokenAnalyzer;
-import edu.uka.aifb.document.wikipedia.WikipediaCollection;
-import edu.uka.aifb.ir.terrier.TerrierIndexFactory;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.nlp.MultiLingualAnalyzer;
-import edu.uka.aifb.tools.ConfigurationManager;
+import edu.kit.aifb.ConfigurationException;
+import edu.kit.aifb.ConfigurationManager;
+import edu.kit.aifb.document.ICollection;
+import edu.kit.aifb.nlp.Language;
+import edu.kit.aifb.terrier.TerrierIndexFactory;
 
 public class BuildWikipediaIndex {
 
+	static Logger logger = Logger.getLogger( BuildWikipediaIndex.class );
+
 	static final String[] REQUIRED_PROPERTIES = {
+		"collection_bean",
 		"language",
-		"single_pass"
+		"indexId",
 	};
 	
-	static Logger logger = Logger.getLogger( BuildWikipediaIndex.class );
-	
 	static public void main( String[] args ) throws Exception {
-		Configuration config = ConfigurationManager.parseArgs( args );
-		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
+		try {
+			ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
+			ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
+			confMan.parseArgs( args );
+			confMan.checkProperties( REQUIRED_PROPERTIES );
+			Configuration config = confMan.getConfig();
 
-		Language language = Language.getLanguage( config.getString( "language" ) );
-		
-		logger.info( "Initializing wikipedia collection, language: " + language );
-		ICollection collection = new WikipediaCollection(
-						config,
-						language );
-		
-		ITokenAnalyzer analyzer = new MultiLingualAnalyzer( config );
-		TerrierIndexFactory factory = new TerrierIndexFactory();
-		
-		if( config.getBoolean( "single_pass" ) ) {
-			factory.buildIndexSinglePass(
-					"wikipedia",
-					language,
-					analyzer,
-					collection,
-					false );
+			String indexId = config.getString( "indexId" );
+			Language language = Language.getLanguage( config.getString( "language" ) );
+
+			ICollection collection = (ICollection) context.getBean(
+					config.getString( "collection_bean" ) );
+
+			TerrierIndexFactory factory = (TerrierIndexFactory) context.getBean(
+					TerrierIndexFactory.class );
+			
+			factory.buildIndex( indexId, collection, language );
 		}
-		else {
-			factory.buildIndex(
-					"wikipedia",
-					language,
-					analyzer,
-					collection,
-					false );
+		catch( ConfigurationException e ) {
+			e.printUsage();
 		}
 	}
 

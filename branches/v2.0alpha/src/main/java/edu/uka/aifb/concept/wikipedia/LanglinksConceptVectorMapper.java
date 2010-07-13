@@ -3,16 +3,16 @@ package edu.uka.aifb.concept.wikipedia;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
-import edu.uka.aifb.api.concept.IConceptIndex;
-import edu.uka.aifb.api.concept.IConceptIterator;
-import edu.uka.aifb.api.concept.IConceptVector;
-import edu.uka.aifb.api.concept.IConceptVectorMapper;
-import edu.uka.aifb.api.wikipedia.ILanglinksMap;
-import edu.uka.aifb.concept.TroveConceptVector;
-import edu.uka.aifb.document.wikipedia.WikipediaCollection;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.tools.ConfigurationManager;
-import edu.uka.aifb.wikipedia.sql.SQLLanglinksMap;
+import edu.kit.aifb.ConfigurationManager;
+import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptIterator;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.concept.IConceptVectorMapper;
+import edu.kit.aifb.concept.TroveConceptVector;
+import edu.kit.aifb.nlp.Language;
+import edu.kit.aifb.wikipedia.sql.ILanglinksMap;
+import edu.kit.aifb.wikipedia.sql.LanglinksApiLanglinksMap;
+import edu.kit.aifb.wikipedia.sql.WikipediaCollection;
 
 public class LanglinksConceptVectorMapper implements IConceptVectorMapper {
 
@@ -31,7 +31,7 @@ public class LanglinksConceptVectorMapper implements IConceptVectorMapper {
 		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
 		logger.info( "Initializing langlinks concept vector mapper (" + sourceLanguage + " to " + targetLanguage + ")" );
 		
-		ILanglinksMap langlinksMap = new SQLLanglinksMap(
+		ILanglinksMap langlinksMap = new LanglinksApiLanglinksMap(
 				config,
 				sourceLanguage, targetLanguage );
 		
@@ -45,7 +45,7 @@ public class LanglinksConceptVectorMapper implements IConceptVectorMapper {
 			int sourceArticleId = WikipediaCollection.buildArticleId( sourceIndex.getConceptName( sourceConceptId ) );
 			int targetArticleId = langlinksMap.map( sourceArticleId );
  			
-			String targetArticleConceptName = WikipediaCollection.buildDocumentName( targetArticleId );
+			String targetArticleConceptName = WikipediaCollection.getArticleName( targetArticleId );
 			int targetConceptId = targetIndex.getConceptId( targetArticleConceptName );
 			
 			m_idMapping[sourceConceptId] = targetConceptId;

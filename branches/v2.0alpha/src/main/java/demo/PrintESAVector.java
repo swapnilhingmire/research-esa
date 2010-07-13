@@ -1,64 +1,98 @@
 package demo;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import edu.uka.aifb.api.concept.IConceptExtractor;
-import edu.uka.aifb.api.concept.IConceptIndex;
-import edu.uka.aifb.api.concept.IConceptIterator;
-import edu.uka.aifb.api.concept.IConceptVector;
-import edu.uka.aifb.api.wikipedia.IPage;
-import edu.uka.aifb.api.wikipedia.IWikipediaDatabase;
-import edu.uka.aifb.document.TextDocument;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.nlp.MultiLingualAnalyzer;
-import edu.uka.aifb.terrier.TerrierESAIndex;
-import edu.uka.aifb.tools.ConfigurationManager;
-import edu.uka.aifb.wikipedia.Page;
-import edu.uka.aifb.wikipedia.sql.SQLWikipediaDatabase;
+import edu.kit.aifb.ConfigurationException;
+import edu.kit.aifb.ConfigurationManager;
+import edu.kit.aifb.concept.IConceptExtractor;
+import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptIterator;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.document.TextDocument;
+import edu.kit.aifb.wikipedia.mlc.MLCDatabase;
+import edu.kit.aifb.wikipedia.sql.IPage;
+import edu.kit.aifb.wikipedia.sql.Page;
+import edu.kit.aifb.wikipedia.sql.WikipediaDatabase;
+import gnu.trove.TIntArrayList;
 
 
 public class PrintESAVector {
 
 	static final String[] REQUIRED_PROPERTIES = {
-		"language",
 		"text",
+		"concept_index_bean",
+		"wp_database_bean",
 	};
 
 	static Logger logger = Logger.getLogger( PrintESAVector.class );
 
 	/**
 	 * @param args
-	 * @throws ConfigurationException 
 	 */
 	public static void main( String[] args ) throws Exception {
-		Configuration config = ConfigurationManager.parseArgs( args );
-		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
+		try {
+			ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
+			ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
+			confMan.parseArgs( args );
+			confMan.checkProperties( REQUIRED_PROPERTIES );
+			Configuration config = confMan.getConfig();
 		
-		Language language = Language.getLanguage( config.getString( "language" ) );
-		IConceptIndex sourceIndex = new TerrierESAIndex( config, "wikipedia", language );
-		logger.info( "size of source index: " + sourceIndex.size() );
+			IConceptIndex index = (IConceptIndex) context.getBean(
+					config.getString( "concept_index_bean" ) );
+			logger.info( "size of source index: " + index.size() );
 
-		IWikipediaDatabase wp = new SQLWikipediaDatabase( config, language );
+			WikipediaDatabase wp = (WikipediaDatabase) context.getBean(
+					config.getString( "wp_database_bean" ) );
 
-		IConceptExtractor esaExtractor = sourceIndex.getConceptExtractor();
-		esaExtractor.setTokenAnalyzer( new MultiLingualAnalyzer( config ) );
-		
-		TextDocument doc = new TextDocument( "text" );
-		doc.setText( "content", language, config.getString( "text" ) );
-		
-		logger.info( "Computing ESA vector of: " + doc.getText( "content" ) );
-		IConceptVector cv = esaExtractor.extract( doc );
-		
-		logger.info( "Printing concept vector" );
-		IConceptIterator it = cv.orderedIterator();
-		while( it.next() ) {
-			int articleId = Integer.parseInt( sourceIndex.getConceptName( it.getId() ) );
-			IPage article = new Page( articleId );
-			wp.initializePage( article );
-			if( article.isInitialized() )
-				System.out.println( it.getValue() + " " + article.getTitle() + " (" + articleId + ")" );
+			MLCDatabase mlcDb = null;
+			if( config.containsKey( "mlc_database_bean" ) ) {
+				mlcDb = (MLCDatabase) context.getBean( config.getString( "mlc_database_bean" ) );
+			}
+			
+			IConceptExtractor esaExtractor = index.getConceptExtractor();
+
+			TextDocument doc = new TextDocument( "text" );
+			doc.setText( "content", index.getLanguage(), config.getString( "text" ) );
+
+			logger.info( "Computing ESA vector of: " + doc.getText( "content" ) );
+			IConceptVector cv = esaExtractor.extract( doc );
+
+			logger.info( "Printing concept vector" );
+			IConceptIterator it = cv.orderedIterator();
+			while( it.next() ) {
+				System.out.print( it.getValue() + " " );
+				
+				if( mlcDb == null ) {
+					int articleId = Integer.parseInt( index.getConceptName( it.getId() ) );
+					IPage article = new Page( articleId );
+					wp.initializePage( article );
+					if( article.isInitialized() )
+						System.out.println( article.getTitle() + " (" + articleId + ")" );
+				}
+				else {
+					TIntArrayList articleIds = mlcDb.getPageIds(
+							Integer.parseInt( index.getConceptName( it.getId() ) ),
+							wp.getLanguage() );
+					System.out.print( "[ " );
+					for( int i=0; i<articleIds.size(); i++ ) {
+						IPage article = new Page( articleIds.get(i) );
+						wp.initializePage( article );
+						if( article.isInitialized() ) {
+							System.out.print( article.getTitle() + " (" + articleIds.get(i) + ")" );
+							if( i<articleIds.size()-1 ) {
+								System.out.print( ", " );
+							}
+						}
+					}
+					System.out.println( " ]" );
+				}
+			}
+		}
+		catch( ConfigurationException e ) {
+			e.printUsage();
 		}
 	}
 }

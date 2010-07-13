@@ -3,17 +3,17 @@ package demo;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import edu.uka.aifb.api.concept.IConceptExtractor;
-import edu.uka.aifb.api.concept.IConceptIndex;
-import edu.uka.aifb.api.concept.IConceptVector;
-import edu.uka.aifb.concept.ConceptVectorSimilarity;
-import edu.uka.aifb.concept.scorer.CosineScorer;
-import edu.uka.aifb.document.TextDocument;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.nlp.MultiLingualAnalyzer;
-import edu.uka.aifb.terrier.TerrierESAIndex;
-import edu.uka.aifb.tools.ConfigurationManager;
+import edu.kit.aifb.ConfigurationManager;
+import edu.kit.aifb.concept.ConceptVectorSimilarity;
+import edu.kit.aifb.concept.IConceptExtractor;
+import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.concept.scorer.CosineScorer;
+import edu.kit.aifb.document.TextDocument;
+import edu.kit.aifb.nlp.Language;
 
 
 public class ComputeESASimilarity {
@@ -31,15 +31,19 @@ public class ComputeESASimilarity {
 	 * @throws ConfigurationException 
 	 */
 	public static void main( String[] args ) throws Exception {
-		Configuration config = ConfigurationManager.parseArgs( args );
-		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
-		
+		ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
+		ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
+		confMan.parseArgs( args );
+		confMan.checkProperties( REQUIRED_PROPERTIES );
+		Configuration config = confMan.getConfig();
+
 		Language language = Language.getLanguage( config.getString( "language" ) );
-		IConceptIndex sourceIndex = new TerrierESAIndex( config, "wikipedia", language );
-		logger.info( "size of source index: " + sourceIndex.size() );
-		
-		IConceptExtractor esaExtractor = sourceIndex.getConceptExtractor();
-		esaExtractor.setTokenAnalyzer( new MultiLingualAnalyzer( config ) );
+
+		IConceptIndex index = (IConceptIndex) context.getBean(
+				config.getString( "concept_index_bean" ) );
+		logger.info( "size of source index: " + index.size() );
+
+		IConceptExtractor esaExtractor = index.getConceptExtractor();
 		
 		TextDocument docA = new TextDocument( "text_a" );
 		docA.setText( "content", language, config.getString( "text_a" ) );

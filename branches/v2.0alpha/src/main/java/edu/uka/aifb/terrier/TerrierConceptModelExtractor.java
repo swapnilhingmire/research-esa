@@ -14,14 +14,14 @@ import uk.ac.gla.terrier.structures.Index;
 import uk.ac.gla.terrier.structures.InvertedIndex;
 import uk.ac.gla.terrier.structures.Lexicon;
 import uk.ac.gla.terrier.structures.LexiconEntry;
-import edu.uka.aifb.api.concept.IConceptExtractor;
-import edu.uka.aifb.api.concept.IConceptModel;
-import edu.uka.aifb.api.concept.IConceptVector;
+import edu.kit.aifb.concept.IConceptExtractor;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.concept.TroveConceptVector;
+import edu.kit.aifb.terrier.concept.IConceptModel;
 import edu.uka.aifb.api.document.IDocument;
 import edu.uka.aifb.api.ir.ITermEstimateModel;
 import edu.uka.aifb.api.nlp.ITokenAnalyzer;
 import edu.uka.aifb.api.nlp.ITokenStream;
-import edu.uka.aifb.concept.TroveConceptVector;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
 

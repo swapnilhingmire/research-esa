@@ -9,15 +9,15 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import uk.ac.gla.terrier.matching.ResultSet;
-import edu.uka.aifb.api.concept.index.ICVIndexBuilder;
-import edu.uka.aifb.api.concept.index.ICVIndexEntryIterator;
-import edu.uka.aifb.api.concept.index.ICVIndexReader;
+import edu.kit.aifb.concept.ConceptMatcher;
+import edu.kit.aifb.concept.TroveConceptVector;
+import edu.kit.aifb.concept.index.ICVIndexBuilder;
+import edu.kit.aifb.concept.index.ICVIndexEntryIterator;
+import edu.kit.aifb.concept.index.ICVIndexReader;
+import edu.kit.aifb.concept.index.IndexedFileCVIndexBuilder;
+import edu.kit.aifb.concept.index.IndexedFileCVIndexReader;
+import edu.kit.aifb.concept.scorer.CosineScorer;
 import edu.uka.aifb.api.ir.IMatch;
-import edu.uka.aifb.concept.ConceptMatcher;
-import edu.uka.aifb.concept.TroveConceptVector;
-import edu.uka.aifb.concept.index.IndexedFileCVIndexBuilder;
-import edu.uka.aifb.concept.index.IndexedFileCVIndexReader;
-import edu.uka.aifb.concept.scorer.CosineScorer;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 public class TestCVIndex {

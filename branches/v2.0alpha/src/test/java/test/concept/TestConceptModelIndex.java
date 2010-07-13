@@ -13,17 +13,17 @@ import uk.ac.gla.terrier.structures.Index;
 import uk.ac.gla.terrier.structures.InvertedIndex;
 import uk.ac.gla.terrier.structures.Lexicon;
 import uk.ac.gla.terrier.structures.LexiconEntry;
-import edu.uka.aifb.api.concept.IConceptIndex;
-import edu.uka.aifb.api.concept.IConceptIterator;
-import edu.uka.aifb.api.concept.IConceptVector;
+import edu.kit.aifb.concept.ConceptMatcher;
+import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptIterator;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.terrier.concept.TerrierESAIndex;
 import edu.uka.aifb.api.ir.terrier.IIndexFactory;
-import edu.uka.aifb.concept.ConceptMatcher;
 import edu.uka.aifb.document.DocumentListCollection;
 import edu.uka.aifb.document.TextDocument;
 import edu.uka.aifb.ir.terrier.TerrierIndexFactory;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.terrier.TerrierConceptModelIndex;
-import edu.uka.aifb.terrier.TerrierESAIndex;
 import edu.uka.aifb.tools.ConfigurationManager;
 
 public class TestConceptModelIndex {

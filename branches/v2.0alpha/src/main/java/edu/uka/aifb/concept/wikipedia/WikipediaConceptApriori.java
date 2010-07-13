@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
-import edu.uka.aifb.api.concept.IConceptApriori;
-import edu.uka.aifb.api.concept.IConceptIndex;
-import edu.uka.aifb.document.wikipedia.WikipediaCollection;
+import edu.kit.aifb.concept.IConceptApriori;
+import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.wikipedia.sql.WikipediaCollection;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.tools.ConfigurationManager;
 import edu.uka.aifb.tools.JdbcFactory;
@@ -40,7 +40,7 @@ public class WikipediaConceptApriori implements IConceptApriori {
 		ResultSet rs = con.createStatement().executeQuery( sql );
 		while( rs.next() )
 		{
-			String conceptName = WikipediaCollection.buildDocumentName( rs.getInt( 1 ) );
+			String conceptName = WikipediaCollection.getArticleName( rs.getInt( 1 ) );
 			int conceptId = index.getConceptId( conceptName );
 			if( conceptId >= 0 ) {
 				m_apriori[conceptId] = rs.getDouble( 2 );
