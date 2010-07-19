@@ -3,7 +3,7 @@ package edu.kit.aifb.wikipedia.wpm;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Article;
-import org.wikipedia.miner.model.Page;
+import org.wikipedia.miner.model.Redirect;
 import org.wikipedia.miner.model.Wikipedia;
 import org.wikipedia.miner.model.Article.AnchorText;
 import org.wikipedia.miner.util.MarkupStripper;
@@ -24,16 +24,22 @@ public class WPMMLCArticleCollection implements ICollection {
 	Wikipedia wp;
 	MLCDatabase mlcArticleDb;
 	boolean useAnchorText;
+	boolean useRedirects;
 	Language language;
 	
 	public WPMMLCArticleCollection() {
 		useAnchorText = true;
+		useRedirects = true;
 	}
 	
 	public void setUseAnchorText( boolean useAnchorText ) {
 		this.useAnchorText = useAnchorText;
 	}
 	
+	public void setUseRedirects( boolean useRedirects ) {
+		this.useRedirects = useRedirects;
+	}
+
 	@Required
 	public void setLanguage( Language language ) {
 		this.language = language;
@@ -57,35 +63,45 @@ public class WPMMLCArticleCollection implements ICollection {
 	
 	protected IDocument buildDocument( int conceptId ) {
 		TextDocument doc = new TextDocument( mlcArticleDb.getConceptName( conceptId ) );
-		StringBuilder content = new StringBuilder();
+		StringBuilder titleBuilder = new StringBuilder();
+		StringBuilder contentBuilder = new StringBuilder();
+		StringBuilder anchorBuilder = new StringBuilder();
 		
 		try {
 			TIntArrayList articleIds = mlcArticleDb.getPageIds( conceptId, language );
 			for( int i=0; i<articleIds.size(); i++ ) {
 				int articleId = articleIds.get(i);
 
-				Page p = wp.getPageById( articleId );
+				Article p = (Article)wp.getPageById( articleId );
 				
 				String title = p.getTitleWithoutScope();
 				logger.debug( "Building document for article " + title + " (" + articleId + ")" );
+				titleBuilder.append( title ).append( "\n" );
 				
-				String text = p.getContent();
+				if( useRedirects ) {
+					SortedVector<Redirect> redirects = p.getRedirects();
+					for( Redirect redirect : redirects ) {
+						titleBuilder.append( redirect.getTitle() ).append( "\n" );
+					}
+				}
+				
+				String content = p.getContent();
 				if( logger.isTraceEnabled() ) {
-					System.out.println( text );
+					System.out.println( content );
 				}
 			
-				content.append( title ).append( "\n" );
-			
 				// remove wiki markup
-				if( text != null ) {
-					content.append( MarkupStripper.stripEverything( text ) ).append( "\n" );
+				if( content != null ) {
+					contentBuilder.append( MarkupStripper.stripEverything( content ) ).append( "\n" );
 				}
 				
 				// add anchor text
 				if( useAnchorText ) {
 					SortedVector<AnchorText> anchorTexts = ((Article)p).getAnchorTexts();
 					for( AnchorText anchorText : anchorTexts ) {
-						content.append( anchorText.getText() ).append( "\n" );
+						for( int j=0; j<anchorText.getCount(); j++ ) {
+							anchorBuilder.append( anchorText.getText() ).append( "\n" );
+						}
 					}
 				}
 			}
@@ -95,7 +111,9 @@ public class WPMMLCArticleCollection implements ICollection {
 			//e.printStackTrace();
 		}	
 		
-		doc.setText( language.toString(), language, content.toString() );
+		doc.setText( "title", language, titleBuilder.toString() );
+		doc.setText( "content", language, contentBuilder.toString() );
+		doc.setText( "anchor", language, anchorBuilder.toString() );
 		return doc;
 	}
 

@@ -9,6 +9,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import edu.kit.aifb.document.ICollection;
 import edu.kit.aifb.document.ICollectionIterator;
+import edu.kit.aifb.document.IDocument;
 
 public class WPMCollectionTest {
 
@@ -17,7 +18,7 @@ public class WPMCollectionTest {
 	@BeforeClass
 	public static void loadDatabase() {
 		ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
-		wpCol = (ICollection)context.getBean( "wp200909_mlc_articles_wpm_collection_en" );
+		wpCol = (ICollection)context.getBean( "wpm_wp200909_mlc_articles_collection_en" );
 	}
 	
 	@Test
@@ -29,7 +30,14 @@ public class WPMCollectionTest {
 	public void iterator() {
 		ICollectionIterator iterator = wpCol.iterator();
 		iterator.next();
-		Assert.assertEquals( 1, Integer.parseInt( iterator.getDocument().getName() ) );
-		Assert.assertTrue( iterator.getDocument().getText( "en" ).contains( "Alan Smithee" ) );
+		IDocument doc = iterator.getDocument();
+		
+		Assert.assertEquals( 1, Integer.parseInt( doc.getName() ) );
+		Assert.assertTrue( doc.getText( "title" ).startsWith( "Alan Smithee" ) );
+		Assert.assertEquals( 9, doc.getText( "title" ).split( "\n" ).length );
+		
+		Assert.assertTrue( doc.getText( "content" ).contains( "Alan Smithee" ) );
+		
+		Assert.assertEquals( 89, doc.getText( "anchor" ).split( "\n" ).length );
 	}
 }
