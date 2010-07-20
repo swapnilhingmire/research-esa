@@ -10,17 +10,15 @@
 
   <context:annotation-config/>
 
-  <bean id="wpm_en" class="org.wikipedia.miner.model.Wikipedia">
-    <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
-    <constructor-arg value="wpm_en"/>
-    <constructor-arg value="pso"/>
-    <constructor-arg value="0MySQL2Pro"/>
+  <bean id="terrier_index_factory" class="edu.kit.aifb.terrier.TerrierIndexFactory">
+    <property name="terrierHome" value="C:\\Users\\pso\\Documents\\Development\\terrier-3.0"/>
   </bean>
- 
-  <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WPMMLCArticleCollection">
-    <property name="wikipedia" ref="wpm_en"/>
-    <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>
-    <property name="language" ref="language_en"/>
-  </bean>
+
+  <bean id="configuration_manager" class="edu.kit.aifb.ConfigurationManager"/>
+
+   <import resource="database_beans.xml"/>
+   <import resource="nlp_beans.xml"/>
+   <import resource="wikipedia_beans.xml"/>
+   <import resource="wpm_beans.xml"/>
  
 </beans>

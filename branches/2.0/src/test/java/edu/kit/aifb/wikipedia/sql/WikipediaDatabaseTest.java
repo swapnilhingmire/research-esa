@@ -3,8 +3,8 @@ package edu.kit.aifb.wikipedia.sql;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+
+import edu.kit.aifb.TestContextManager;
 
 public class WikipediaDatabaseTest {
 
@@ -13,9 +13,8 @@ public class WikipediaDatabaseTest {
 	
 	@BeforeClass
 	public static void loadDatabase() {
-		ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
-		englishWp = (WikipediaDatabase)context.getBean( "wp200909_database_en" );
-		germanWp = (WikipediaDatabase)context.getBean( "wp200909_database_de" );
+		englishWp = (WikipediaDatabase)TestContextManager.getContext().getBean( "wp200909_database_en" );
+		germanWp = (WikipediaDatabase)TestContextManager.getContext().getBean( "wp200909_database_de" );
 	}
 	
 	@Test
@@ -28,6 +27,17 @@ public class WikipediaDatabaseTest {
 		Assert.assertTrue( text.length() > 10 );
 		Assert.assertTrue( text.substring( 100 ), text.contains( "red wine" ) );
 		Assert.assertTrue( text.substring( 100 ), text.contains( "cinnamon" ) );
+	}
+	
+	@Test
+	public void specialCharacters() throws PropertyNotInitializedException {
+		IPage p = germanWp.getArticle( "Fähre" );
+		Assert.assertEquals( 16373, p.getId() );
+		Assert.assertEquals( "Fähre", p.getTitle() );
+		
+		p = new Page( 16373 );
+		germanWp.initializePage( p );
+		Assert.assertEquals( "Fähre", p.getTitle() );
 	}
 	
 }

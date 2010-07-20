@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>pso</groupId>
   <artifactId>research-esa</artifactId>
-  <version>v2.0alpha</version>
+  <version>2.0</version>
   <name>Research ESA</name>
   <packaging>jar</packaging>
   <distributionManagement>
