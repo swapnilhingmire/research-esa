@@ -3,6 +3,7 @@ package edu.uka.aifb.concept.expert;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 
 import uk.ac.gla.terrier.matching.CollectionResultSet;
@@ -22,9 +23,14 @@ import edu.uka.aifb.api.expert.IExpertIndex;
 import edu.uka.aifb.document.SingleTermTokenStream;
 import edu.uka.aifb.nlp.Language;
 import edu.uka.aifb.terrier.TerrierConceptModelExtractor;
+import edu.uka.aifb.tools.ConfigurationManager;
 
 public class ConceptExpertIndex implements IExpertIndex {
 
+	static final String[] REQUIRED_PROPERTIES = {
+		"esa.concept_expert_index.use_apriori_model",
+	}; 
+	
 	static Logger logger = Logger.getLogger( ConceptExpertIndex.class );
 	
 	ICVIndexReader indexReader;
@@ -33,7 +39,15 @@ public class ConceptExpertIndex implements IExpertIndex {
 	
 	Map<Language,IConceptExtractor> conceptExtractors;
 	
+	boolean useAprioriModel;
+	
 	public ConceptExpertIndex( ICVIndexReader indexReader ) {
+		Configuration config = ConfigurationManager.getCurrentConfiguration();
+		ConfigurationManager.checkProperties( config,REQUIRED_PROPERTIES );
+		
+		useAprioriModel = config.getBoolean( "esa.concept_expert_index.use_apriori_model" ); 
+		logger.info( "Using apriori model: " + useAprioriModel );
+		
 		this.indexReader = indexReader;
 		conceptExtractors = new HashMap<Language, IConceptExtractor>();
 		
@@ -74,22 +88,33 @@ public class ConceptExpertIndex implements IExpertIndex {
 		
 		int[] ids = rs.getDocids();
 		double[] scores = rs.getScores();
-		
-		AprioriModel aprioriModel = new AprioriModel( conceptExtractors.get( language ) );
-		double termApriori = aprioriModel.getTokenProbability( token );
-		
 		int count = 0;
-		IConceptIterator it = cv.orderedIterator();
-		while( it.next() ) {
-			double conceptApriori = aprioriModel.getConceptProbability( it.getId() );
-			if( logger.isDebugEnabled() ) {
-				logger.debug( "Apriori probability: term=" + termApriori + ", concept=" + conceptApriori + ", p(t)/p(c)=" + termApriori / conceptApriori );
+		
+		if( useAprioriModel ) {
+			AprioriModel aprioriModel = new AprioriModel( conceptExtractors.get( language ) );
+			double termApriori = aprioriModel.getTokenProbability( token );
+
+			IConceptIterator it = cv.orderedIterator();
+			while( it.next() ) {
+				double conceptApriori = aprioriModel.getConceptProbability( it.getId() );
+				if( logger.isDebugEnabled() ) {
+					logger.debug( "Apriori probability: term=" + termApriori + ", concept=" + conceptApriori + ", p(t)/p(c)=" + termApriori / conceptApriori );
+				}
+
+				ids[count] = it.getId();
+				scores[count] = it.getValue() * termApriori / conceptApriori;
+				count++;
 			}
-			
-			ids[count] = it.getId();
-			scores[count] = it.getValue() * termApriori / conceptApriori;
-			count++;
 		}
+		else {
+			IConceptIterator it = cv.orderedIterator();
+			while( it.next() ) {
+				ids[count] = it.getId();
+				scores[count] = it.getValue();
+				count++;
+			}
+		}
+		
 		rs.setExactResultSize( count );
 		rs.setResultSize( count );
 		return rs;
