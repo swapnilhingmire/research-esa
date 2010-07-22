@@ -12,6 +12,9 @@
 
   <bean id="terrier_index_factory" class="edu.kit.aifb.terrier.TerrierIndexFactory">
     <property name="terrierHome" value="C:\\Users\\pso\\Documents\\Development\\terrier-3.0"/>
+    <property name="tokenAnalyzer">
+      <bean class="edu.kit.aifb.nlp.DummyAnalyzer"/>
+    </property>
   </bean>
 
   <bean id="configuration_manager" class="edu.kit.aifb.ConfigurationManager"/>

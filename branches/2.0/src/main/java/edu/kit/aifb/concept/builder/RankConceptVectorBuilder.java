@@ -30,8 +30,8 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 	}
 
 	@Override
-	public void addScores(int[] conceptIds, double[] conceptScores) {
-		for( int i=0; i<conceptIds.length && conceptScores[i] > 0; i++ ) {
+	public void addScores(int[] conceptIds, double[] conceptScores, int count ) {
+		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			cv.add( conceptIds[i], rankToScore( i ) );
 		}
 	}

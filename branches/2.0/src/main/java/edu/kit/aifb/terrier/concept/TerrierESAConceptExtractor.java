@@ -16,12 +16,6 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 
 	private static Logger logger = Logger.getLogger( TerrierESAConceptExtractor.class );
 	
-	static final String[] REQUIRED_PROPERTIES = {
-		"terrier.esa.model_class",
-		"concepts.builder_class",
-		"terrier.esa.document_scores_modifier_classes"
-	};
-	
 	TerrierSearch search;
 	IConceptVectorBuilder conceptVectorBuilder;
 	int maxConceptId;
@@ -68,7 +62,7 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		logger.info( "Found " + rs.getResultSize() + " matches in index." );
 		
 		conceptVectorBuilder.reset( docName, maxConceptId );
-		conceptVectorBuilder.addScores( rs.getDocids(), rs.getScores() );
+		conceptVectorBuilder.addScores( rs.getDocids(), rs.getScores(), rs.getResultSize() );
 		return conceptVectorBuilder.getConceptVector();
 	}
 
