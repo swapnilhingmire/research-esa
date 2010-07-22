@@ -16,8 +16,6 @@ import uk.ac.gla.terrier.structures.LexiconEntry;
 import edu.uka.aifb.api.concept.IConceptIndex;
 import edu.uka.aifb.api.concept.IConceptIterator;
 import edu.uka.aifb.api.concept.IConceptVector;
-import edu.uka.aifb.api.ir.terrier.IIndexFactory;
-import edu.uka.aifb.concept.ConceptMatcher;
 import edu.uka.aifb.document.DocumentListCollection;
 import edu.uka.aifb.document.TextDocument;
 import edu.uka.aifb.ir.terrier.TerrierIndexFactory;
@@ -55,13 +53,12 @@ public class TestConceptModelIndex {
 		doc.setText( "content", Language.DE, "bla bla bla" );
 		col.addDocument( doc );
 
-		IIndexFactory factory = new TerrierIndexFactory();
-		factory.buildIndex( "test", Language.DE, null, col, true, null );
+		TerrierIndexFactory.buildIndex( "test", Language.DE, null, col, true, null );
 		
 		/*
 		 * Test index
 		 */
-		Index index = factory.readIndex( "test" , Language.DE );
+		Index index = TerrierIndexFactory.readIndex( "test" , Language.DE );
 		DocumentIndex docIndex = index.getDocumentIndex();
 		DirectIndex directIndex = index.getDirectIndex();
 		InvertedIndex invertedIndex = index.getInvertedIndex();

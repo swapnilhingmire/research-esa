@@ -77,7 +77,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		
 		smoothingWeights = new double[maxConceptId];
 		for( int i=0; i<maxConceptId; i++ ) {
-			smoothingWeights[i] = termEstimateModel.getSmoothingWeigth( docIndex.getDocumentNumber( i ) );
+			smoothingWeights[i] = termEstimateModel.getSmoothingWeight( docIndex.getDocumentNumber( i ) );
 		}
 	}
 	

@@ -21,9 +21,7 @@ public class TerrierESAIndex implements IConceptIndex {
 	Language m_language;
 	
 	public TerrierESAIndex( Configuration config, String indexId, Language language ) {
-		TerrierIndexFactory factory = new TerrierIndexFactory();
-		
-		index = factory.readIndex( indexId, language );
+		index = TerrierIndexFactory.readIndex( indexId, language );
 		documentIndex = index.getDocumentIndex();
 		
 		m_config = config;

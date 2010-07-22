@@ -32,10 +32,9 @@ public class BuildWikipediaIndex {
 						language );
 		
 		ITokenAnalyzer analyzer = new MultiLingualAnalyzer( config );
-		TerrierIndexFactory factory = new TerrierIndexFactory();
 		
 		if( config.getBoolean( "single_pass" ) ) {
-			factory.buildIndexSinglePass(
+			TerrierIndexFactory.buildIndexSinglePass(
 					"wikipedia",
 					language,
 					analyzer,
@@ -43,7 +42,7 @@ public class BuildWikipediaIndex {
 					false );
 		}
 		else {
-			factory.buildIndex(
+			TerrierIndexFactory.buildIndex(
 					"wikipedia",
 					language,
 					analyzer,

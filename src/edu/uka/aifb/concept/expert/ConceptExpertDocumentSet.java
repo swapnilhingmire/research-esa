@@ -18,7 +18,12 @@ public class ConceptExpertDocumentSet implements IExpertDocumentSet {
 
 	@Override
 	public String getExpertName( int expertId ) {
-		return indexReader.getConceptVectorData( expertId ).getDocName();
+		String name = indexReader.getConceptVectorData( expertId ).getDocName();
+		int pos = name.indexOf( '/' );
+		if( pos >= 0 ) {
+			name = name.substring( 0, pos );
+		}
+		return name;
 	}
 
 	@Override
