@@ -1,37 +1,32 @@
-package edu.uka.aifb.terrier;
+package edu.kit.aifb.terrier.concept;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
+import org.terrier.matching.models.WeightingModel;
+import org.terrier.structures.CollectionStatistics;
+import org.terrier.structures.DocumentIndex;
+import org.terrier.structures.Index;
+import org.terrier.structures.InvertedIndex;
+import org.terrier.structures.Lexicon;
+import org.terrier.structures.LexiconEntry;
+import org.terrier.structures.MetaIndex;
 
-import uk.ac.gla.terrier.matching.models.WeightingModel;
-import uk.ac.gla.terrier.structures.CollectionStatistics;
-import uk.ac.gla.terrier.structures.DocumentIndex;
-import uk.ac.gla.terrier.structures.Index;
-import uk.ac.gla.terrier.structures.InvertedIndex;
-import uk.ac.gla.terrier.structures.Lexicon;
-import uk.ac.gla.terrier.structures.LexiconEntry;
 import edu.kit.aifb.concept.IConceptExtractor;
 import edu.kit.aifb.concept.IConceptVector;
 import edu.kit.aifb.concept.TroveConceptVector;
-import edu.kit.aifb.terrier.concept.IConceptModel;
-import edu.uka.aifb.api.document.IDocument;
-import edu.uka.aifb.api.ir.ITermEstimateModel;
-import edu.uka.aifb.api.nlp.ITokenAnalyzer;
-import edu.uka.aifb.api.nlp.ITokenStream;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.tools.ConfigurationManager;
+import edu.kit.aifb.document.IDocument;
+import edu.kit.aifb.nlp.ITokenAnalyzer;
+import edu.kit.aifb.nlp.ITokenStream;
+import edu.kit.aifb.nlp.Language;
+import edu.kit.aifb.terrier.tem.ITermEstimateModel;
 
 public class TerrierConceptModelExtractor implements IConceptExtractor {
 
 	static final int MAX_DOC_SCORE_CACHE = 500;
-	
-	static final String[] REQUIRED_PROPERTIES = {
-		"concepts.model_class",
-	};
 	
 	static Logger logger = Logger.getLogger( TerrierConceptModelExtractor.class );
 	
@@ -43,9 +38,10 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 	
 	private Index index;
 	private CollectionStatistics collectionStatistics;
-	private Lexicon lexicon;
+	private Lexicon<String> lexicon;
 	private InvertedIndex invertedIndex;
 	private DocumentIndex docIndex;
+	private MetaIndex metaIndex;
 	
 	private ITokenAnalyzer tokenAnalyzer;
 	
@@ -55,20 +51,19 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 
 	private short[] support;
 	
-	protected TerrierConceptModelExtractor( Configuration config, Index index, Language language ) throws Exception {
-		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
-		
+	protected TerrierConceptModelExtractor( Index index, Language language, IConceptModel conceptModel ) throws Exception {
 		this.index = index;
 		collectionStatistics = index.getCollectionStatistics();
 		lexicon = index.getLexicon();
 		invertedIndex = index.getInvertedIndex();
 		docIndex = index.getDocumentIndex();
+		metaIndex = index.getMetaIndex();
 		
 		this.language = language;
 		maxConceptId = index.getDocumentIndex().getNumberOfDocuments();
 		
-		logger.info( "Setting concept model: " + config.getString( "concepts.model_class" ) );
-		conceptModel = (IConceptModel)Class.forName( config.getString( "concepts.model_class" ) ).newInstance();
+		logger.info( "Setting concept model: " + conceptModel.getClass().getName() );
+		this.conceptModel = conceptModel;
 		conceptModel.setIndex( index );
 		termEstimateModel = conceptModel.getTermEstimatModel();
 		
@@ -77,7 +72,8 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		
 		smoothingWeights = new double[maxConceptId];
 		for( int i=0; i<maxConceptId; i++ ) {
-			smoothingWeights[i] = termEstimateModel.getSmoothingWeigth( docIndex.getDocumentNumber( i ) );
+			smoothingWeights[i] = termEstimateModel.getSmoothingWeight(
+					metaIndex.getItem( "docno", i ) );
 		}
 	}
 	
@@ -175,11 +171,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 			
 		//inform the weighting model of the collection statistics		
 		WeightingModel wmodel = conceptModel.getWeightingModel();
-		wmodel.setNumberOfTokens((double)collectionStatistics.getNumberOfTokens());
-		wmodel.setNumberOfDocuments((double)collectionStatistics.getNumberOfDocuments());
-		wmodel.setAverageDocumentLength((double)collectionStatistics.getAverageDocumentLength());
-		wmodel.setNumberOfUniqueTerms((double)collectionStatistics.getNumberOfUniqueTerms());
-		wmodel.setNumberOfPointers((double)collectionStatistics.getNumberOfPointers());
+		wmodel.setCollectionStatistics( collectionStatistics );
 		
 		wmodel.setKeyFrequency( 1 );
 		
@@ -193,16 +185,21 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 		
 		for( i=0; i<numberOfQueryTerms; i++ ) {
 			//the weighting model is prepared for assigning scores to documents
-			wmodel.setDocumentFrequency( lexiconEntries[i].n_t);
-			wmodel.setTermFrequency( lexiconEntries[i].TF );
+			wmodel.setEntryStatistics( lexiconEntries[i] );
+			wmodel.prepare();
 
 			//the postings are being read from the inverted file.
 			pointers = invertedIndex.getDocuments( lexiconEntries[i] );
 			for( int j=0; j<pointers[0].length; j++ ) {
 				int conceptId = pointers[0][j];
-				double score = wmodel.score(
-						pointers[1][j], 
-						docIndex.getDocumentLength(conceptId));
+				double score = 0;
+				try {
+					score = wmodel.score(
+							pointers[1][j], 
+							docIndex.getDocumentLength(conceptId));
+				} catch( IOException e ) {
+					logger.error( e );
+				}
 				if( score > 0 ) {
 					docScores[i][conceptId] = score;
 					if( support[conceptId] == 0 ) {

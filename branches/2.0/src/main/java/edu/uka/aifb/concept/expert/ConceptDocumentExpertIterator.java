@@ -1,7 +1,7 @@
 package edu.uka.aifb.concept.expert;
 
 import edu.kit.aifb.concept.index.ICVIndexEntryIterator;
-import edu.uka.aifb.api.expert.IDocumentExpertIterator;
+import edu.kit.aifb.document.expert.IDocumentExpertIterator;
 
 public class ConceptDocumentExpertIterator implements IDocumentExpertIterator {
 

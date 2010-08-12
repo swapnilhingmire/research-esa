@@ -2,25 +2,20 @@ package edu.uka.aifb.concept.model;
 
 import java.util.Arrays;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
+import org.terrier.matching.models.WeightingModel;
+import org.terrier.structures.Index;
+import org.terrier.utility.HeapSort;
 
-import uk.ac.gla.terrier.matching.models.WeightingModel;
-import uk.ac.gla.terrier.structures.Index;
-import uk.ac.gla.terrier.utility.HeapSort;
 import edu.kit.aifb.concept.IConceptVector;
 import edu.kit.aifb.concept.TroveConceptVector;
 import edu.kit.aifb.terrier.concept.IConceptModel;
-import edu.uka.aifb.api.ir.ITermEstimateModel;
-import edu.uka.aifb.ir.model.IdfTermEstimateModel;
-import edu.uka.aifb.ir.terrier.model.RtfModel;
-import edu.uka.aifb.tools.ConfigurationManager;
+import edu.kit.aifb.terrier.model.RtfModel;
+import edu.kit.aifb.terrier.tem.ITermEstimateModel;
+import edu.kit.aifb.terrier.tem.IdfTermEstimateModel;
 
 public class RtfIdfFixedSizeConceptModel implements IConceptModel {
-
-	static final String[] REQUIRED_PROPERTIES = {
-		"concepts.builder.fixed_size.size"
-	};
 
 	static Logger logger = Logger.getLogger( RtfIdfFixedSizeConceptModel.class );
 	
@@ -31,14 +26,14 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 	
 	double[] scores;
 	int[] ids;
+
+	@Required
+	public void setSize( int size ) {
+		logger.info( "Initializing: size=" + size );
+		this.fixedSize = size;
+	}
 	
 	public RtfIdfFixedSizeConceptModel() {
-		Configuration config = ConfigurationManager.getCurrentConfiguration();
-		ConfigurationManager.checkProperties( config, REQUIRED_PROPERTIES );
-		
-		fixedSize = config.getInt( "concepts.builder.fixed_size.size" );
-		logger.info( "Initializing: size=" + fixedSize );
-
 		termEstimateModel = new IdfTermEstimateModel();
 		model = new RtfModel();
 	}

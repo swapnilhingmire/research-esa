@@ -4,24 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.terrier.matching.CollectionResultSet;
+import org.terrier.matching.ResultSet;
+import org.terrier.structures.CollectionStatistics;
+import org.terrier.structures.DocumentIndex;
+import org.terrier.structures.Index;
+import org.terrier.structures.Lexicon;
+import org.terrier.structures.LexiconEntry;
 
-import uk.ac.gla.terrier.matching.CollectionResultSet;
-import uk.ac.gla.terrier.matching.ResultSet;
-import uk.ac.gla.terrier.structures.CollectionStatistics;
-import uk.ac.gla.terrier.structures.DocumentIndex;
-import uk.ac.gla.terrier.structures.Index;
-import uk.ac.gla.terrier.structures.Lexicon;
-import uk.ac.gla.terrier.structures.LexiconEntry;
 import edu.kit.aifb.concept.IConceptExtractor;
 import edu.kit.aifb.concept.IConceptIterator;
 import edu.kit.aifb.concept.IConceptVector;
 import edu.kit.aifb.concept.index.ICVIndexReader;
-import edu.uka.aifb.api.expert.IDocumentExpertIterator;
-import edu.uka.aifb.api.expert.IExpertDocumentSet;
-import edu.uka.aifb.api.expert.IExpertIndex;
-import edu.uka.aifb.document.SingleTermTokenStream;
-import edu.uka.aifb.nlp.Language;
-import edu.uka.aifb.terrier.TerrierConceptModelExtractor;
+import edu.kit.aifb.document.SingleTermTokenStream;
+import edu.kit.aifb.document.expert.IDocumentExpertIterator;
+import edu.kit.aifb.document.expert.IExpertDocumentSet;
+import edu.kit.aifb.document.expert.IExpertIndex;
+import edu.kit.aifb.nlp.Language;
+import edu.kit.aifb.terrier.concept.TerrierConceptModelExtractor;
 
 public class ConceptExpertIndex implements IExpertIndex {
 
@@ -112,7 +112,7 @@ public class ConceptExpertIndex implements IExpertIndex {
 	class AprioriModel {
 		Index index;
 		DocumentIndex docIndex;
-		Lexicon lexicon;
+		Lexicon<String> lexicon;
 		CollectionStatistics colStatistics;
 		
 		public AprioriModel( IConceptExtractor extractor ) {
@@ -128,8 +128,8 @@ public class ConceptExpertIndex implements IExpertIndex {
 			if( lexicon != null ) {
 				LexiconEntry e = lexicon.getLexiconEntry( token );
 				if( e != null ) {
-					double pOfT = (double)e.TF / (double)colStatistics.getNumberOfTokens();
-					double idf = Math.log( (double)colStatistics.getNumberOfDocuments() / (double)e.n_t )
+					double pOfT = (double)e.getFrequency() / (double)colStatistics.getNumberOfTokens();
+					double idf = Math.log( (double)colStatistics.getNumberOfDocuments() / (double)e.getDocumentFrequency() )
 						/ Math.log( (double)colStatistics.getNumberOfDocuments() );
 
 					return pOfT * idf;

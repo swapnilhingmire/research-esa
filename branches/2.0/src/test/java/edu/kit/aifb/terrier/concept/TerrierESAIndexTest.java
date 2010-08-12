@@ -1,4 +1,4 @@
-package edu.kit.aifb.concept.terrier;
+package edu.kit.aifb.terrier.concept;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
