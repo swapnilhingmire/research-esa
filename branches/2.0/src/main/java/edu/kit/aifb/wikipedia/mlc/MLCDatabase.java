@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.IJdbcStatementBuffer;
 import edu.kit.aifb.nlp.Language;
 import gnu.trove.TIntArrayList;
 
@@ -19,7 +19,7 @@ public class MLCDatabase {
 	
 	String mlcTable;
 	String mlcCategorylinksTable;
-	JdbcStatementBuffer jsb;
+	IJdbcStatementBuffer jsb;
 	TIntArrayList conceptIds;
 	
 	@Required
@@ -28,7 +28,7 @@ public class MLCDatabase {
 	}
 	
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcStatementBuffer( IJdbcStatementBuffer jsb ) {
 		this.jsb = jsb;
 	}
 	

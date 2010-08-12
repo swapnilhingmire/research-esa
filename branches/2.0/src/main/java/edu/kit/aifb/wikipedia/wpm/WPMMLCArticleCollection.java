@@ -1,5 +1,7 @@
 package edu.kit.aifb.wikipedia.wpm;
 
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Article;
@@ -64,54 +66,66 @@ public class WPMMLCArticleCollection implements ICollection {
 	protected IDocument buildDocument( int conceptId ) {
 		TextDocument doc = new TextDocument( mlcArticleDb.getConceptName( conceptId ) );
 		StringBuilder titleBuilder = new StringBuilder();
+		StringBuilder redirectBuilder = new StringBuilder();
 		StringBuilder contentBuilder = new StringBuilder();
 		StringBuilder anchorBuilder = new StringBuilder();
 		
 		try {
 			TIntArrayList articleIds = mlcArticleDb.getPageIds( conceptId, language );
+		
 			for( int i=0; i<articleIds.size(); i++ ) {
 				int articleId = articleIds.get(i);
 
-				Article p = (Article)wp.getPageById( articleId );
-				
-				String title = p.getTitleWithoutScope();
-				logger.debug( "Building document for article " + title + " (" + articleId + ")" );
-				titleBuilder.append( title ).append( "\n" );
-				
-				if( useRedirects ) {
-					SortedVector<Redirect> redirects = p.getRedirects();
-					for( Redirect redirect : redirects ) {
-						titleBuilder.append( redirect.getTitle() ).append( "\n" );
+				try {
+					Article p = (Article)wp.getPageById( articleId );
+					if( p == null ) {
+						throw new Exception( "Article could not be initialized.");
 					}
-				}
 				
-				String content = p.getContent();
-				if( logger.isTraceEnabled() ) {
-					System.out.println( content );
-				}
-			
-				// remove wiki markup
-				if( content != null ) {
-					contentBuilder.append( MarkupStripper.stripEverything( content ) ).append( "\n" );
-				}
-				
-				// add anchor text
-				if( useAnchorText ) {
-					SortedVector<AnchorText> anchorTexts = ((Article)p).getAnchorTexts();
-					for( AnchorText anchorText : anchorTexts ) {
-						for( int j=0; j<anchorText.getCount(); j++ ) {
-							anchorBuilder.append( anchorText.getText() ).append( "\n" );
+					String title = p.getTitleWithoutScope();
+					logger.debug( "Building document for article " + title + " (" + articleId + ")" );
+					titleBuilder.append( title ).append( "\n" );
+
+					if( useRedirects ) {
+						redirectBuilder.append( title ).append( "\n" );
+
+						SortedVector<Redirect> redirects = p.getRedirects();
+						for( Redirect redirect : redirects ) {
+							redirectBuilder.append( redirect.getTitle() ).append( "\n" );
+						}
+					}
+
+					String content = p.getContent();
+					if( logger.isTraceEnabled() ) {
+						System.out.println( content );
+					}
+
+					// remove wiki markup
+					if( content != null ) {
+						contentBuilder.append( MarkupStripper.stripEverything( content ) ).append( "\n" );
+					}
+
+					// add anchor text
+					if( useAnchorText ) {
+						SortedVector<AnchorText> anchorTexts = ((Article)p).getAnchorTexts();
+						for( AnchorText anchorText : anchorTexts ) {
+							for( int j=0; j<anchorText.getCount(); j++ ) {
+								anchorBuilder.append( anchorText.getText() ).append( "\n" );
+							}
 						}
 					}
 				}
+				catch( Exception e ) {
+					logger.warn( "Error when processing article " + articleId + " for concept " + conceptId + ": " + e.getMessage() );
+				}
 			}
 		}
-		catch( Exception e ) {
-			logger.error( "Error while retrieving concept " + conceptId + ": " + e );
-			//e.printStackTrace();
+		catch( SQLException e ) {
+			logger.error( "Error while retrieving article ids for concept " + conceptId + ": " + e.getMessage() );
 		}	
 		
 		doc.setText( "title", language, titleBuilder.toString() );
+		doc.setText( "redirect", language, redirectBuilder.toString() );
 		doc.setText( "content", language, contentBuilder.toString() );
 		doc.setText( "anchor", language, anchorBuilder.toString() );
 		return doc;

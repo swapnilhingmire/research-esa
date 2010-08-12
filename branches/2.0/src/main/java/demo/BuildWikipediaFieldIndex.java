@@ -11,6 +11,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import edu.kit.aifb.ConfigurationException;
 import edu.kit.aifb.ConfigurationManager;
 import edu.kit.aifb.document.ICollection;
+import edu.kit.aifb.nlp.Language;
 import edu.kit.aifb.terrier.MTTerrierIndexFactory;
 
 public class BuildWikipediaFieldIndex {
@@ -21,6 +22,7 @@ public class BuildWikipediaFieldIndex {
 		"collection_bean",
 		"fields",
 		"indexId",
+		"language"
 	};
 	
 	static public void main( String[] args ) throws Exception {
@@ -32,7 +34,8 @@ public class BuildWikipediaFieldIndex {
 			Configuration config = confMan.getConfig();
 
 			String indexId = config.getString( "indexId" );
-
+			Language language = Language.getLanguage( config.getString( "language" ) );
+						
 			List<String> fields = new ArrayList<String>();
 			for( String field : config.getStringArray( "fields" ) ) {
 				fields.add( field );
@@ -44,7 +47,7 @@ public class BuildWikipediaFieldIndex {
 			MTTerrierIndexFactory factory = (MTTerrierIndexFactory) context.getBean(
 					MTTerrierIndexFactory.class );
 			
-			factory.buildFieldIndexes( indexId, collection, fields );
+			factory.buildFieldIndexes( indexId, language, collection, fields );
 		}
 		catch( ConfigurationException e ) {
 			e.printUsage();

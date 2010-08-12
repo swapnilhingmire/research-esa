@@ -38,7 +38,7 @@ public class BuildWikipediaIndex {
 			TerrierIndexFactory factory = (TerrierIndexFactory) context.getBean(
 					TerrierIndexFactory.class );
 			
-			factory.buildIndex( indexId, collection, language );
+			factory.buildIndex( indexId, language, collection );
 		}
 		catch( ConfigurationException e ) {
 			e.printUsage();

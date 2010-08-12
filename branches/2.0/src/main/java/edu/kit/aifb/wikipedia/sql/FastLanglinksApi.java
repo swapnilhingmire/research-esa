@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.IJdbcStatementBuffer;
 
 
 public class FastLanglinksApi implements ILanglinksApi {
@@ -21,7 +21,7 @@ public class FastLanglinksApi implements ILanglinksApi {
 	WikipediaDatabase sourceWikiApi;
 	WikipediaDatabase targetWikiApi;
 	
-	JdbcStatementBuffer jsb;
+	IJdbcStatementBuffer jsb;
 	
 	@Required
 	public void setSourceWikipediaDatabase( WikipediaDatabase source ) {
@@ -34,7 +34,7 @@ public class FastLanglinksApi implements ILanglinksApi {
 	}
 
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcStatementBuffer( IJdbcStatementBuffer jsb ) {
 		this.jsb = jsb;
 	}
 	

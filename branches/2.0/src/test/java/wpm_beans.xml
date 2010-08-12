@@ -24,6 +24,13 @@
     <constructor-arg value="0MySQL2Pro"/>
   </bean>
  
+  <bean id="wpm_es" class="org.wikipedia.miner.model.Wikipedia">
+    <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
+    <constructor-arg value="wpm_es"/>
+    <constructor-arg value="pso"/>
+    <constructor-arg value="0MySQL2Pro"/>
+  </bean>
+
   <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WPMMLCArticleCollection">
     <property name="wikipedia" ref="wpm_en"/>
     <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>

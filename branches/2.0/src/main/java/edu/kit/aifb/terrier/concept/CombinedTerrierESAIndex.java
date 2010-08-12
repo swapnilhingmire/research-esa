@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.terrier.matching.dsms.DocumentScoreModifier;
 import org.terrier.matching.models.WeightingModel;
@@ -18,8 +17,9 @@ import edu.kit.aifb.concept.IConceptIndex;
 import edu.kit.aifb.concept.IConceptVectorBuilder;
 import edu.kit.aifb.nlp.ITokenAnalyzer;
 import edu.kit.aifb.nlp.Language;
-import edu.kit.aifb.terrier.TerrierIndexFactory;
+import edu.kit.aifb.terrier.ITerrierSearch;
 import edu.kit.aifb.terrier.TerrierSearch;
+import gnu.trove.TDoubleArrayList;
 import gnu.trove.TIntIntHashMap;
 
 public class CombinedTerrierESAIndex implements IConceptIndex {
@@ -31,27 +31,22 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 	MetaIndex metaIndex;
 	
 	Language language;
-	WeightingModel model;
-	DocumentScoreModifier dsm;
+
 	IConceptVectorBuilder builder;
-	List<String> indexIds;
-	double[] indexWeights;
 	
-	ITokenAnalyzer analyzer;
+	List<TerrierSearch> searches;
+	TDoubleArrayList weights;
 	
-	TerrierIndexFactory terrierIndexFactory;
+	List<TIntIntHashMap> idMaps;
 	
-	TIntIntHashMap[] idMap;
-	
-	@Autowired  @Override
-	public void setTokenAnalyzer( ITokenAnalyzer analyzer ) {
-		logger.info( "Setting token analyzer: " + analyzer.getClass().getName() );
-		this.analyzer = analyzer;
+	public CombinedTerrierESAIndex() {
+		searches = new ArrayList<TerrierSearch>();
+		weights = new TDoubleArrayList(); 
+		idMaps = new ArrayList<TIntIntHashMap>();
 	}
 	
-	@Autowired
-	public void setTerrierIndexFactory( TerrierIndexFactory factory ) {
-		terrierIndexFactory = factory;
+	@Override
+	public void setTokenAnalyzer( ITokenAnalyzer analyzer ) {
 	}
 	
 	@Required @Override
@@ -60,30 +55,28 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		this.language = language;
 	}
 
-	@Required
-	public void setIndexIds( List<String> indexIds ) {
-		logger.info( "Setting indexes: " + indexIds.toString() );
-		this.indexIds = indexIds;
-	}
-	
-	@Required
-	public void setIndexWeights( List<String> indexWeightList ) {
-		logger.info( "Setting index weights: " + indexWeightList.toString() );
-		indexWeights = new double[indexWeightList.size()];
-		for( int i=0; i<indexWeightList.size(); i++ ) {
-			indexWeights[i] = Double.parseDouble( indexWeightList.get( i ) );
+	public void addSearch( TerrierSearch search, double weight ) throws IOException {
+		searches.add( search );
+		weights.add( weight );
+		
+		Index currentIndex = search.getIndex();
+		TIntIntHashMap currentIdMap = new TIntIntHashMap();
+		idMaps.add( currentIdMap );
+		
+		if( searches.size() == 1 ) {
+			documentIndex = currentIndex.getDocumentIndex();
+			metaIndex = currentIndex.getMetaIndex();
 		}
-	}
-	
-	@Required
-	public void setWeightingModel( WeightingModel model ) {
-		logger.info( "Setting weighting model: " + model.getClass().getName() );
-		this.model = model;
-	}
-	
-	public void setDocumentScoreModifier( DocumentScoreModifier dsm ) {
-		logger.info( "Setting document score modifier: " + dsm.getClass().getName() );
-		this.dsm = dsm;
+		else {
+			DocumentIndex currentDocumentIndex = currentIndex.getDocumentIndex();
+			MetaIndex currentMetaIndex = currentIndex.getMetaIndex();
+
+			for( int docId=0; docId<currentDocumentIndex.getNumberOfDocuments(); docId++ ) {
+				int targetDocId = metaIndex.getDocument(
+						"docno", currentMetaIndex.getItem( "docno", docId ) );
+				currentIdMap.put( docId, targetDocId );
+			}
+		}
 	}
 	
 	@Required
@@ -92,53 +85,14 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		this.builder = builder;
 	}
 
-	public void readIndexes() throws IOException {
-		indexes = new Index[indexIds.size()];
-		idMap = new TIntIntHashMap[indexIds.size()];
-		
-		Index firstIndex = terrierIndexFactory.readIndex( indexIds.get(0), language );
-		indexes[0] = firstIndex;
-		documentIndex = firstIndex.getDocumentIndex();
-		metaIndex = firstIndex.getMetaIndex();
-		
-		for( int i=1; i<indexIds.size(); i++ ) {
-			Index currentIndex = terrierIndexFactory.readIndex( indexIds.get(1), language );
-			DocumentIndex currentDocumentIndex = currentIndex.getDocumentIndex();
-			MetaIndex currentMetaIndex = currentIndex.getMetaIndex();
-			
-			TIntIntHashMap currentIdMap = new TIntIntHashMap();
-			for( int docId=0; docId<currentDocumentIndex.getNumberOfDocuments(); docId++ ) {
-				int targetDocId = metaIndex.getDocument(
-						"docno", currentMetaIndex.getItem( "docno", docId ) );
-				currentIdMap.put( docId, targetDocId );
-			}
-			
-			indexes[i] = currentIndex;
-			idMap[i] = currentIdMap;
-		}
-	}
-	
+	@Override
 	public IConceptExtractor getConceptExtractor() {
-		TerrierSearch[] searches = new TerrierSearch[indexes.length];
-		for( int i=0; i<indexes.length; i++ ) {
-			searches[i] = new TerrierSearch();
-			if( dsm == null ) {
-				searches[i].setIndex( indexes[i], (WeightingModel)model.clone() );
-			}
-			else {
-				searches[i].setIndex(
-						indexes[i],
-						(WeightingModel)model.clone(),
-						(DocumentScoreModifier)dsm.clone() );
-			}
-			searches[i].setTokenAnalyzer( analyzer );
-		}
-		
 		return new CombinedTerrierESAConceptExtractor(
-				searches, indexWeights, idMap,
+				searches, weights, idMaps,
 				builder, language );
 	}
 
+	@Override
 	public int getConceptId( String conceptName ) {
 		try {
 			return metaIndex.getDocument( "docno", conceptName );
@@ -149,6 +103,7 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		}
 	}
 
+	@Override
 	public String getConceptName( int conceptId ) {
 		try {
 			return metaIndex.getItem( "docno", conceptId );
@@ -159,6 +114,7 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		}
 	}
 
+	@Override
 	public int size() {
 		return documentIndex.getNumberOfDocuments();
 	}

@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.IJdbcStatementBuffer;
 import edu.kit.aifb.nlp.Language;
 import gnu.trove.TIntArrayList;
 
@@ -25,11 +25,11 @@ public class WikipediaDatabase {
 	static Logger logger = Logger.getLogger(WikipediaDatabase.class); 
 		
 	String db;
-	JdbcStatementBuffer jsb;
+	IJdbcStatementBuffer jsb;
 	Language language;
 	
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcStatementBuffer( IJdbcStatementBuffer jsb ) {
 		this.jsb = jsb;
 	}
 	
@@ -363,7 +363,7 @@ public class WikipediaDatabase {
 		}
 	}
 
-	public JdbcStatementBuffer getJdbcStatementBuffer() {
+	public IJdbcStatementBuffer getJdbcStatementBuffer() {
 		return jsb;
 	}
 
