@@ -12,7 +12,7 @@
 
   <bean id="mysql_aifbleros" class="edu.kit.aifb.JdbcFactory">
     <property name="driver" value="com.mysql.jdbc.Driver"/>
-    <property name="url" value="jdbc:mysql://aifbleros.aifb.uni-karlsruhe.de?user=pso&amp;password=0MySQL2Pro&amp;useCursorFetch=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8"/>
+    <property name="url" value="jdbc:mysql://aifbleros.aifb.uni-karlsruhe.de?user=wp200909&amp;password=%3DM%2C5XsVh&amp;useCursorFetch=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8"/>
   </bean>
 
   <bean id="mysql_aifbleros_statement_buffer" class="edu.kit.aifb.JdbcStatementBuffer">

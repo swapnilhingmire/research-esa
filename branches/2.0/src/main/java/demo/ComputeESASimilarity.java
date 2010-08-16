@@ -19,6 +19,7 @@ import edu.kit.aifb.nlp.Language;
 public class ComputeESASimilarity {
 
 	static final String[] REQUIRED_PROPERTIES = {
+		//"concept_index_bean",
 		"language",
 		"text_a",
 		"text_b"
@@ -31,7 +32,7 @@ public class ComputeESASimilarity {
 	 * @throws ConfigurationException 
 	 */
 	public static void main( String[] args ) throws Exception {
-		ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
+		ApplicationContext context = new FileSystemXmlApplicationContext( "*_context.xml" );
 		ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
 		confMan.parseArgs( args );
 		confMan.checkProperties( REQUIRED_PROPERTIES );
@@ -39,8 +40,12 @@ public class ComputeESASimilarity {
 
 		Language language = Language.getLanguage( config.getString( "language" ) );
 
-		IConceptIndex index = (IConceptIndex) context.getBean(
-				config.getString( "concept_index_bean" ) );
+		String conceptIndexBean = "default_concept_index";
+		if( config.containsKey( "concept_index_bean" ) ) {
+			conceptIndexBean = config.getString( "concept_index_bean" );
+		}
+		
+		IConceptIndex index = (IConceptIndex) context.getBean( conceptIndexBean );
 		logger.info( "size of source index: " + index.size() );
 
 		IConceptExtractor esaExtractor = index.getConceptExtractor();

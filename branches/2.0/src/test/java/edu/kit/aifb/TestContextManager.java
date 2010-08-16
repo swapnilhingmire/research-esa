@@ -9,7 +9,7 @@ public class TestContextManager {
 	
 	public static ApplicationContext getContext() {
 		if( context == null ) {
-			context = new ClassPathXmlApplicationContext( "testContext.xml" );
+			context = new ClassPathXmlApplicationContext( "test_context.xml" );
 		}
 		return context;
 	}		

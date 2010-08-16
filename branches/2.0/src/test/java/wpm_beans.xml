@@ -13,22 +13,22 @@
   <bean id="wpm_en" class="org.wikipedia.miner.model.Wikipedia">
     <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
     <constructor-arg value="wpm_en"/>
-    <constructor-arg value="pso"/>
-    <constructor-arg value="0MySQL2Pro"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
   </bean>
 
   <bean id="wpm_de" class="org.wikipedia.miner.model.Wikipedia">
     <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
     <constructor-arg value="wpm_de"/>
-    <constructor-arg value="pso"/>
-    <constructor-arg value="0MySQL2Pro"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
   </bean>
  
   <bean id="wpm_es" class="org.wikipedia.miner.model.Wikipedia">
     <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
     <constructor-arg value="wpm_es"/>
-    <constructor-arg value="pso"/>
-    <constructor-arg value="0MySQL2Pro"/>
+    <constructor-arg value="wp200909"/>
+    <constructor-arg value="=M,5XsVh"/>
   </bean>
 
   <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WPMMLCArticleCollection">

@@ -27,7 +27,7 @@ public class BuildWikipediaFieldIndex {
 	
 	static public void main( String[] args ) throws Exception {
 		try {
-			ApplicationContext context = new FileSystemXmlApplicationContext( "config/*_beans.xml" );
+			ApplicationContext context = new FileSystemXmlApplicationContext( "*_context.xml" );
 			ConfigurationManager confMan = (ConfigurationManager) context.getBean( ConfigurationManager.class );
 			confMan.parseArgs( args );
 			confMan.checkProperties( REQUIRED_PROPERTIES );

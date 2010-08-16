@@ -28,8 +28,8 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 	}
 
 	@Required
-	public void setWindowSize( int windowsSize ) {
-		this.windowSize = windowsSize;
+	public void setSize( int size ) {
+		this.windowSize = size;
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 					logger.trace( "difference=" + difference );
 				}
 
-				if( difference <= maxScore * threshold ) {
+				if( difference >= maxScore * threshold ) {
 					break;
 				}
 				
