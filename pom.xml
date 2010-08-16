@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>pso</groupId>
+  <artifactId>research-esa</artifactId>
+  <version>2.0</version>
+  <name>Research ESA</name>
+  <packaging>jar</packaging>
+  <distributionManagement>
+    <repository>
+      <id>pso.maven2</id>
+      <name>My private M2 repository</name>
+      <url>scpexe://aifbhades.aifb.uni-karlsruhe.de/home/data/users/pso/.m2/repository/</url>
+    </repository>
+  </distributionManagement>
+  <build>
+    <extensions>
+      <!-- Enabling the use of FTP -->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh-external</artifactId>
+         <version>1.0-beta-6</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>fully.qualified.MainClass</mainClass>
+                    </manifest>
+                </archive>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>pso</groupId>
+      <artifactId>ir_framework</artifactId>
+      <version>4.0</version>
+    </dependency>
+  </dependencies>
+</project>
