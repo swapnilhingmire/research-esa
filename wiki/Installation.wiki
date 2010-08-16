@@ -11,7 +11,7 @@ The implementation is based on the following external libaries:
 
   * [http://ressim.berlios.de/ Matrix Toolkits for Java (MTJ)]
   * [http://snowball.tartarus.org/ Snowball Stemmer]
-  * [http://ir.dcs.gla.ac.uk/terrier/ Terrier]
+  * [http://ir.dcs.gla.ac.uk/terrier/ Terrier] (Version 3)
   * [http://commons.apache.org/cli/ Apache Commons CLI]
   * [http://commons.apache.org/collections/ Apache Commons Collections]
   * [http://commons.apache.org/configuration/ Apache Commons Configuration]
@@ -19,10 +19,14 @@ The implementation is based on the following external libaries:
   * [http://commons.apache.org/logging/ Apache Commons Logging]
   * [http://logging.apache.org/log4j/1.2/index.html Apache log4j]
   * [http://trove4j.sourceforge.net/ GNU Trove]
+  * [http://www.springsource.org/ Spring Framework] (Version 3)
 
 For access to the Wikipedia database a JDBC driver is needed. In most cases this will be the Java MySQL connector.
 
-Research-esa is also based on the library _ir_framework_v3.jar_, which is included in the _/lib_ directory. Please refer to the [http://www.aifb.uni-karlsruhe.de/WBS/pso/ir_framework_v3_api/ API of ir_framework_v3] for more information.
+Research-esa is also based on the library _ir_framework_4.0.jar_, which is included in the _/lib_ directory. Please refer to the [http://www.aifb.uni-karlsruhe.de/WBS/pso/ir_framework-4.0/ API of ir_framework-4.0] for more information.
+
+==Maven==
+Starting with Research-ESA 2.0 [http://maven.apache.org/ Maven] can be used to organize dependencies. The project configuration file _pom.xml_ is included in the project sources.
 
 ==Running the demo==
 After compiling the sources the demo can be started as described in the [Tutorial].
