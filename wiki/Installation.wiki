@@ -26,7 +26,7 @@ For access to the Wikipedia database a JDBC driver is needed. In most cases this
 Research-esa is also based on the library _ir_framework_4.0.jar_, which is included in the _/lib_ directory. Please refer to the [http://www.aifb.uni-karlsruhe.de/WBS/pso/ir_framework-4.0/ API of ir_framework-4.0] for more information.
 
 ==Maven==
-Starting with Research-ESA 2.0 [http://maven.apache.org/ Maven] can be used to organize dependencies. The project configuration file _pom.xml_ is included in the project sources.
+Introduced in version 2.0, [http://maven.apache.org/ Maven] can be used to organize dependencies. The project configuration file _pom.xml_ is included in the project sources.
 
 ==Running the demo==
 After compiling the sources the demo can be started as described in the [Tutorial].
