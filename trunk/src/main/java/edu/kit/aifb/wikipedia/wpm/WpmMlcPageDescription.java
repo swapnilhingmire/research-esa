@@ -73,7 +73,8 @@ public class WpmMlcPageDescription implements IConceptDescription {
 		}
 		sb.append( ']' );
 		
-		logger.debug( sb.toString() );
+		if( logger.isDebugEnabled() )
+			logger.debug( "Description of concept " + conceptName + ": " + sb.toString() );
 		return sb.toString();
 	}
 

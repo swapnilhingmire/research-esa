@@ -12,18 +12,12 @@ public class WikipediaMLCCategoryCollection extends WikipediaMLCArticleCollectio
 
 	private static Logger logger = Logger.getLogger( WikipediaMLCCategoryCollection.class );
 	
-	String mlcCategorylinksTable;
 	MLCDatabase mlcCategoryDb;
 	
 	@Required
 	public void setMlcCategoryDatabase( MLCDatabase mlcDb ) {
 		mlcCategoryDb = mlcDb;
 	}
-	
-	 @Required
-	 public void setCategorylinksTable( String table ) {
-		mlcCategorylinksTable = table; 
-	 }
 	
 	@Override
 	public IDocument getDocument( String docName ) {
