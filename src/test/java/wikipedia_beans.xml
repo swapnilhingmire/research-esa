@@ -25,6 +25,12 @@
     <property name="mlcTable" value="wp200909.mlc_articles_500c_3l"/>
   </bean>
 
+  <bean id="wp200909_mlc_categories" class="edu.kit.aifb.wikipedia.mlc.MLCDatabase"
+   		init-method="readConcepts">
+    <property name="mlcTable" value="wp200909.mlc_categories_3l"/>
+    <property name="mlcCategorylinksTable" value="wp200909.mlc_categorylinks_500c_3l_2link"/>
+  </bean>
+
   <bean id="wp200909_full_collection_de" class="edu.kit.aifb.wikipedia.sql.WikipediaCollection"
   		init-method="readArticles">
     <property name="wikipediaDatabase" ref="wp200909_database_de"/>

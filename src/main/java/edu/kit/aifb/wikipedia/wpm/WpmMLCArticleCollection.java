@@ -19,9 +19,9 @@ import edu.kit.aifb.nlp.Language;
 import edu.kit.aifb.wikipedia.mlc.MLCDatabase;
 import gnu.trove.TIntArrayList;
 
-public class WPMMLCArticleCollection implements ICollection {
+public class WpmMLCArticleCollection implements ICollection {
 
-	private static Logger logger = Logger.getLogger( WPMMLCArticleCollection.class );
+	private static Logger logger = Logger.getLogger( WpmMLCArticleCollection.class );
 	
 	Wikipedia wp;
 	MLCDatabase mlcArticleDb;
@@ -29,7 +29,7 @@ public class WPMMLCArticleCollection implements ICollection {
 	boolean useRedirects;
 	Language language;
 	
-	public WPMMLCArticleCollection() {
+	public WpmMLCArticleCollection() {
 		useAnchorText = true;
 		useRedirects = true;
 	}
@@ -72,7 +72,10 @@ public class WPMMLCArticleCollection implements ICollection {
 		
 		try {
 			TIntArrayList articleIds = mlcArticleDb.getPageIds( conceptId, language );
-		
+			if( logger.isDebugEnabled() )
+				logger.debug( "Building document for concept " + conceptId + " (Linked articles: " + articleIds.size() + ")" );
+
+			
 			for( int i=0; i<articleIds.size(); i++ ) {
 				int articleId = articleIds.get(i);
 
@@ -133,7 +136,7 @@ public class WPMMLCArticleCollection implements ICollection {
 
 	@Override
 	public ICollectionIterator iterator() {
-		return new WikipediaMLConceptCollectionIterator();
+		return new CollectionIterator( mlcArticleDb.getConceptIds() );
 	}
 
 	@Override
@@ -141,15 +144,15 @@ public class WPMMLCArticleCollection implements ICollection {
 		return mlcArticleDb.size();
 	}
 
-	class WikipediaMLConceptCollectionIterator implements ICollectionIterator {
+	protected class CollectionIterator implements ICollectionIterator {
 
 		private int m_index = -1;
 		private TIntArrayList conceptIds;
 		private IDocument currentDoc;
 		
-		public WikipediaMLConceptCollectionIterator() {
+		public CollectionIterator( TIntArrayList conceptIds ) {
 			m_index = -1;
-			conceptIds = mlcArticleDb.getConceptIds();
+			this.conceptIds = conceptIds; 
 		}
 		
 		@Override

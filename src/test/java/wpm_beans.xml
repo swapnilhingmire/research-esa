@@ -31,10 +31,17 @@
     <constructor-arg value="=M,5XsVh"/>
   </bean>
 
-  <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WPMMLCArticleCollection">
+  <bean id="wpm_wp200909_mlc_articles_collection_en" class="edu.kit.aifb.wikipedia.wpm.WpmMLCArticleCollection">
     <property name="wikipedia" ref="wpm_en"/>
     <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>
     <property name="language" ref="language_en"/>
   </bean>
  
+  <bean id="wpm_wp200909_mlc_categories_collection_en" class="edu.kit.aifb.wikipedia.wpm.WpmMLCCategoryCollection">
+    <property name="wikipedia" ref="wpm_en"/>
+    <property name="mlcArticleDatabase" ref="wp200909_mlc_articles"/>
+    <property name="mlcCategoryDatabase" ref="wp200909_mlc_categories"/>
+    <property name="language" ref="language_en"/>
+  </bean>
+
 </beans>

@@ -59,7 +59,8 @@ public class MLCPageDescription implements IConceptDescription {
 		}
 		sb.append( ']' );
 		
-		logger.info( sb.toString() );
+		if( logger.isDebugEnabled() )
+			logger.debug( "Description of concept " + conceptName + ": " + sb.toString() );
 		return sb.toString();
 	}
 

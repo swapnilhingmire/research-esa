@@ -21,6 +21,8 @@ public class WikipediaPageDescription implements IConceptDescription {
 		Page p = new Page( WikipediaCollection.getArticleId( conceptName ) );
 		wpDb.initializePage( p );
 		if( p.isInitialized() ) {
+			if( logger.isDebugEnabled() )
+				logger.debug( "Description of concept " + conceptName + ": " + p.getTitle() );
 			return p.getTitle();
 		}
 		else {
