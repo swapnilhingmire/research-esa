@@ -21,12 +21,12 @@ public class WikipediaMLCCategoryCollection extends WikipediaMLCArticleCollectio
 	
 	@Override
 	public IDocument getDocument( String docName ) {
-		int articleId = mlcCategoryDb.getConceptId( docName );
+		int articleId = MLCDatabase.getConceptId( docName );
 		return buildDocument( articleId );
 	}
 	
 	protected IDocument buildDocument( int categoryId ) {
-		TextDocument doc = new TextDocument( mlcCategoryDb.getConceptName( categoryId ) );
+		TextDocument doc = new TextDocument( MLCDatabase.getConceptName( categoryId ) );
 		StringBuilder content = new StringBuilder();
 		
 		int conceptCount = 0;

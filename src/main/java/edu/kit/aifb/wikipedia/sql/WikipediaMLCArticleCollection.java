@@ -29,12 +29,12 @@ public class WikipediaMLCArticleCollection implements ICollection {
 	
 	@Override
 	public IDocument getDocument( String docName ) {
-		int articleId = mlcArticleDb.getConceptId( docName );
+		int articleId = MLCDatabase.getConceptId( docName );
 		return buildDocument( articleId );
 	}
 	
 	protected IDocument buildDocument( int conceptId ) {
-		TextDocument doc = new TextDocument( mlcArticleDb.getConceptName( conceptId ) );
+		TextDocument doc = new TextDocument( MLCDatabase.getConceptName( conceptId ) );
 		StringBuilder content = new StringBuilder();
 		
 		try {

@@ -13,6 +13,7 @@ import org.terrier.structures.MetaIndex;
 
 import edu.kit.aifb.concept.IConceptExtractor;
 import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptIndexAware;
 import edu.kit.aifb.concept.IConceptVectorBuilder;
 import edu.kit.aifb.nlp.ITokenAnalyzer;
 import edu.kit.aifb.nlp.Language;
@@ -75,6 +76,9 @@ public class TerrierESAIndex implements IConceptIndex {
 	public void setConceptVectorBuilder( IConceptVectorBuilder builder ) {
 		logger.info( "Setting concept vector builder: " + builder.getClass().getName() );
 		this.builder = builder;
+		if( builder instanceof IConceptIndexAware ) {
+			((IConceptIndexAware)builder).setConceptIndex( this );
+		}
 	}
 
 	public void readIndex() throws IOException {
@@ -132,4 +136,5 @@ public class TerrierESAIndex implements IConceptIndex {
 	public Language getLanguage() {
 		return language;
 	}
+
 }

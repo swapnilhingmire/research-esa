@@ -22,7 +22,7 @@ public class WpmMLCCategoryCollection extends WpmMLCArticleCollection {
 	
 	@Override
 	public IDocument getDocument( String docName ) {
-		int articleId = mlcCategoryDb.getConceptId( docName );
+		int articleId = MLCDatabase.getConceptId( docName );
 		return buildDocument( articleId );
 	}
 	
@@ -33,7 +33,7 @@ public class WpmMLCCategoryCollection extends WpmMLCArticleCollection {
 
 	@Override
 	protected IDocument buildDocument( int categoryId ) {
-		TextDocument doc = new TextDocument( mlcCategoryDb.getConceptName( categoryId ) );
+		TextDocument doc = new TextDocument( MLCDatabase.getConceptName( categoryId ) );
 		StringBuilder titleBuilder = new StringBuilder();
 		StringBuilder redirectBuilder = new StringBuilder();
 		StringBuilder contentBuilder = new StringBuilder();

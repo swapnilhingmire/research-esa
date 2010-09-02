@@ -6,18 +6,16 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.terrier.matching.dsms.DocumentScoreModifier;
-import org.terrier.matching.models.WeightingModel;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
 import org.terrier.structures.MetaIndex;
 
 import edu.kit.aifb.concept.IConceptExtractor;
 import edu.kit.aifb.concept.IConceptIndex;
+import edu.kit.aifb.concept.IConceptIndexAware;
 import edu.kit.aifb.concept.IConceptVectorBuilder;
 import edu.kit.aifb.nlp.ITokenAnalyzer;
 import edu.kit.aifb.nlp.Language;
-import edu.kit.aifb.terrier.ITerrierSearch;
 import edu.kit.aifb.terrier.TerrierSearch;
 import gnu.trove.TDoubleArrayList;
 import gnu.trove.TIntIntHashMap;
@@ -25,8 +23,8 @@ import gnu.trove.TIntIntHashMap;
 public class CombinedTerrierESAIndex implements IConceptIndex {
 
 	private static Logger logger = Logger.getLogger( CombinedTerrierESAIndex.class );
-	
-	Index[] indexes;
+
+	Index index;
 	DocumentIndex documentIndex;
 	MetaIndex metaIndex;
 	
@@ -64,6 +62,7 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		idMaps.add( currentIdMap );
 		
 		if( searches.size() == 1 ) {
+			index = currentIndex;
 			documentIndex = currentIndex.getDocumentIndex();
 			metaIndex = currentIndex.getMetaIndex();
 		}
@@ -83,6 +82,9 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 	public void setConceptVectorBuilder( IConceptVectorBuilder builder ) {
 		logger.info( "Setting concept vector builder: " + builder.getClass().getName() );
 		this.builder = builder;
+		if( builder instanceof IConceptIndexAware ) {
+			((IConceptIndexAware)builder).setConceptIndex( this );
+		}
 	}
 
 	@Override
@@ -123,4 +125,5 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 	public Language getLanguage() {
 		return language;
 	}
+
 }
