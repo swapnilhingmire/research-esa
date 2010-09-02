@@ -42,22 +42,29 @@ public class MLCPageDescription implements IConceptDescription {
 		}
 		WikipediaDatabase wpDb = wpDbMap.get( language );
 
-		int conceptId = mlcDb.getConceptId( conceptName );
+		int conceptId = MLCDatabase.getConceptId( conceptName );
 		TIntArrayList articleIds = mlcDb.getPageIds( conceptId, language ); 
 		
+		if( articleIds.size() == 0 ) {
+			logger.debug( "No pages found for concept " + conceptName );
+			return null;
+		}
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append( '[' );
+		//sb.append( '[' );
 		for( int i=0; i<articleIds.size(); i++ ) {
 			Page p = new Page( articleIds.get( i ) );
 			wpDb.initializePage( p );
 			if( p.isInitialized() ) {
-				sb.append( '"' ).append( p.getTitle() ).append( '"' );
+				//sb.append( '"' )
+				sb.append( p.getTitle() );
+				//sb.append( '"' );
 				if( i<articleIds.size()-1 ) {
-					sb.append( ", " );
+					sb.append( ";" );
 				}
 			}
 		}
-		sb.append( ']' );
+		//sb.append( ']' );
 		
 		if( logger.isDebugEnabled() )
 			logger.debug( "Description of concept " + conceptName + ": " + sb.toString() );

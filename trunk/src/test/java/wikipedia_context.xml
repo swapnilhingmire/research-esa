@@ -38,18 +38,11 @@
     <property name="articleIdColumn" value="page_id"/>
   </bean>
   
-  <bean id="wp200909_mlc_articles_concept_index_de" class="edu.kit.aifb.terrier.concept.TerrierESAIndex"
-      init-method="readIndex">
-    <property name="language" ref="language_de"/>
-    <property name="indexId" value="wp200909_mlc_articles_500c_3l"/>
-    <property name="weightingModel">
-      <bean class="edu.kit.aifb.terrier.model.RtfIdfModel"/>
-    </property>
-    <property name="conceptVectorBuilder">
-      <bean class="edu.kit.aifb.concept.builder.FixedSizeConceptVectorBuilder">
-        <property name="size" value="20"/>
-      </bean>
-    </property>
+   <bean id="mlc_factory" class="edu.kit.aifb.wikipedia.mlc.MLCFactory">
+    <property name="articleTable" value="wp200909.mlc_articles_500c_3l"/>
+    <property name="categoryTable" value="wp200909.mlc_categories_3l"/>
+    <property name="categorylinksTable" value="wp200909.mlc_categorylinks_500c_3l_2link"/>
+    <property name="rootCatId" value="69113"/>
   </bean>
   
 </beans>

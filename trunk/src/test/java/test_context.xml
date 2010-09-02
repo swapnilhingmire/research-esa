@@ -19,9 +19,10 @@
 
   <bean id="configuration_manager" class="edu.kit.aifb.ConfigurationManager"/>
 
-   <import resource="database_beans.xml"/>
-   <import resource="nlp_beans.xml"/>
-   <import resource="wikipedia_beans.xml"/>
-   <import resource="wpm_beans.xml"/>
- 
+   <import resource="database_context.xml"/>
+   <import resource="nlp_context.xml"/>
+   <import resource="wikipedia_context.xml"/>
+   <import resource="wpm_context.xml"/> 
+   <import resource="concept_context.xml"/> 
+
 </beans>

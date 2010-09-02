@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.IJdbcStatementBuffer;
+import edu.kit.aifb.JdbcStatementBuffer;
 import edu.kit.aifb.nlp.Language;
 import gnu.trove.TIntArrayList;
 
@@ -19,7 +19,7 @@ public class MLCDatabase {
 	
 	String mlcTable;
 	String mlcCategorylinksTable;
-	IJdbcStatementBuffer jsb;
+	JdbcStatementBuffer jsb;
 	TIntArrayList conceptIds;
 	
 	@Required
@@ -28,12 +28,20 @@ public class MLCDatabase {
 	}
 	
 	@Autowired
-	public void setJdbcStatementBuffer( IJdbcStatementBuffer jsb ) {
+	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
 		this.jsb = jsb;
+	}
+	
+	public String getMlcTable() {
+		return mlcTable;
 	}
 	
 	public void setMlcCategorylinksTable( String table ) {
 		mlcCategorylinksTable = table;
+	}
+	
+	public String getMlcCategorylinksTable() {
+		return mlcCategorylinksTable;
 	}
 	
 	public void readConcepts() throws SQLException {
@@ -83,18 +91,6 @@ public class MLCDatabase {
 		return mlcArticleIds;
 	}
 	
-	public String getConceptName( int conceptId ) { 
-		StringBuilder docNameBuilder = new StringBuilder();
-		Formatter docIdFormatter = new Formatter( docNameBuilder );
-
-		docIdFormatter.format( "%1$010d", conceptId );
-		return docNameBuilder.toString();
-	}
-	
-	public int getConceptId( String docName ) {
-		return Integer.parseInt( docName );
-	}
-	
 	public int size() {
 		return conceptIds.size();
 	}
@@ -102,4 +98,17 @@ public class MLCDatabase {
 	public TIntArrayList getConceptIds() {
 		return conceptIds;
 	}
+
+	static public String getConceptName( int conceptId ) { 
+		StringBuilder docNameBuilder = new StringBuilder();
+		Formatter docIdFormatter = new Formatter( docNameBuilder );
+
+		docIdFormatter.format( "%1$010d", conceptId );
+		return docNameBuilder.toString();
+	}
+	
+	static public int getConceptId( String docName ) {
+		return Integer.parseInt( docName );
+	}
+
 }
