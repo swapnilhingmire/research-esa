@@ -68,17 +68,15 @@ public class WpmMlcPageDescription implements IConceptDescription {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		//sb.append( '[' );
 		for( int i=0; i<articleIds.size(); i++ ) {
 			Page p = wpm.getPageById( articleIds.get( i ) );
-			//sb.append( '"' )
-			sb.append( p.getTitle() );
-			//sb.append( '"' );
-			if( i<articleIds.size()-1 ) {
-				sb.append( ";" );
+			if( p != null ) {
+				sb.append( p.getTitle() );
+				if( i<articleIds.size()-1 ) {
+					sb.append( ";" );
+				}
 			}
 		}
-		//sb.append( ']' );
 		
 		if( logger.isDebugEnabled() )
 			logger.debug( "Description of concept " + conceptName + ": " + sb.toString() );
