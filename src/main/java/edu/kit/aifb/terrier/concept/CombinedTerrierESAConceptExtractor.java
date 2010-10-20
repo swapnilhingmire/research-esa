@@ -37,7 +37,12 @@ public class CombinedTerrierESAConceptExtractor implements IConceptExtractor {
 		this.weights = weights;
 		this.conceptVectorBuilder = builder;
 
-		maxConceptId = searches.get( 0 ).getIndex().getDocumentIndex().getNumberOfDocuments();
+		if( searches.size() > 0 ) {
+			maxConceptId = searches.get( 0 ).getIndex().getDocumentIndex().getNumberOfDocuments();
+		}
+		else  {
+			maxConceptId = 0;
+		}
 	}
 
 	@Override
