@@ -58,10 +58,15 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 		updateFilePrefix();
 	}
 
-	@Required
-	public void setId( String id ) {
+	@Override
+	public void initialize( String id, int conceptCount ) {
 		this.id = id;
 		updateFilePrefix();
+
+		m_cvIndexEntries = new TroveCVIndexEntry[conceptCount];
+		for( int i=0; i<conceptCount; i++ ) {
+			m_cvIndexEntries[i] = new TroveCVIndexEntry();
+		}
 	}
 
 	@Required
@@ -73,16 +78,8 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 		if( baseDir != null && id != null ) {
 			m_filePrefix = baseDir + "/" + id;
 		}
-		if( language != null && language != Language.UNKNOWN ) {
+		if( m_filePrefix != null && language != null && language != Language.UNKNOWN ) {
 			m_filePrefix += "_" + language;
-		}
-	}
-
-	@Required
-	public void setSize( int size ) {
-		m_cvIndexEntries = new TroveCVIndexEntry[size];
-		for( int i=0; i<size; i++ ) {
-			m_cvIndexEntries[i] = new TroveCVIndexEntry();
 		}
 	}
 

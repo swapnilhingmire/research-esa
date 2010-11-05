@@ -26,8 +26,7 @@ public class TestCVIndex {
 		builder.setBaseDirectory( "data/test" );
 		builder.setLanguage( Language.EN );
 		builder.setCacheSize( 10000 );
-		builder.setSize( 10 );
-		builder.setId( "test_CVIndexTest" );
+		builder.initialize( "test_CVIndexTest", 10 );
 		
 		TroveConceptVector cv0 = new TroveConceptVector( "doc0", 10 );
 		cv0.add( 4, .1 );
@@ -54,8 +53,7 @@ public class TestCVIndex {
 		builder.setBaseDirectory( "data/test" );
 		builder.setLanguage( Language.EN );
 		builder.setCacheSize( 10000 );
-		builder.setSize( 10 );
-		builder.setId( "test_CVIndexTest_compressed" );
+		builder.initialize( "test_CVIndexTest_compressed", 10 );
 		builder.setCompressEntries( true );
 		
 		TroveConceptVector cv0 = new TroveConceptVector( "doc0", 10 );

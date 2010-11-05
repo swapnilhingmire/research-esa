@@ -36,4 +36,5 @@ public interface ICVIndexBuilder {
 	 */
 	public boolean indexExists();
 	
+	public void initialize( String id, int conceptCount );
 }
