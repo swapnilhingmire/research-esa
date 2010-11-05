@@ -14,11 +14,13 @@ import edu.kit.aifb.TestContextManager;
 
 public class WPMTest {
 
+	Wikipedia englishWp;
 	Wikipedia germanWp;
 	Wikipedia spanishWp;
 	
 	@Before
 	public void loadDatabase() {
+		englishWp = (Wikipedia) TestContextManager.getContext().getBean( "wpm_en" );
 		germanWp = (Wikipedia) TestContextManager.getContext().getBean( "wpm_de" );
 		spanishWp = (Wikipedia) TestContextManager.getContext().getBean( "wpm_es" );
 	}
@@ -32,6 +34,10 @@ public class WPMTest {
 		p = germanWp.getPageById( 16373 );
 		Assert.assertNotNull( p );
 		Assert.assertEquals( "Fähre", p.getTitle() );
+		
+		p = englishWp.getPageById( 771172 );
+		Assert.assertNotNull( p );
+		Assert.assertEquals( "Hunter × Hunter", p.getTitle() );
 	}
 	
 	@Test

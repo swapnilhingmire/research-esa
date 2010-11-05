@@ -17,6 +17,8 @@
     <constructor-arg value="=M,5XsVh"/>
   </bean>
 
+  
+
   <bean id="wpm_de" class="org.wikipedia.miner.model.Wikipedia">
     <constructor-arg value="aifbleros.aifb.uni-karlsruhe.de"/>
     <constructor-arg value="wpm_de"/>
@@ -44,4 +46,23 @@
     <property name="language" ref="language_en"/>
   </bean>
 
+  <bean id="wpm_articles_descriptions" class="edu.kit.aifb.wikipedia.wpm.WpmMlcPageDescription">
+    <property name="mlcDatabase" ref="wp200909_mlc_articles"/>
+    <property name="wikipediaMiners">
+      <list>
+        <bean id="wpm_en_wrapper" class="edu.kit.aifb.wikipedia.wpm.WikipediaMinerWrapper">
+          <property name="server" value="aifbleros.aifb.uni-karlsruhe.de"/>
+          <property name="database" value="wpm_en"/>
+          <property name="user" value="wp200909"/>
+          <property name="password" value="=M,5XsVh"/>
+        </bean>
+      </list>
+    </property>
+    <property name="languages">
+      <list>
+        <ref bean="language_en"/>
+      </list>
+    </property>
+  </bean>
+  
 </beans>

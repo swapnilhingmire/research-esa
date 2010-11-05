@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -44,6 +45,8 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 	private Language language;
 	private String id;
 	
+	private boolean compressEntries = false;
+
 	class DeletePriorityComparator implements Comparator<Integer> {
 		@Override
 		public int compare( Integer arg0, Integer arg1 ) {
@@ -69,6 +72,10 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 	@Required
 	public void setCacheSize( int maxCacheKByteSize ) {
 		this.m_maxCacheKByteSize = maxCacheKByteSize;
+	}
+	
+	public void setCompressEntries( boolean compress ) {
+		this.compressEntries = compress;
 	}
 	
 	public void readIndex() throws Exception {
@@ -140,7 +147,13 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 				m_conceptsRAF.read( m_buffer, 0, m_positions.getByteSize( conceptId ) );
 
 				m_bufferInputStream.reset();
-				DataInputStream dataIn = new DataInputStream( m_bufferInputStream );
+				DataInputStream dataIn;
+				if( compressEntries ) {
+					dataIn = new DataInputStream( new GZIPInputStream( m_bufferInputStream ) );
+				}
+				else {
+					dataIn = new DataInputStream( m_bufferInputStream );
+				}
 
 				entry = TroveCVIndexEntry.readFromDataInput( dataIn );
 				m_cachedIndexEntries.put( conceptId, entry );
