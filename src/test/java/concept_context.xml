@@ -24,6 +24,20 @@
     </property>
   </bean>
     
+  <bean name="wp200909_mlc_articles_concept_index_en" class="edu.kit.aifb.terrier.concept.TerrierESAIndex"
+  		init-method="readIndex">
+    <property name="language" ref="language_en"/>
+    <property name="indexId" value="wpm_wp200909_mlc_articles_500c_3l_title"/>
+    <property name="weightingModel">
+      <bean class="edu.kit.aifb.terrier.model.RtfModel"/>
+    </property>
+    <property name="conceptVectorBuilder">
+      <bean class="edu.kit.aifb.concept.builder.FixedSizeConceptVectorBuilder">
+        <property name="size" value="20"/>
+      </bean>
+    </property>
+  </bean>
+
   <bean id="wp200909_mlc_articles_concept_index_de" class="edu.kit.aifb.terrier.concept.TerrierESAIndex"
       init-method="readIndex">
     <property name="language" ref="language_de"/>

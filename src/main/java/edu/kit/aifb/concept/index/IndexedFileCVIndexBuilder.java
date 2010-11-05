@@ -1,6 +1,7 @@
 package edu.kit.aifb.concept.index;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -23,47 +26,49 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 		"concepts.base_dir",
 		"concepts.builder_cache_size"
 	};
-	
+
 	static Logger logger = Logger.getLogger( IndexedFileCVIndexBuilder.class );
-	
+
 	private TroveCVIndexEntry[] m_cvIndexEntries; 
-	
+
 	private IndexedFileCVData m_cvData;
-	
+
 	int m_tmpFileCount;
 	long m_currentCacheByteSize;
 	int m_maxCacheKByteSize;
-	
+
 	private String m_filePrefix;
-	
+
 	private ByteArrayOutputStream buffer;
-	
+
 	private String baseDir;
 	private Language language;
 	private String id;
-	
+
+	private boolean compressEntries = false;
+
 	@Required
 	public void setBaseDirectory( String baseDir ) {
 		this.baseDir = baseDir;
 		updateFilePrefix();
 	}
-	
+
 	public void setLanguage( Language language ) {
 		this.language = language;
 		updateFilePrefix();
 	}
-	
+
 	@Required
 	public void setId( String id ) {
 		this.id = id;
 		updateFilePrefix();
 	}
-	
+
 	@Required
 	public void setCacheSize( int maxCacheKByteSize ) {
 		this.m_maxCacheKByteSize = maxCacheKByteSize;
 	}
-	
+
 	private void updateFilePrefix() {
 		if( baseDir != null && id != null ) {
 			m_filePrefix = baseDir + "/" + id;
@@ -72,7 +77,7 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 			m_filePrefix += "_" + language;
 		}
 	}
-	
+
 	@Required
 	public void setSize( int size ) {
 		m_cvIndexEntries = new TroveCVIndexEntry[size];
@@ -80,16 +85,20 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 			m_cvIndexEntries[i] = new TroveCVIndexEntry();
 		}
 	}
-		
+
+	public void setCompressEntries( boolean compress ) {
+		this.compressEntries = compress;
+	}
+
 	public IndexedFileCVIndexBuilder() {
 		m_cvData = new IndexedFileCVData(); 
-		
+
 		m_tmpFileCount = 0;
 		m_currentCacheByteSize = 0;
-		
+
 		buffer = new ByteArrayOutputStream();
 	}
-	
+
 	public boolean indexExists() {
 		File conceptFile = new File( m_filePrefix + ".concepts" );
 		File postionFile = new File( m_filePrefix + ".positions" );
@@ -99,13 +108,13 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 
 	public void add( IConceptVector cv ) {
 		int docId = m_cvData.add( new PersistantCVData( cv.getData() ) );
-		
+
 		IConceptIterator it = cv.iterator();
 		while( it.next() ) {
 			m_cvIndexEntries[it.getId()].add( docId, it.getValue() );
 			m_currentCacheByteSize += 12;
 		}
-		
+
 		if( m_currentCacheByteSize / 1024 > m_maxCacheKByteSize ) {
 			buildTmpIndex();
 		}
@@ -114,40 +123,46 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 	private long writeEntries(
 			OutputStream out, 
 			TroveCVIndexEntry entry, int conceptId,
-			IndexedFilePositions positions, long currentOffset ) throws IOException
-	{
+			IndexedFilePositions positions, long currentOffset,
+			boolean compressSingleEntries ) throws IOException
+			{
 		buffer.reset();
-		
-		DataOutputStream dataOut = new DataOutputStream( buffer );
+		DataOutputStream dataOut;
+		if( compressSingleEntries ) {
+			dataOut = new DataOutputStream( new GZIPOutputStream( buffer ) );
+		}
+		else {
+			dataOut = new DataOutputStream( buffer );
+		}
 		entry.writeToDataOutput( dataOut );
 		dataOut.close();
-		
+
 		int byteSize = buffer.size();
-		
+
 		buffer.writeTo( out );
-		
+
 		if( positions != null ) {
 			positions.set( conceptId, currentOffset, byteSize );
 		}
 		return currentOffset + byteSize;
-	}
-	
+			}
+
 	private void buildTmpIndex() {
 		try {
 			m_tmpFileCount++;
-			OutputStream tmpFileOut = new FileOutputStream (
-					m_filePrefix + ".concepts." + m_tmpFileCount );
+			OutputStream tmpFileOut = new GZIPOutputStream( new BufferedOutputStream( new FileOutputStream (
+					m_filePrefix + ".concepts." + m_tmpFileCount ) ) );
 			logger.info( "Building temporary concept index file " + m_filePrefix + ".concepts." + m_tmpFileCount );
-			
+
 			/*
 			 * Write concept entries
 			 */
 			for( int i=0; i<m_cvIndexEntries.length; i++ ) {
-				writeEntries( tmpFileOut, m_cvIndexEntries[i], i, null, 0 );
+				writeEntries( tmpFileOut, m_cvIndexEntries[i], i, null, 0, false );
 			}
-			
+
 			tmpFileOut.close();
-			
+
 			/*
 			 * Reset index entries
 			 */
@@ -160,17 +175,17 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 			logger.error( e );
 		}
 	}
-	
+
 	public void buildIndex() {
 		buildTmpIndex();
-		
+
 		try {
 			DataInputStream[] tmpFileDataIn = new DataInputStream[m_tmpFileCount];
 			for( int i=0; i<m_tmpFileCount; i++ ) {
-				tmpFileDataIn[i] = new DataInputStream( new BufferedInputStream( new FileInputStream (
-						m_filePrefix + ".concepts." + (i+1) ) ) );
+				tmpFileDataIn[i] = new DataInputStream( new GZIPInputStream( new BufferedInputStream( new FileInputStream (
+						m_filePrefix + ".concepts." + (i+1) ) ) ) );
 			}
-			
+
 			logger.info( "Building concept index file " + m_filePrefix + ".concepts" );
 			OutputStream conceptFileOut = new FileOutputStream (
 					m_filePrefix + ".concepts" );
@@ -184,29 +199,29 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 				for( int i=1; i<tmpFileDataIn.length; i++ ) {
 					entry.merge( TroveCVIndexEntry.readFromDataInput( tmpFileDataIn[i] ) );
 				}
-				
-				currentOffset = writeEntries( conceptFileOut, entry, conceptId, positions, currentOffset );
-				
+
+				currentOffset = writeEntries(
+						conceptFileOut, entry, conceptId, positions, currentOffset, compressEntries );
 			}
-			
+
 			conceptFileOut.close();
-			
-			 /*
-          * Write positions
-          */
-         logger.info( "Saving positions" );
+
+			/*
+			 * Write positions
+			 */
+			logger.info( "Saving positions" );
 			positions.saveToFile( new File( m_filePrefix + ".positions" ) );
-         
-         /*
-          * Write concept vector data
-          */
-         logger.info( "Saving concept vector data" );
+
+			/*
+			 * Write concept vector data
+			 */
+			logger.info( "Saving concept vector data" );
 			m_cvData.saveToFile( new File( m_filePrefix + ".cv_data" ) );
-         
-         /*
-          * Remove temporary files
-          */
-         logger.info( "Removing temporary files" );
+
+			/*
+			 * Remove temporary files
+			 */
+			logger.info( "Removing temporary files" );
 			for( int i=0; i<m_tmpFileCount; i++ ) {
 				File tmpFile = new File( m_filePrefix + ".concepts." + (i+1) );
 				tmpFile.delete();
