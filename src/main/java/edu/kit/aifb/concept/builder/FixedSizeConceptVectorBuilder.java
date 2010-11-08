@@ -13,11 +13,6 @@ import edu.kit.aifb.concept.TroveConceptVector;
 
 
 public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
-
-	static final String[] REQUIRED_PROPERTIES = {
-		"concepts.builder.fixed_size.size"
-	};
-	
 	static Logger logger = Logger.getLogger( FixedSizeConceptVectorBuilder.class );
 	
 	int size;
@@ -63,7 +58,7 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 	
 	@Override
 	public IConceptVector getConceptVector() {
-		HeapSort.heapSort( values, ids );
+		HeapSort.heapSort( values, ids, size );
 
 		IConceptVector newCv = new TroveConceptVector( docName, ids.length );
 		for( int i=ids.length-1; i>=0 && i>=ids.length - size; i-- ) {
@@ -72,4 +67,10 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		return newCv;
 	}
 	
+	@Override
+	public IConceptVectorBuilder clone() {
+		FixedSizeConceptVectorBuilder newBuilder = new FixedSizeConceptVectorBuilder();
+		newBuilder.setSize( size );
+		return newBuilder;
+	}
 }

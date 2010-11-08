@@ -126,4 +126,8 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		return language;
 	}
 
+	@Override
+	public IConceptIndex clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
 }

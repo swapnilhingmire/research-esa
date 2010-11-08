@@ -68,8 +68,10 @@ public class TerrierESAIndex implements IConceptIndex {
 	}
 	
 	public void setDocumentScoreModifier( DocumentScoreModifier dsm ) {
-		logger.info( "Setting document score modifier: " + dsm.getClass().getName() );
-		this.dsm = dsm;
+		if( dsm != null ) {
+			logger.info( "Setting document score modifier: " + dsm.getClass().getName() );
+			this.dsm = dsm;
+		}
 	}
 	
 	@Required
@@ -137,4 +139,26 @@ public class TerrierESAIndex implements IConceptIndex {
 		return language;
 	}
 
+	@Override
+	public IConceptIndex clone() throws CloneNotSupportedException {
+		try {
+			TerrierESAIndex newIndex = new TerrierESAIndex();
+			newIndex.setTokenAnalyzer( analyzer );
+			newIndex.setTerrierIndexFactory( terrierIndexFactory );
+			newIndex.setLanguage( language );
+			newIndex.setIndexId( indexId );
+			newIndex.setWeightingModel( model );
+			newIndex.setDocumentScoreModifier( dsm );
+			
+			newIndex.setConceptVectorBuilder( builder.clone() );
+			
+			newIndex.readIndex();
+			return newIndex;
+		}
+		catch( IOException e ) {
+			logger.error( "Error while cloning: " + e );
+		}
+		return null;
+	}
+	
 }
