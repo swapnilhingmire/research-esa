@@ -4,7 +4,7 @@ import edu.kit.aifb.nlp.ITokenAnalyzer;
 import edu.kit.aifb.nlp.Language;
 
 
-public interface IConceptIndex {
+public interface IConceptIndex extends Cloneable {
 
 	public IConceptExtractor getConceptExtractor();
 	
@@ -19,4 +19,5 @@ public interface IConceptIndex {
 	public void setLanguage( Language language );
 	public Language getLanguage();
 	
+	public IConceptIndex clone() throws CloneNotSupportedException;
 }

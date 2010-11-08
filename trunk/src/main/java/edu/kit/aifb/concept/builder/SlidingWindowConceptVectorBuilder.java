@@ -82,5 +82,11 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 
-
+	@Override
+	public IConceptVectorBuilder clone() {
+		SlidingWindowConceptVectorBuilder newBuilder = new SlidingWindowConceptVectorBuilder();
+		newBuilder.setSize( windowSize );
+		newBuilder.setThreshold( threshold );
+		return newBuilder;
+	}
 }

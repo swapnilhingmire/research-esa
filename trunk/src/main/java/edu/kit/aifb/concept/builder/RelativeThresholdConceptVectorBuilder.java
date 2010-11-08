@@ -56,4 +56,12 @@ public class RelativeThresholdConceptVectorBuilder implements IConceptVectorBuil
 	public void reset(String docName, int maxConceptId) {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
+	
+	@Override
+	public IConceptVectorBuilder clone() {
+		RelativeThresholdConceptVectorBuilder newBuilder = new RelativeThresholdConceptVectorBuilder();
+		newBuilder.setThreshold( threshold );
+		return newBuilder;
+	}
+
 }

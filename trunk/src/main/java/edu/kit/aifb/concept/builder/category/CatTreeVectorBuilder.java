@@ -125,4 +125,10 @@ public abstract class CatTreeVectorBuilder implements
 		}			
 		return true;
 	}
+	
+	@Override
+	public IConceptVectorBuilder clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();	
+	}
+	
 }

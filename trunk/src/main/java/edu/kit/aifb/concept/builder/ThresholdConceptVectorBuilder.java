@@ -52,5 +52,11 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 
+	@Override
+	public IConceptVectorBuilder clone() {
+		ThresholdConceptVectorBuilder newBuilder = new ThresholdConceptVectorBuilder();
+		newBuilder.setThreshold( threshold );
+		return newBuilder;
+	}
 
 }

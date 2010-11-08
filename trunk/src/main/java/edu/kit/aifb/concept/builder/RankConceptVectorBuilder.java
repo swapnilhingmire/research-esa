@@ -60,4 +60,12 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 	
+	@Override
+	public IConceptVectorBuilder clone() {
+		RankConceptVectorBuilder newBuilder = new RankConceptVectorBuilder();
+		newBuilder.setSize( size );
+		return newBuilder;
+		
+	}
+
 }
