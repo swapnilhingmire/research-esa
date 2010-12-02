@@ -89,4 +89,13 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		newBuilder.setThreshold( threshold );
 		return newBuilder;
 	}
+	
+	@Override
+	public IConceptVector getConceptVector(String docName, int maxConceptId,
+			int[] conceptIds, double[] conceptScores, int count) {
+		reset( docName, maxConceptId );
+		addScores( conceptIds, conceptScores, count );
+		return getConceptVector();
+	}
+
 }

@@ -3,6 +3,7 @@ package edu.kit.aifb.concept.index;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,9 +65,9 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 		this.language = language;
 	}
 	
-	@Required
-	public void setId( String id ) {
+	public void initialize( String id ) throws Exception {
 		this.id = id;
+		readIndex();
 	}
 	
 	@Required

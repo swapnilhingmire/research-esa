@@ -48,4 +48,7 @@ public interface ICVIndexReader {
 	public int getDocumentFrequency( int conceptId );
 	
 	public int getConceptVectorId( String docName );
+	
+	public void initialize( String id ) throws Exception;
+
 }

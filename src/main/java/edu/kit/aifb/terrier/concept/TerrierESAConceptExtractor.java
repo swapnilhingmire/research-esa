@@ -61,9 +61,9 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 	public IConceptVector buildVector( String docName, ResultSet rs ) {
 		logger.info( "Found " + rs.getResultSize() + " matches in index." );
 		
-		conceptVectorBuilder.reset( docName, maxConceptId );
-		conceptVectorBuilder.addScores( rs.getDocids(), rs.getScores(), rs.getResultSize() );
-		return conceptVectorBuilder.getConceptVector();
+		return conceptVectorBuilder.getConceptVector(
+				docName, maxConceptId,
+				rs.getDocids(), rs.getScores(), rs.getResultSize() );
 	}
 
 }
