@@ -1,4 +1,4 @@
-package edu.kit.aifb.concept;
+package edu.kit.aifb.concept.index;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,32 +9,35 @@ import org.terrier.matching.CollectionResultSet;
 import org.terrier.matching.ResultSet;
 import org.terrier.utility.HeapSort;
 
-import edu.kit.aifb.concept.index.ICVIndexEntryIterator;
-import edu.kit.aifb.concept.index.ICVIndexReader;
-import edu.kit.aifb.concept.index.IConceptMatcher;
-import edu.kit.aifb.concept.index.PersistantCVData;
+import edu.kit.aifb.concept.IConceptIterator;
+import edu.kit.aifb.concept.IConceptVector;
+import edu.kit.aifb.concept.IConceptVectorData;
 import edu.kit.aifb.concept.scorer.IScorer;
 import edu.kit.aifb.ir.IMatch;
 import edu.kit.aifb.ir.Match;
 
 
-public class ConceptMatcher implements IConceptMatcher {
+public class ConceptMatcher {
 
 	static Logger logger = Logger.getLogger( ConceptMatcher.class );
 	
 	ICVIndexReader m_indexReader;
 	IScorer[] m_documentScorers;
-	
+		
 	ResultSet resultSet;
-	
+
 	public ConceptMatcher( ICVIndexReader indexReader ) {
 		m_indexReader = indexReader;
-		
 		m_documentScorers = new IScorer[indexReader.getNumberOfDocuments()];
-		
 		resultSet = new CollectionResultSet( indexReader.getNumberOfDocuments() );
 	}
 	
+	/**
+	 * This sets the scoring model for the concept based retrieval.
+	 * 
+	 * @param className The name of the IScorer class that implements the
+	 * concept based retrieval model.
+	 */
 	@SuppressWarnings("unchecked")
 	public void setScorerClass( String className ) {
 		try {
@@ -46,7 +49,11 @@ public class ConceptMatcher implements IConceptMatcher {
 		} 
 	}
 	
-	@Override
+	/**
+	 * This sets the scoring model for the concept based retrieval.
+	 * 
+	 * @param scorerClass The scorer class that implements IScorer interface.
+	 */
 	public void setScorerClass(Class<? extends IScorer> scorerClass) {
 		logger.info( "Initializing concept matcher with scorer class " + scorerClass.getName() );
 		
@@ -61,9 +68,15 @@ public class ConceptMatcher implements IConceptMatcher {
 		}
 	}
 
+	/**
+	 * This function performs a complete retrieval step for a specified query which
+	 * is represented by a concept vector.  
+	 * 
+	 * @param queryCV The concept vector of the query that should be searched for.
+	 */
 	public void match( IConceptVector queryCV ) {
 		logger.debug( "Matching " + queryCV.getData().getDocName() );
-		
+				
 		logger.debug( "Resetting scorers" );
 		IConceptVectorData queryCVData = new PersistantCVData( queryCV.getData() );
 		for( int i=0; i<m_documentScorers.length; i++ )
@@ -100,6 +113,7 @@ public class ConceptMatcher implements IConceptMatcher {
 			
 		}
 		
+		
 		logger.debug( "Finalizing scores and computing ranking" );
 		for( int i=0; i<m_documentScorers.length; i++ ) {
 			if( m_documentScorers[i].hasScore() )
@@ -113,6 +127,11 @@ public class ConceptMatcher implements IConceptMatcher {
 		}
 	}
 
+	/**
+	 * This function returns a sorted list of matches found for a previous call of match().
+	 * 
+	 * @return A sorted list of matches containing relevant documents and their scores.
+	 */
 	public List<IMatch> getMatches() {
 		List<IMatch> matchList = new ArrayList<IMatch>();
 		
@@ -134,7 +153,11 @@ public class ConceptMatcher implements IConceptMatcher {
 		return matchList;
 	}
 
-	@Override
+	/**
+	 * This function returns a sorted list of matches found for a previous call of match().
+	 * 
+	 * @return A result set containing relevant documents and their scores.
+	 */
 	public ResultSet getResultSet() {
 		resultSet.initialise();
 		

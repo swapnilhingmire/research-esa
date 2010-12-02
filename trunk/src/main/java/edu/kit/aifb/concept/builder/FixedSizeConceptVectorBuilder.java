@@ -73,4 +73,15 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		newBuilder.setSize( size );
 		return newBuilder;
 	}
+
+	@Override
+	public IConceptVector getConceptVector( String docName, int maxConceptId,
+			int[] conceptIds, double[] conceptScores, int count ) {
+		IConceptVector newCv = new TroveConceptVector( docName, maxConceptId );
+		int maxI = Math.min( size, Math.min( count, conceptIds.length ) );
+		for( int i=0; i<maxI && conceptScores[i] > 0; i++ ) {
+			newCv.set( conceptIds[i], conceptScores[i] );
+		}
+		return newCv;
+	}
 }

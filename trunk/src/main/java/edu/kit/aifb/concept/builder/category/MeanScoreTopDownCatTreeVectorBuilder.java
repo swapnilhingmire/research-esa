@@ -3,6 +3,8 @@ package edu.kit.aifb.concept.builder.category;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import edu.kit.aifb.concept.IConceptVector;
+
 import gnu.trove.TIntArrayList;
 
 public class MeanScoreTopDownCatTreeVectorBuilder extends
@@ -34,6 +36,14 @@ public class MeanScoreTopDownCatTreeVectorBuilder extends
 
 			scores[catId] /= treeSize[catId];
 		}
+	}
+
+	@Override
+	public IConceptVector getConceptVector(String docName, int maxConceptId,
+			int[] conceptIds, double[] conceptScores, int count) {
+		reset( docName, maxConceptId );
+		addScores( conceptIds, conceptScores, count );
+		return getConceptVector();
 	}
 
 }

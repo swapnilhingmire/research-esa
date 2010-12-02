@@ -9,7 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.terrier.matching.ResultSet;
 
-import edu.kit.aifb.concept.ConceptMatcher;
 import edu.kit.aifb.concept.TroveConceptVector;
 import edu.kit.aifb.concept.scorer.CosineScorer;
 import edu.kit.aifb.ir.IMatch;
@@ -43,8 +42,7 @@ public class TestCVIndex {
 		reader.setBaseDirectory( "data/test" );
 		reader.setCacheSize( 10000 );
 		reader.setLanguage( Language.EN );
-		reader.setId( "test_CVIndexTest" );
-		reader.readIndex();
+		reader.initialize( "test_CVIndexTest" );
 	}
 	
 	@BeforeClass
@@ -71,9 +69,8 @@ public class TestCVIndex {
 		compressedReader.setBaseDirectory( "data/test" );
 		compressedReader.setCacheSize( 10000 );
 		compressedReader.setLanguage( Language.EN );
-		compressedReader.setId( "test_CVIndexTest_compressed" );
 		compressedReader.setCompressEntries( true );
-		compressedReader.readIndex();
+		compressedReader.initialize( "test_CVIndexTest_compressed" );
 	}
 
 	@Test
