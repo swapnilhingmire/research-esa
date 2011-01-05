@@ -1,7 +1,6 @@
 package edu.kit.aifb.concept.index;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -26,10 +25,16 @@ public class ConceptMatcher {
 		
 	ResultSet resultSet;
 
+	int resultLimit = Integer.MAX_VALUE;
+	
 	public ConceptMatcher( ICVIndexReader indexReader ) {
 		m_indexReader = indexReader;
 		m_documentScorers = new IScorer[indexReader.getNumberOfDocuments()];
 		resultSet = new CollectionResultSet( indexReader.getNumberOfDocuments() );
+	}
+	
+	public void setResultLimit( int resultLimit ) {
+		this.resultLimit = resultLimit;
 	}
 	
 	/**
@@ -135,20 +140,18 @@ public class ConceptMatcher {
 	public List<IMatch> getMatches() {
 		List<IMatch> matchList = new ArrayList<IMatch>();
 		
-		for( int i=0; i<m_documentScorers.length; i++ ) {
-			if( m_documentScorers[i].hasScore() )
-			{
-				IConceptVectorData docData = m_indexReader.getConceptVectorData( i );
-				
-				matchList.add( new Match(
-						docData.getDocName(),
-						m_documentScorers[i].getScore() ) );
-			}
+		ResultSet rs = getResultSet();
+		int[] ids = rs.getDocids();
+		double[] scores = rs.getScores();
+		
+		for( int i=0; i<rs.getResultSize(); i++ ) {
+			IConceptVectorData docData = m_indexReader.getConceptVectorData( ids[i] );
+
+			matchList.add( new Match(
+					docData.getDocName(),
+					scores[i] ) );
 		}
 		
-		logger.debug( "Sorting result list" );
-		Collections.sort( matchList );
-
 		logger.info( "Found " + matchList.size() + " matches." );
 		return matchList;
 	}
@@ -178,9 +181,11 @@ public class ConceptMatcher {
 
 		//sets the actual size of the result set.
 		resultSet.setResultSize( numberOfRetrievedDocs );
-
-		HeapSort.descendingHeapSort( scores, ids, occurences, numberOfRetrievedDocs );
-
+		if( numberOfRetrievedDocs > resultLimit ) {
+			resultSet.setResultSize( resultLimit );
+		}
+		
+		HeapSort.descendingHeapSort( scores, ids, occurences, resultSet.getResultSize() );
 		return resultSet;
 	}
 	
