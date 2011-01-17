@@ -1,6 +1,8 @@
 demo
+edu.kit.aifb
 edu.kit.aifb.concept
 edu.kit.aifb.concept.builder
+edu.kit.aifb.concept.builder.category
 edu.kit.aifb.concept.index
 edu.kit.aifb.concept.scorer
 edu.kit.aifb.terrier.concept
