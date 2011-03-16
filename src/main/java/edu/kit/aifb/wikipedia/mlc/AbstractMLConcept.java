@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import edu.kit.aifb.JdbcStatementBuffer;
 import edu.kit.aifb.nlp.Language;
 import edu.kit.aifb.wikipedia.sql.IPage;
 import edu.kit.aifb.wikipedia.sql.Page;
@@ -38,40 +37,60 @@ abstract public class AbstractMLConcept implements IMLConcept {
 
 	@Override
 	public Collection<IPage> getPages( Language lang ) throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlc_page from "
 				+ pageTable
 				+ " where mlc_id=? and mlc_lang=?;" );
-		pst.setInt( 1, id );
-		pst.setString( 2, lang.toString() );
-		
-		Collection<IPage> pages = new ArrayList<IPage>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			pages.add( new Page( rs.getInt( 1 ) ) );
+		try {
+			pst.setInt( 1, id );
+			pst.setString( 2, lang.toString() );
+
+			Collection<IPage> pages = new ArrayList<IPage>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					pages.add( new Page( rs.getInt( 1 ) ) );
+				}
+				return pages;
+			}
+			finally {
+				rs.close();
+			}
 		}
-		return pages;
+		finally {
+			pst.close();
+		}
 	}
 
 	@Override
 	public Map<Language, Collection<IPage>> getPages() throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlc_page, mlc_lang from "
 				+ pageTable
 				+ " where mlc_id=?;" );
-		pst.setInt( 1, id );
-		
-		Map<Language,Collection<IPage>> pages = new HashMap<Language,Collection<IPage>>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			IPage p = new Page( rs.getInt( 1 ) );
-			Language l = Language.getLanguage( rs.getString( 2 ) );
-			if( !pages.containsKey( l ) ) {
-				pages.put( l, new ArrayList<IPage>() );
+		try {
+			pst.setInt( 1, id );
+
+			Map<Language,Collection<IPage>> pages = new HashMap<Language,Collection<IPage>>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					IPage p = new Page( rs.getInt( 1 ) );
+					Language l = Language.getLanguage( rs.getString( 2 ) );
+					if( !pages.containsKey( l ) ) {
+						pages.put( l, new ArrayList<IPage>() );
+					}
+					pages.get( l ).add( p );
+				}
+				return pages;
 			}
-			pages.get( l ).add( p );
+			finally {
+				rs.close();
+			}
 		}
-		return pages;
+		finally {
+			pst.close();
+		}
 	}
 
 	@Override

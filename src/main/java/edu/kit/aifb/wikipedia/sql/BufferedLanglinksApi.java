@@ -39,13 +39,22 @@ public class BufferedLanglinksApi extends FastLanglinksApi {
 				"select " + llTargetColumn + " " +
 				"from " + llTable + " " +
 				"where " + llSourceColumn + "=?;";
-			PreparedStatement st = jsb.getPreparedStatement( sql );
-			st.setInt(1, sourcePageId);
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				targetPageId = rs.getInt(1);
+			PreparedStatement st = jsb.prepareStatement( sql );
+			try {
+				st.setInt(1, sourcePageId);
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						targetPageId = rs.getInt(1);
+					}
+				}
+				finally {
+					rs.close();
+				}
 			}
-			rs.close();
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 		}
@@ -79,32 +88,39 @@ public class BufferedLanglinksApi extends FastLanglinksApi {
 			
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: selectManyBySource");
-			Statement st = jsb.getStatement();
-			ResultSet rs = st.executeQuery(sql);
-			
-			int index = 0;
-			int[] targetPageIds = new int[sourcePageIds.length];
+			Statement st = jsb.createStatement();
+			try {
+				ResultSet rs = st.executeQuery(sql);
+				try {
+					int index = 0;
+					int[] targetPageIds = new int[sourcePageIds.length];
 
-			while (rs.next()) {
-				int sourceId = rs.getInt(1);
-				int targetId = rs.getInt(2);
-				while (sourcePageIds[index] < sourceId && index < sourcePageIds.length) {
-					targetPageIds[index] = -1;
-					index++;
+					while (rs.next()) {
+						int sourceId = rs.getInt(1);
+						int targetId = rs.getInt(2);
+						while (sourcePageIds[index] < sourceId && index < sourcePageIds.length) {
+							targetPageIds[index] = -1;
+							index++;
+						}
+
+						if (index >= sourcePageIds.length) {
+							break;
+						}
+
+						if (sourcePageIds[index] == sourceId) {
+							targetPageIds[index] = targetId;
+							index++;
+						}
+					}
+					return targetPageIds;
 				}
-				
-				if (index >= sourcePageIds.length) {
-					break;
-				}
-				
-				if (sourcePageIds[index] == sourceId) {
-					targetPageIds[index] = targetId;
-					index++;
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			return targetPageIds;
-
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 			return null;

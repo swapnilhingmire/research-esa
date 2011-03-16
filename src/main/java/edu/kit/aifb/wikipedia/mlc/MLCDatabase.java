@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.JdbcFactory;
 import edu.kit.aifb.nlp.Language;
 import gnu.trove.TIntArrayList;
 
@@ -19,7 +19,7 @@ public class MLCDatabase {
 	
 	String mlcTable;
 	String mlcCategorylinksTable;
-	JdbcStatementBuffer jsb;
+	JdbcFactory jsb;
 	TIntArrayList conceptIds;
 	
 	@Required
@@ -28,7 +28,7 @@ public class MLCDatabase {
 	}
 	
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcFactory( JdbcFactory jsb ) {
 		this.jsb = jsb;
 	}
 	
@@ -47,27 +47,47 @@ public class MLCDatabase {
 	public void readConcepts() throws SQLException {
 		logger.info( "Reading concept ids from " + mlcTable );
 		conceptIds = new TIntArrayList();
-		PreparedStatement pst = jsb.getPreparedStatement(
+		PreparedStatement pst = jsb.prepareStatement(
 				"select distinct mlc_id from " + mlcTable + " order by mlc_id;" );
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			conceptIds.add( rs.getInt( 1 ) );
+		try {
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					conceptIds.add( rs.getInt( 1 ) );
+				}
+				logger.info( "Found " + conceptIds.size() + " concepts." );
+			}
+			finally {
+				rs.close();
+			}
 		}
-		logger.info( "Found " + conceptIds.size() + " concepts." );
+		finally {
+			pst.close();
+		}
 	}
 	
 	public TIntArrayList getPageIds( int conceptId, Language language ) throws SQLException {
-		PreparedStatement pst = jsb.getPreparedStatement(
+		PreparedStatement pst = jsb.prepareStatement(
 				"select mlc_page from " + mlcTable + " where mlc_id=? and mlc_lang=?;" );
-		pst.setInt( 1, conceptId );
-		pst.setString( 2, language.toString() );
-		
-		TIntArrayList pageIds = new TIntArrayList();
-		ResultSet pageResultSet = pst.executeQuery();
-		while( pageResultSet.next() ) {
-			pageIds.add( pageResultSet.getInt( 1 ) );
+		try {
+			pst.setInt( 1, conceptId );
+			pst.setString( 2, language.toString() );
+
+			TIntArrayList pageIds = new TIntArrayList();
+			ResultSet pageResultSet = pst.executeQuery();
+			try {
+				while( pageResultSet.next() ) {
+					pageIds.add( pageResultSet.getInt( 1 ) );
+				}
+				return pageIds;
+			}
+			finally {
+				pageResultSet.close();
+			}
 		}
-		return pageIds;
+		finally {
+			pst.close();
+		}
 	}
 	
 	public TIntArrayList getMlcArticleIdsInCategory( int categoryId ) throws SQLException {
@@ -76,16 +96,25 @@ public class MLCDatabase {
 			logger.error( "Table for MLC category links was not set!" );
 		}
 		else {
-			PreparedStatement pstLinks = jsb.getPreparedStatement(
+			PreparedStatement pstLinks = jsb.prepareStatement(
 					"select mlcl_from from " + mlcCategorylinksTable
 					+ " where mlcl_namespace=0 and mlcl_to=?;" );
-
 			if( logger.isDebugEnabled() )
 				logger.debug( "Retrieving mlc concepts linking to category " + categoryId );
-			pstLinks.setInt( 1, categoryId );
-			ResultSet linkResultSet = pstLinks.executeQuery();
-			while( linkResultSet.next() ) {
-				mlcArticleIds.add( linkResultSet.getInt( 1 ) );
+			try {
+				pstLinks.setInt( 1, categoryId );
+				ResultSet linkResultSet = pstLinks.executeQuery();
+				try {
+					while( linkResultSet.next() ) {
+						mlcArticleIds.add( linkResultSet.getInt( 1 ) );
+					}
+				}
+				finally {
+					linkResultSet.close();
+				}
+			}
+			finally {
+				pstLinks.close();
 			}
 		}
 		return mlcArticleIds;

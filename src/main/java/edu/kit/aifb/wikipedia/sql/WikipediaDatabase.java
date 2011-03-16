@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.JdbcFactory;
 import edu.kit.aifb.nlp.Language;
 import gnu.trove.TIntArrayList;
 
@@ -25,11 +25,11 @@ public class WikipediaDatabase {
 	static Logger logger = Logger.getLogger(WikipediaDatabase.class); 
 		
 	String db;
-	JdbcStatementBuffer jsb;
+	JdbcFactory jsb;
 	Language language;
 	
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcFactory( JdbcFactory jsb ) {
 		this.jsb = jsb;
 	}
 	
@@ -57,31 +57,38 @@ public class WikipediaDatabase {
 				+"where cl_from=? "
 				+"and cl_to=page_title "
 				+"and page_namespace="+Page.CATEGORY_NAMESPACE+";";
-			
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
 
-			st.setInt(1, page.getId());
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				IPage p = new Page(rs.getInt(1), Page.CATEGORY_NAMESPACE, rs.getString(2), rs.getInt(3) > 0);
-				p = resolveRedirects(p);
-				if (p != null) {
-					articles.add(p);
+			try{
+				st.setInt(1, page.getId());
+				ResultSet rs = st.executeQuery();
+				try{
+					while (rs.next()) {
+						IPage p = new Page(rs.getInt(1), Page.CATEGORY_NAMESPACE, rs.getString(2), rs.getInt(3) > 0);
+						p = resolveRedirects(p);
+						if (p != null) {
+							articles.add(p);
+						}
+					}
+
+					if (articles.size() > 0) {
+						return articles;
+					}
+				}
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			
-			if (articles.size() > 0) {
-				return articles;
-			} else {
-				return null;
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 
 	public Collection<IPage> getLinkedPages(IPage page) {
@@ -93,29 +100,36 @@ public class WikipediaDatabase {
 				+"from "+db+".page, "+db+".pagelinks "
 				+"where pl_from=? "
 				+"and pl_namespace=page_namespace and pl_title=page_title;";
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
 
-			st.setInt(1, page.getId());
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
-				p = resolveRedirects(p);
-				if (p != null) {
-					pages.add(p);
+			try {
+				st.setInt(1, page.getId());
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
+						p = resolveRedirects(p);
+						if (p != null) {
+							pages.add(p);
+						}
+					}
+					return pages;
+				}
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			
-			return pages;
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
-			return null;
 		} catch (PropertyNotInitializedException e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 	
 	public Collection<IPage> getSubCategories(IPage page) {
@@ -127,23 +141,31 @@ public class WikipediaDatabase {
 				+"from "+db+".page, "+db+".categorylinks "
 				+"where page_id=cl_from and page_namespace=? "
 				+"and cl_to=?;";
-			PreparedStatement st = jsb.getPreparedStatement( sql );
-			st.setInt(1, Page.CATEGORY_NAMESPACE );
-			st.setString(2, page.getTitle() );
-			if (logger.isDebugEnabled())
-				logger.debug("SQL: "+sql + " {" + Page.CATEGORY_NAMESPACE + "," + page.getTitle() + "}" );
+			PreparedStatement st = jsb.prepareStatement( sql );
+			try {
+				st.setInt(1, Page.CATEGORY_NAMESPACE );
+				st.setString(2, page.getTitle() );
+				if (logger.isDebugEnabled())
+					logger.debug("SQL: "+sql + " {" + Page.CATEGORY_NAMESPACE + "," + page.getTitle() + "}" );
 
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
-				p = resolveRedirects(p);
-				if (p != null) {
-					pages.add(p);
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
+						p = resolveRedirects(p);
+						if (p != null) {
+							pages.add(p);
+						}
+					}
+					return pages;
+				}
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			
-			return pages;
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 			return null;
@@ -162,23 +184,31 @@ public class WikipediaDatabase {
 				+"from "+db+".page, "+db+".categorylinks "
 				+"where page_id=cl_from and page_namespace=? "
 				+"and cl_to=?;";
-			PreparedStatement st = jsb.getPreparedStatement( sql );
-			st.setInt(1, Page.ARTICLE_NAMESPACE );
-			st.setString(2, category.getTitle() );
-			if (logger.isDebugEnabled())
-				logger.debug("SQL: "+sql + " {" + Page.ARTICLE_NAMESPACE + "," + category.getTitle() + "}" );
+			PreparedStatement st = jsb.prepareStatement( sql );
+			try {
+				st.setInt(1, Page.ARTICLE_NAMESPACE );
+				st.setString(2, category.getTitle() );
+				if (logger.isDebugEnabled())
+					logger.debug("SQL: "+sql + " {" + Page.ARTICLE_NAMESPACE + "," + category.getTitle() + "}" );
 
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
-				p = resolveRedirects(p);
-				if (p != null) {
-					pages.add(p);
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
+						p = resolveRedirects(p);
+						if (p != null) {
+							pages.add(p);
+						}
+					}
+					return pages;
+				}
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			
-			return pages;
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 			return null;
@@ -194,26 +224,30 @@ public class WikipediaDatabase {
 				"select page_id, page_is_redirect "
 				+"from "+db+".page where page_title=? and page_namespace=?;";
 
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			st.setString(1, title);
-			st.setInt(2, Page.ARTICLE_NAMESPACE);
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				IPage p = new Page(rs.getInt(1), Page.ARTICLE_NAMESPACE, title, rs.getInt(2) > 0);
-				rs.close();
-				return resolveRedirects(p);
-
-			} else {
-				rs.close();
-				return null;
+			try {
+				st.setString(1, title);
+				st.setInt(2, Page.ARTICLE_NAMESPACE);
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						IPage p = new Page(rs.getInt(1), Page.ARTICLE_NAMESPACE, title, rs.getInt(2) > 0);
+						return resolveRedirects(p);
+					}
+				}
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 
 	public IPage getCategory(String title) {
@@ -222,26 +256,30 @@ public class WikipediaDatabase {
 				"select page_id, page_is_redirect "
 				+"from "+db+".page where page_title=? and page_namespace=?;";
 
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: " + sql + " {" + title + "," + Page.CATEGORY_NAMESPACE + "}");
-
-			st.setString(1, title);
-			st.setInt(2, Page.CATEGORY_NAMESPACE);
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				IPage p = new Page(rs.getInt(1), Page.CATEGORY_NAMESPACE, title, rs.getInt(2) > 0);
-				rs.close();
-				return resolveRedirects(p);
-
-			} else {
-				rs.close();
-				return null;
+			try {
+				st.setString(1, title);
+				st.setInt(2, Page.CATEGORY_NAMESPACE);
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						IPage p = new Page(rs.getInt(1), Page.CATEGORY_NAMESPACE, title, rs.getInt(2) > 0);
+						return resolveRedirects(p);
+					} 
+				} 
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 	
 	public void initializePage(IPage p) {
@@ -250,20 +288,25 @@ public class WikipediaDatabase {
 				"select page_namespace, page_title, page_is_redirect "
 				+"from "+db+".page where page_id=?;";
  
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			st.setInt(1, p.getId());
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				p.setNamespace(rs.getInt(1));
-				p.setTitle(rs.getString(2));
-				p.setIsRedirect(rs.getInt(3) > 0);
-				rs.close();
-
-			} else {
-				rs.close();
+			try {
+				st.setInt(1, p.getId());
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						p.setNamespace(rs.getInt(1));
+						p.setTitle(rs.getString(2));
+						p.setIsRedirect(rs.getInt(3) > 0);
+					}
+				}
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -289,36 +332,49 @@ public class WikipediaDatabase {
 			+"from "+db+".page, "+db+".redirect "
 			+"where rd_namespace=page_namespace and rd_title=page_title "
 			+"and rd_from=?";
-		PreparedStatement stmt0 = jsb.getPreparedStatement( sql0 );
-		stmt0.setInt(1, p.getId());
-		if (logger.isDebugEnabled())
-			logger.debug("SQL: "+sql0);
-		ResultSet rs = stmt0.executeQuery();
-		if (rs.next()) {
-			newPage = new Page(rs.getInt(1), p.getNamespace(), rs.getString(2), rs.getInt(3) > 0);
-			rs.close();
-		} else {
-			rs.close();
-			
-			String sql1 =
-				"select page_id, page_title, page_is_redirect "
-				+"from "+db+".page, "+db+".pagelinks "
-				+"where pl_namespace=page_namespace and pl_title=page_title "
-				+"and pl_from=?";
-			
-			PreparedStatement stmt1 = jsb.getPreparedStatement( sql1 );
-			stmt1.setInt(1, p.getId());
+		PreparedStatement stmt0 = jsb.prepareStatement( sql0 );
+		try {
+			stmt0.setInt(1, p.getId());
 			if (logger.isDebugEnabled())
-				logger.debug("SQL: "+sql1);
-			rs = stmt1.executeQuery();
-			if (rs.next()) {
-				newPage = new Page(rs.getInt(1), p.getNamespace(), rs.getString(2), rs.getInt(3) > 0);
-				rs.close();
-			} else {
+				logger.debug("SQL: "+sql0);
+			ResultSet rs = stmt0.executeQuery();
+			try {
+				if (rs.next()) {
+					newPage = new Page(rs.getInt(1), p.getNamespace(), rs.getString(2), rs.getInt(3) > 0);
+				} else {
+					String sql1 =
+						"select page_id, page_title, page_is_redirect "
+						+"from "+db+".page, "+db+".pagelinks "
+						+"where pl_namespace=page_namespace and pl_title=page_title "
+						+"and pl_from=?";
+
+					PreparedStatement stmt1 = jsb.prepareStatement( sql1 );
+					try {
+						stmt1.setInt(1, p.getId());
+						if (logger.isDebugEnabled())
+							logger.debug("SQL: "+sql1);
+						ResultSet rs1 = stmt1.executeQuery();
+						try {
+							if (rs1.next()) {
+								newPage = new Page(rs1.getInt(1), p.getNamespace(), rs1.getString(2), rs1.getInt(3) > 0);
+							}
+						}
+						finally {
+							rs1.close();
+						}
+					}
+					finally {
+						stmt1.close();
+					}
+				}
+			}
+			finally {
 				rs.close();
 			}
 		}
-
+		finally {
+			stmt0.close();
+		}
 		/* recursion */
 		return resolveRedirects(newPage);
 	}
@@ -332,38 +388,42 @@ public class WikipediaDatabase {
 				+"where rev_page=? "
 				+"and rev_text_id=old_id "
 				+"order by rev_timestamp desc limit 1;";
-			
+
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-			PreparedStatement stmt = jsb.getPreparedStatement( sql );
-			stmt.setInt(1, p.getId());
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				Blob blob = rs.getBlob(1);
-				rs.close();
-								
-				StringBuilder sb = new StringBuilder((int)blob.length());
-				
-				BufferedReader r = new BufferedReader(new InputStreamReader(blob.getBinaryStream(), "UTF-8"));
-				
-				for (String line = r.readLine(); line != null; line = r.readLine()) {
-					sb.append(line);
+			PreparedStatement stmt = jsb.prepareStatement( sql );
+			try {
+				stmt.setInt(1, p.getId());
+				ResultSet rs = stmt.executeQuery();
+				try {
+					if (rs.next()) {
+						Blob blob = rs.getBlob(1);
+
+						StringBuilder sb = new StringBuilder((int)blob.length());
+						BufferedReader r = new BufferedReader(new InputStreamReader(blob.getBinaryStream(), "UTF-8"));
+
+						for (String line = r.readLine(); line != null; line = r.readLine()) {
+							sb.append(line);
+						}
+						return sb.toString();
+					}
 				}
-				return sb.toString();
-			} else {
-				rs.close();
-				return null;
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				stmt.close();
 			}
 		} catch (SQLException e) {
 			logger.error(e);
-			return null;
 		} catch (IOException e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 
-	public JdbcStatementBuffer getJdbcStatementBuffer() {
+	public JdbcFactory getJdbcFactory() {
 		return jsb;
 	}
 
@@ -380,19 +440,24 @@ public class WikipediaDatabase {
 				"where page_id=? " +
 				"and page_namespace=pl_namespace "+
 				"and page_title=pl_title;";
- 
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			st.setInt(1, p.getId());
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				count = rs.getInt(1);
-				rs.close();
-
-			} else {
-				rs.close();
+			try {
+				st.setInt(1, p.getId());
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						count = rs.getInt(1);
+					}
+				}
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -408,18 +473,23 @@ public class WikipediaDatabase {
 				"from "+db+".pagelinks "+
 				"where pl_from=?;";
  
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			st.setInt(1, p.getId());
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				count = rs.getInt(1);
-				rs.close();
-
-			} else {
-				rs.close();
+			try {
+				st.setInt(1, p.getId());
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						count = rs.getInt(1);
+					} 
+				}
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -446,21 +516,28 @@ public class WikipediaDatabase {
 				+"where pl_from="+sourcePage.getId()+" "
 				+"and pl_namespace=page_namespace and pl_title=page_title "
 				+"and page_id in ("+idStringBuilder.toString()+");";
-			Statement st = jsb.getStatement();
+			Statement st = jsb.createStatement();
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			ResultSet rs = st.executeQuery(sql);
-			while (rs.next()) {
-				IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
-				p = resolveRedirects(p);
-				if (p != null) {
-					pages.add(p);
+			try {
+				ResultSet rs = st.executeQuery(sql);
+				try {
+					while (rs.next()) {
+						IPage p = new Page(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4) > 0);
+						p = resolveRedirects(p);
+						if (p != null) {
+							pages.add(p);
+						}
+					}
+					return pages;
+				}
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			
-			return pages;
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 			return null;
@@ -476,18 +553,23 @@ public class WikipediaDatabase {
 				"select max(page_id) "
 				+"from "+db+".page;";
 
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				int maxPageId = rs.getInt( 1 );
-				rs.close();
-				return maxPageId;
-
-			} else {
-				rs.close();
+			try {
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						int maxPageId = rs.getInt( 1 );
+						return maxPageId;
+					}
+				}
+				finally {
+					rs.close();
+				}
+			}
+			finally {
+				st.close();
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -505,25 +587,32 @@ public class WikipediaDatabase {
 				"select page_id "
 				+"from "+db+".page "
 				+"where page_namespace=0 and page_is_redirect=0";
-			
+
 			if( number > 0 ) {
 				sql += " limit " + number;
 			}
 			sql += ";";
 
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
+			try {
+				TIntArrayList ids = new TIntArrayList();
 
-			TIntArrayList ids = new TIntArrayList();
-
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				ids.add( rs.getInt( 1 ) );
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						ids.add( rs.getInt( 1 ) );
+					}
+					return ids;
+				}
+				finally {
+					rs.close();
+				}
 			}
-			rs.close();
-			return ids;
-
+			finally {
+				st.close();
+			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -537,19 +626,26 @@ public class WikipediaDatabase {
 				+ "from " + table + " "
 				+ "order by " + column + ";";
 			
-			PreparedStatement st = jsb.getPreparedStatement( sql );
+			PreparedStatement st = jsb.prepareStatement( sql );
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
+			try {
+				TIntArrayList ids = new TIntArrayList();
 
-			TIntArrayList ids = new TIntArrayList();
-
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				ids.add( rs.getInt( 1 ) );
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						ids.add( rs.getInt( 1 ) );
+					}
+					return ids;
+				}
+				finally {
+					rs.close();
+				}
 			}
-			rs.close();
-			return ids;
-
+			finally {
+				st.close();
+			}
 		} catch (Exception e) {
 			logger.error(e);
 		}

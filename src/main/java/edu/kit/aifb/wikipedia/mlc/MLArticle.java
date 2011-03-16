@@ -13,18 +13,28 @@ public class MLArticle extends AbstractMLConcept {
 	}
 	
 	public Collection<MLCategory> getCategories() throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlcl_to from "
 				+ factory.getCategorylinksTable()
 				+ " where mlcl_namespace=0 and mlcl_from=?;" );
-		pst.setInt( 1, id );
-		
-		Collection<MLCategory> categories = new ArrayList<MLCategory>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			categories.add( factory.createMLCategory( rs.getInt( 1 ) ) );
+		try {
+			pst.setInt( 1, id );
+
+			Collection<MLCategory> categories = new ArrayList<MLCategory>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					categories.add( factory.createMLCategory( rs.getInt( 1 ) ) );
+				}
+				return categories;
+			}
+			finally {
+				rs.close();
+			}
 		}
-		return categories;
+		finally {
+			pst.close();
+		}
 	}
 
 }

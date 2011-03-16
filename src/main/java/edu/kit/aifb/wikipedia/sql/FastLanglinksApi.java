@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.JdbcFactory;
 
 
 public class FastLanglinksApi implements ILanglinksApi {
@@ -21,7 +21,7 @@ public class FastLanglinksApi implements ILanglinksApi {
 	WikipediaDatabase sourceWikiApi;
 	WikipediaDatabase targetWikiApi;
 	
-	JdbcStatementBuffer jsb;
+	JdbcFactory jsb;
 	
 	@Required
 	public void setSourceWikipediaDatabase( WikipediaDatabase source ) {
@@ -34,7 +34,7 @@ public class FastLanglinksApi implements ILanglinksApi {
 	}
 
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcFactory( JdbcFactory jsb ) {
 		this.jsb = jsb;
 	}
 	
@@ -56,13 +56,22 @@ public class FastLanglinksApi implements ILanglinksApi {
 				"from "+sourceWikiApi.getDbName()+".fast_langlinks "+
 				"where ll_from=? "+
 				"and ll_lang=\""+targetWikiApi.getLanguage()+"\";";
-			PreparedStatement st = jsb.getPreparedStatement( sql );
-			st.setInt(1, sourcePageId);
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				targetPageId = rs.getInt(1);
+			PreparedStatement st = jsb.prepareStatement( sql );
+			try {
+				st.setInt(1, sourcePageId);
+				ResultSet rs = st.executeQuery();
+				try {
+					if (rs.next()) {
+						targetPageId = rs.getInt(1);
+					}
+				}
+				finally {
+					rs.close();
+				}
 			}
-			rs.close();
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 		}
@@ -97,21 +106,31 @@ public class FastLanglinksApi implements ILanglinksApi {
 			
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: "+sql);
-			PreparedStatement st = jsb.getPreparedStatement( sql );
-			st.setInt(1, a.getId());
-			st.setInt(2, b.getId());
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				Page[] pageArray = new Page[2]; 
-				pageArray[0] = new Page(rs.getInt(1));
-				pageArray[1] = new Page(rs.getInt(2));
-				l.add(pageArray);
+			PreparedStatement st = jsb.prepareStatement( sql );
+			try {
+				st.setInt(1, a.getId());
+				st.setInt(2, b.getId());
+				ResultSet rs = st.executeQuery();
+				try {
+					while (rs.next()) {
+						Page[] pageArray = new Page[2]; 
+						pageArray[0] = new Page(rs.getInt(1));
+						pageArray[1] = new Page(rs.getInt(2));
+						l.add(pageArray);
+					}
+					return l;
+				}
+				finally {
+					rs.close();
+				}
 			}
-			return l;
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -141,32 +160,39 @@ public class FastLanglinksApi implements ILanglinksApi {
 			
 			if (logger.isDebugEnabled())
 				logger.debug("SQL: selectManyBySource");
-			Statement st = jsb.getStatement();
-			ResultSet rs = st.executeQuery(sql);
-			
-			int index = 0;
-			int[] targetPageIds = new int[sourcePageIds.length];
+			Statement st = jsb.createStatement();
+			try {
+				ResultSet rs = st.executeQuery(sql);
+				try {
+					int index = 0;
+					int[] targetPageIds = new int[sourcePageIds.length];
 
-			while (rs.next()) {
-				int sourceId = rs.getInt(1);
-				int targetId = rs.getInt(2);
-				while (sourcePageIds[index] < sourceId && index < sourcePageIds.length) {
-					targetPageIds[index] = -1;
-					index++;
+					while (rs.next()) {
+						int sourceId = rs.getInt(1);
+						int targetId = rs.getInt(2);
+						while (sourcePageIds[index] < sourceId && index < sourcePageIds.length) {
+							targetPageIds[index] = -1;
+							index++;
+						}
+
+						if (index >= sourcePageIds.length) {
+							break;
+						}
+
+						if (sourcePageIds[index] == sourceId) {
+							targetPageIds[index] = targetId;
+							index++;
+						}
+					}
+					return targetPageIds;
 				}
-				
-				if (index >= sourcePageIds.length) {
-					break;
-				}
-				
-				if (sourcePageIds[index] == sourceId) {
-					targetPageIds[index] = targetId;
-					index++;
+				finally {
+					rs.close();
 				}
 			}
-			rs.close();
-			return targetPageIds;
-
+			finally {
+				st.close();
+			}
 		} catch (SQLException e) {
 			logger.error(e);
 			return null;
