@@ -13,54 +13,84 @@ public class MLCategory extends AbstractMLConcept {
 	}
 	
 	public Collection<MLCategory> getSubCategories() throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlcl_from from "
 				+ factory.getCategorylinksTable()
 				+ " where mlcl_namespace=14 and mlcl_to=?;" );
-		pst.setInt( 1, id );
-		
-		Collection<MLCategory> categories = new ArrayList<MLCategory>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			int subId = rs.getInt( 1 );
-			if( subId != id ) {
-				categories.add( factory.createMLCategory( subId ) );
+		try {
+			pst.setInt( 1, id );
+
+			Collection<MLCategory> categories = new ArrayList<MLCategory>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					int subId = rs.getInt( 1 );
+					if( subId != id ) {
+						categories.add( factory.createMLCategory( subId ) );
+					}
+				}
+				return categories;
+			}
+			finally {
+				rs.close();
 			}
 		}
-		return categories;
+		finally {
+			pst.close();
+		}
 	}
 
 	public Collection<MLCategory> getSupCategories() throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlcl_to from "
 				+ factory.getCategorylinksTable()
 				+ " where mlcl_namespace=14 and mlcl_from=?;" );
-		pst.setInt( 1, id );
-		
-		Collection<MLCategory> categories = new ArrayList<MLCategory>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			int supId = rs.getInt( 1 );
-			if( supId != id ) {
-				categories.add( factory.createMLCategory( supId ) );
+		try {
+			pst.setInt( 1, id );
+
+			Collection<MLCategory> categories = new ArrayList<MLCategory>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					int supId = rs.getInt( 1 );
+					if( supId != id ) {
+						categories.add( factory.createMLCategory( supId ) );
+					}
+				}
+				return categories;
+			}
+			finally {
+				rs.close();
 			}
 		}
-		return categories;
+		finally {
+			pst.close();
+		}
 	}
 
 	public Collection<MLArticle> getArticles() throws SQLException {
-		PreparedStatement pst = factory.getJdbcStatementBuffer().getPreparedStatement(
+		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlcl_from from "
 				+ factory.getCategorylinksTable()
 				+ " where mlcl_namespace=0 and mlcl_to=?;" );
-		pst.setInt( 1, id );
-		
-		Collection<MLArticle> concepts = new ArrayList<MLArticle>();
-		ResultSet rs = pst.executeQuery();
-		while( rs.next() ) {
-			concepts.add( factory.createMLArticle( rs.getInt( 1 ) ) );
+		try {
+			pst.setInt( 1, id );
+
+			Collection<MLArticle> concepts = new ArrayList<MLArticle>();
+			ResultSet rs = pst.executeQuery();
+			try {
+				while( rs.next() ) {
+					concepts.add( factory.createMLArticle( rs.getInt( 1 ) ) );
+				}
+				return concepts;
+			}
+			finally {
+				rs.close();
+			}
 		}
-		return concepts;
+		finally {
+			pst.close();
+		}
 	}
 
 }

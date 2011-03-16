@@ -20,15 +20,11 @@
  
   <!-- JDBC Database beans -->
  
-  <bean id="mysql_database" class="edu.kit.aifb.JdbcFactory">
+  <bean id="wp_database" class="edu.kit.aifb.DefaultJdbcFactory">
     <property name="driver" value="com.mysql.jdbc.Driver"/>
     <property name="url" value="jdbc:mysql://localhost/?user=wikipedia&password=wikipedia&useCursorFetch=true"/>
   </bean>
 
-  <bean id="mysql_statement_buffer" class="edu.kit.aifb.JdbcStatementBuffer">
-        <property name="jdbcFactory" ref="mysql_database"/>
-  </bean>
- 
   <!-- NLP -->
  
   <bean id="multilingual_analyzer" class="edu.kit.aifb.nlp.MultiLingualAnalyzer">

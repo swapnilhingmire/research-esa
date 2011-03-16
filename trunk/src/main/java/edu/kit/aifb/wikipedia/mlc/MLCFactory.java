@@ -2,6 +2,7 @@ package edu.kit.aifb.wikipedia.mlc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import edu.kit.aifb.JdbcStatementBuffer;
+import edu.kit.aifb.JdbcFactory;
 import gnu.trove.TIntArrayList;
 
 public class MLCFactory implements ApplicationContextAware {
@@ -18,7 +19,7 @@ public class MLCFactory implements ApplicationContextAware {
 	
 	ApplicationContext context;
 	
-	JdbcStatementBuffer jsb;
+	JdbcFactory jsb;
 	String articleTable;
 	String categoryTable;
 	String categorylinksTable;
@@ -53,11 +54,11 @@ public class MLCFactory implements ApplicationContextAware {
 	}
 
 	@Autowired
-	public void setJdbcStatementBuffer( JdbcStatementBuffer jsb ) {
+	public void setJdbcFactory( JdbcFactory jsb ) {
 		this.jsb = jsb;
 	}
 
-	public JdbcStatementBuffer getJdbcStatementBuffer() {
+	public JdbcFactory getJdbcFactory() {
 		return jsb;
 	}
 
@@ -81,15 +82,26 @@ public class MLCFactory implements ApplicationContextAware {
 	public TIntArrayList readMLCategoryIds() throws SQLException {
 		logger.info( "Reading category ids" );
 		TIntArrayList categoryIds = new TIntArrayList();
-		ResultSet rs = jsb.getStatement().executeQuery(
-				"select distinct mlc_id from "
-				+ categoryTable
-				+ " order by mlc_id;" );
-		while( rs.next() ) {
-			categoryIds.add( rs.getInt( 1 ) );
+		Statement st = jsb.createStatement();
+		try {
+			ResultSet rs = st.executeQuery(
+					"select distinct mlc_id from "
+					+ categoryTable
+					+ " order by mlc_id;" );
+			try {
+				while( rs.next() ) {
+					categoryIds.add( rs.getInt( 1 ) );
+				}
+				logger.info( "Found " + categoryIds.size() + " categories." );
+				return categoryIds;
+			}
+			finally {
+				rs.close();
+			}
 		}
-		logger.info( "Found " + categoryIds.size() + " categories." );
-		return categoryIds;
+		finally {
+			st.close();
+		}
 	}
 
 	/*public TIntArrayList readMLRootCategoryIds() throws SQLException {

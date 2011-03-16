@@ -1,34 +1,25 @@
 package edu.kit.aifb.wikipedia.wpm;
 
+import java.sql.Connection;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Wikipedia;
-import org.wikipedia.miner.model.WikipediaDatabase;
+
+import edu.kit.aifb.JdbcFactory;
 
 public class WikipediaMinerWrapper {
 	private Logger logger = Logger.getLogger( WikipediaMinerWrapper.class );
 	
-	String user;
-	String password;
-	String server;
+	JdbcFactory jdbcFactory;
 	String database;
 	
 	Wikipedia wikipedia;
-	WikipediaDatabase wikipediaDatabase;
+	Connection connection;
 	
 	@Required
-	public void setUser( String user ) {
-		this.user = user;
-	}
-
-	@Required
-	public void setPassword( String password ) {
-		this.password = password;
-	}
-
-	@Required
-	public void setServer( String server ) {
-		this.server = server;
+	public void setJdbcFactory( JdbcFactory jdbcFactory ) {
+		this.jdbcFactory = jdbcFactory;
 	}
 
 	@Required
@@ -37,10 +28,10 @@ public class WikipediaMinerWrapper {
 	}
 	
 	public Wikipedia getWikipedia() throws Exception {
-		if( wikipedia == null || !wikipediaDatabase.checkConnection() ) {
-			logger.info( "Connecting to WikipediaMiner: " + database + "@" + server );
-			wikipedia = new Wikipedia( server, database, user, password );
-			wikipediaDatabase = wikipedia.getDatabase();
+		if( wikipedia == null || connection == null || connection.isClosed() ) {
+			logger.info( "Connecting to WikipediaMiner: " + database );
+			connection = jdbcFactory.getConnection();
+			wikipedia = new Wikipedia( database, connection );
 		}
 		return wikipedia;
 	}
