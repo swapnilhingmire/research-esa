@@ -33,7 +33,7 @@ public class WikipediaMinerWrapper {
 	public Wikipedia getWikipedia() throws Exception {
 		if( wikipedia == null || connection == null || connection.isClosed() ) {
 			logger.info( "Connecting to WikipediaMiner: " + database );
-			connection = jdbcFactory.getConnection();
+			connection = jdbcFactory.createConnection();
 			
 			Statement stmt = connection.createStatement();
 			try {
