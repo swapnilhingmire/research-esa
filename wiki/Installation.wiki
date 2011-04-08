@@ -30,3 +30,6 @@ Introduced in version 2.0, [http://maven.apache.org/ Maven] can be used to organ
 
 ==Running the demo==
 After compiling the sources the demo can be started as described in the [Tutorial].
+
+==Problems==
+Several known problems are listed on our [Troubleshooting] page.
