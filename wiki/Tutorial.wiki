@@ -1,7 +1,5 @@
 #summary A short turorial for an example use of the ESA framework.
 
-=Tutorial=
-
 ==Install local Wikipedia database==
   * Download the Wikipedia XML dump for a specific language: [http://download.wikipedia.org/]
   * Import SQL to a local database server according to [http://www.mediawiki.org/wiki/Manual:Importing_XML_dumps]
