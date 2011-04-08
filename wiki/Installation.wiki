@@ -1,7 +1,5 @@
 #summary Documentation of the installation of research-esa.
 
-=Installation=
-
 ==Java sources==
 The project is provided as Java source files that can be downloaded from the project SVN.
 
