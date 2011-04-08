@@ -1,0 +1,11 @@
+#summary Problems that have been experienced with Research-ESA.
+
+= Introduction =
+
+On this page, we list known problems of different versions of Research-ESA. The presented solutions to these problems will hopefully help to avoid the same problems for new installations.
+
+= Research-ESA 2.0 =
+
+== Database ==
+
+ * Latin-1 encoding
