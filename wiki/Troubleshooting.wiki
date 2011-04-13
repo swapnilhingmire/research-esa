@@ -7,13 +7,31 @@ On this page, we list known problems of different versions of Research-ESA. The 
 
 = Research-ESA 2.0 =
 
-== Install ==
+== Installing ==
 
-== Build ==
+    * === No unique bean of type {{{edu.kit.aifb.ConfigurationManager}}} error ===
 
-== Run == 
+This error was caused because the "&"  xml reserved character from the original {{{demo_context.xml}}} example should be replaced by &amp; to produce well formed xml. 
 
-=== ESA similarity calculation = 0.0 with non Latin-1 wikipedia databases  ===
+== Building Wikipedia indexes ==  
+
+    * === java.lang.OutOfMemoryError: Java heap space ===
+
+==== Trouble ====
+
+The error is produced when running demo.BuildWikipediaIndex.java in a not-so-powerful hardware. 
+
+==== Shooting ====
+
+Run demo.BuildWikipediaIndex with java -Xmx1G option. 
+
+    * === NoSuchMethodError in org.tartarus.snowball.SnowballProgram.stem() ===
+
+Libraries downloaded from the original Snowball stemmer site doesn't work with research-esa. You need the original libraries used in ir_framework_4.0. 
+
+== Calculating ESA vectors and text similarity ==
+
+    * === ESA similarity calculation = 0.0 with non Latin-1 wikipedia databases  ===
 
 ==== Trouble ====
 
