@@ -15,7 +15,7 @@ This error was caused because the "&"  xml reserved character from the original 
 
 == Building Wikipedia indexes ==  
 
-    * === java.lang.OutOfMemoryError: Java heap space ===
+    * === {{{java.lang.OutOfMemoryError: Java heap space}}} ===
 
 ==== Trouble ====
 
@@ -23,9 +23,9 @@ The error is produced when running demo.BuildWikipediaIndex.java in a not-so-pow
 
 ==== Shooting ====
 
-Run demo.BuildWikipediaIndex with java -Xmx1G option. 
+Run {{{ demo.BuildWikipediaIndex }}} with java -Xmx1G option. 
 
-    * === NoSuchMethodError in org.tartarus.snowball.SnowballProgram.stem() ===
+    * === NoSuchMethodError in {{{ org.tartarus.snowball.SnowballProgram.stem() }}} ===
 
 Libraries downloaded from the original Snowball stemmer site doesn't work with research-esa. You need the original libraries used in ir_framework_4.0. 
 
