@@ -13,9 +13,7 @@ On this page, we list known problems of different versions of Research-ESA. The 
 
 == Run == 
 
-== Database ==
-
-=== Latin-1 / UTF-8 /Binary encoding
+=== Wikipedia database encoding: Latin-1 vs binary UTF-8  ===
 
 ==== Problem ====
 
