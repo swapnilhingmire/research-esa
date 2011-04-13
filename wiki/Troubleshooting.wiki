@@ -13,7 +13,7 @@ On this page, we list known problems of different versions of Research-ESA. The 
 
 == Run == 
 
-=== ESA similarity calculation with non Latin-1 wikipedia databases ===
+=== ESA similarity calculation equal to 0.0 with non Latin-1 wikipedia databases  ===
 
 ==== Trouble ====
 
