@@ -13,11 +13,16 @@ On this page, we list known problems of different versions of Research-ESA. The 
 
 == Run == 
 
-=== Wikipedia database encoding: Latin-1 vs binary UTF-8  ===
+=== ESA similarity calculation with non Latin-1 wikipedia databases ===
 
-==== Problem ====
+==== Trouble ====
 
 When comparing two texts with demo.ComputeESASimilarity, the wikipedia database must be on latin1 charset in order to get a semantic similarity score between the two texts. However, I wanted to work with a full wikipedia database (which in english its supposed to have around 3 million pages), so I created the database via  [http://www.mediawiki.org/wiki/MediaWiki Mediawiki] engine, which doesn't support anymore latin-1 databases. Your only options are an utf-8 binary charset database or a plain utf8 one. I tried to calculate semantic similarity with both, but demo.ComputeESASimilarity always gave ESA = 0.0000. 
 
-==== *partial* solution ==== 
-I dumped wikimedia mysql database schema using {{{ mysqldump --nodata }}} and with sed I changed the charset and collation specifications to latin-1. Then I imported again the [http://dumps.wikimedia.org/enwiki/20110405/ wikipedia dumps]
+==== (Partial) Shooting ==== 
+
+I dumped wikimedia mysql database schema using {{{ mysqldump --nodata }}} to an {{{.sql}}} script and with {{{ sed }}} I changed the charset and collation specifications to latin-1. Then I imported again the [http://dumps.wikimedia.org/enwiki/20110405/ wikipedia dumps] , but mwdumper was not able to import the whole database because of a duplicate index error, which is actually documented in [http://www.mediawiki.org/wiki/Manual:MWDumper mwdumper ] documentation. So now I'm able to calculate ESA similarity in a latin-1 charset database, but with only around 10 percent of wikipedia articles. 
+
+==== Pending questions ====
+
+First I thought that demo.ComputeESASimilarity was calculating 0.00 because it couldn't read the ESA vectors, but when I tried demo.PrintESAVector from the binary utf-8 database I found no problem (output was very similar to the latin-1 database), so I think that the problem might be during the cosinus similarity calculation, but I haven't found anything yet. Any hints? 
