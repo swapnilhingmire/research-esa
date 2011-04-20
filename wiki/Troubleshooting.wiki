@@ -44,3 +44,7 @@ I dumped wikimedia mysql database schema using {{{ mysqldump --nodata }}} to an 
 ==== Pending questions ====
 
 First I thought that demo.ComputeESASimilarity was calculating 0.00 because it couldn't read the ESA vectors, but when I tried demo.PrintESAVector from the binary utf-8 database I found no problem (output was very similar to the latin-1 database), so I think that the problem might be during the cosinus similarity calculation, but I haven't found anything yet. Any hints? 
+
+==== Update on 03/20/2011 ====
+
+Im still not able to get demo.ComputeESASimilarity different from 0.00 with a full wikipedia database. Now I imported from wikipedia dumps with mwdumper using the --default-character-set=utf8 option on mysql database with binary character set. It worked for on a sample example of 100,000 wikipedia pages, but when I uploaded the 11 million pages of the last full wikipedia dump I got ESA Similarity=0,000000000 again (sigh).
