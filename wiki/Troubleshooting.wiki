@@ -44,7 +44,7 @@ The right configuration is:
 * mwdumper import of [http://dumps.wikimedia.org/enwiki/20110405/ wikipedia dumps] , but mwdumper must be called using the --default-character-set=utf8: 
 {{{
 
-java -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/cidesal/corpus/wikipedia/english/enwiki-20110405-pages-articles4.xml.bz2 | mysql -u cidesal -p wikipedia_english --default-character-set=utf8
+java -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/corpus/wikipedia/en/enwiki-20110405-pages-articles4.xml.bz2 | mysql -u cidesal -p wikipedia_english --default-character-set=utf8
 
 }}}
 
