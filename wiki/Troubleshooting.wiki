@@ -48,7 +48,7 @@ java -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/cidesal/corpus/wikipedia/en
 
 }}}
 
-* For the full wikipedia_english (11 million pages) the vector size must be bigger on demo_context.xml (originally it was set to 1000, I changed it to 10000 and it worked). 
+* For the full wikipedia_english (11 million pages) the FixedSizeConceptVectorBuilder size must be bigger on demo_context.xml (originally it was set to 1000, I changed it to 10000 and it worked). 
 
 {{{
 
@@ -61,7 +61,7 @@ java -jar build/mwdumper-1.16.jar --format=sql:1.5 ~/cidesal/corpus/wikipedia/en
     </property>
     <property name="conceptVectorBuilder">
       <bean class="edu.kit.aifb.concept.builder.FixedSizeConceptVectorBuilder">
-        <property name="size" value="1000"/>
+        <property name="size" value="10000"/>
       </bean>
     </property>
   </bean>
