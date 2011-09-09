@@ -1,15 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>pso</groupId>
+  <groupId>edu.kit.aifb.esa</groupId>
   <artifactId>research-esa</artifactId>
   <version>2.0</version>
   <name>Research ESA</name>
   <packaging>jar</packaging>
   <distributionManagement>
     <repository>
-      <id>pso.maven2</id>
-      <name>My private M2 repository</name>
-      <url>scpexe://aifbhades.aifb.uni-karlsruhe.de/home/data/users/pso/.m2/repository/</url>
+			<id>libs-releases</id>
+			<name>AIFB LS3 Artifactory</name>
+			<url>https://km.aifb.kit.edu/services/artifactory/libs-releases-local</url>
+			<uniqueVersion>false</uniqueVersion>
     </repository>
   </distributionManagement>
   <build>
@@ -48,7 +49,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>pso</groupId>
+      <groupId>edu.kit.aifb.esa</groupId>
       <artifactId>ir_framework</artifactId>
       <version>4.0</version>
     </dependency>
