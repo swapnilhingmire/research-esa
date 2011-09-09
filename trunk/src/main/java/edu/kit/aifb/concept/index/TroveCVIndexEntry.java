@@ -148,17 +148,14 @@ public class TroveCVIndexEntry implements Serializable {
 	public class TroveCVIndexEntryIterator implements ICVIndexEntryIterator {
 		private int m_index = -1;
 		
-		@Override
 		public int getDocId() {
 			return m_docIds.get( m_index );
 		}
 
-		@Override
 		public double getValue() {
 			return m_values.get( m_index );
 		}
 
-		@Override
 		public boolean next() {
 			m_index++;
 			if( m_index < m_docIds.size() - 1 ) {
@@ -169,7 +166,6 @@ public class TroveCVIndexEntry implements Serializable {
 			}
 		}
 
-		@Override
 		public double getValueSum() {
 			return m_valueSum;
 		}

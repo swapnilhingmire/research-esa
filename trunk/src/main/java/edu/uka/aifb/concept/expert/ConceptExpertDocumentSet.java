@@ -11,17 +11,14 @@ public class ConceptExpertDocumentSet implements IExpertDocumentSet {
 		this.indexReader = indexReader;
 	}
 	
-	@Override
 	public int getExpertId( String expertName ) {
 		return indexReader.getConceptVectorId( expertName );
 	}
 
-	@Override
 	public String getExpertName( int expertId ) {
 		return indexReader.getConceptVectorData( expertId ).getDocName();
 	}
 
-	@Override
 	public int getNumberOfExperts() {
 		return indexReader.getNumberOfDocuments();
 	}

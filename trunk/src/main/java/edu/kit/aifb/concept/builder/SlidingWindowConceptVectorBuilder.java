@@ -32,20 +32,17 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		this.windowSize = size;
 	}
 	
-	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
-	@Override
 	public void addScores(IConceptVector cv) {
 		logger.error( "addScore( IConceptVector) is not implemented!" );
 		//TODO Implementation
 	}
 
-	@Override
 	public IConceptVector getConceptVector() {
 		IConceptVector newCv = new TroveConceptVector( cv.getData().getDocName(), cv.size() );
 
@@ -77,7 +74,6 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		return newCv;
 	}
 
-	@Override
 	public void reset(String docName, int maxConceptId) {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
@@ -90,7 +86,6 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		return newBuilder;
 	}
 	
-	@Override
 	public IConceptVector getConceptVector(String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count) {
 		reset( docName, maxConceptId );

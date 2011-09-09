@@ -11,17 +11,14 @@ public class ConceptDocumentExpertIterator implements IDocumentExpertIterator {
 		this.indexEntryIt = indexEntryIt;
 	}
 	
-	@Override
 	public double getDocumentGivenExpertProb() {
 		return indexEntryIt.getValue() / indexEntryIt.getValueSum();
 	}
 
-	@Override
 	public int getExpertId() {
 		return indexEntryIt.getDocId();
 	}
 
-	@Override
 	public boolean next() {
 		return indexEntryIt.next();
 	}

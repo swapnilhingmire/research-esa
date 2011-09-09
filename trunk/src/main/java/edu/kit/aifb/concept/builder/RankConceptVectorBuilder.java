@@ -29,14 +29,12 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 		return 1 - (double)rank / size; 
 	}
 
-	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			cv.add( conceptIds[i], rankToScore( i ) );
 		}
 	}
 
-	@Override
 	public void addScores(IConceptVector oldCv) {
 		IConceptIterator it = oldCv.orderedIterator();
 		
@@ -45,7 +43,6 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 		}
 	}
 
-	@Override
 	public IConceptVector getConceptVector() {
 		IConceptVector newCv = new TroveConceptVector( cv.getData().getDocName(), cv.size() );
 		IConceptIterator it = cv.orderedIterator();
@@ -55,12 +52,10 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 		return newCv;
 	}
 
-	@Override
 	public void reset(String docName, int maxConceptId) {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 	
-	@Override
 	public IConceptVectorBuilder clone() {
 		RankConceptVectorBuilder newBuilder = new RankConceptVectorBuilder();
 		newBuilder.setSize( size );
@@ -68,7 +63,6 @@ public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 		
 	}
 
-	@Override
 	public IConceptVector getConceptVector(String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count) {
 		reset( docName, maxConceptId );

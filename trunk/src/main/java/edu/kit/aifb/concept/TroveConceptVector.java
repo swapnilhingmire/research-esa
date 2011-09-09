@@ -20,12 +20,10 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 		valueMap = new TIntDoubleHashMap();
 	}
 	
-	@Override
 	public void add(int key, double d) {
 		valueMap.put( key, valueMap.get( key ) + d );
 	}
 
-	@Override
 	public void add( IConceptVector v ) {
 		IConceptIterator it = v.iterator();
 		while( it.next() ) {
@@ -33,32 +31,26 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 		}
 	}
 
-	@Override
 	public int count() {
 		return valueMap.size();
 	}
 
-	@Override
 	public double get( int key ) {
 		return valueMap.get( key );
 	}
 
-	@Override
 	public IConceptVectorData getData() {
 		return new TroveConceptVectorData();
 	}
 
-	@Override
 	public IConceptIterator iterator() {
 		return new TroveConceptVectorIterator();
 	}
 
-	@Override
 	public IConceptIterator orderedIterator() {
 		return new TroveConceptVectorOrderedIterator( valueMap );
 	}
 
-	@Override
 	public void set( int key, double d ) {
 		if( d != 0 ) {
 			valueMap.put( key, d );
@@ -68,7 +60,6 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 		}
 	}
 
-	@Override
 	public int size() {
 		return size;
 	}
@@ -105,7 +96,6 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 				sum = 0;
 			}
 			
-			@Override
 			public boolean execute( double value ) {
 				if( p == 1 ) {
 					sum += value;
@@ -130,17 +120,14 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 			reset();
 		}
 		
-		@Override
 		public int getId() {
 			return valueIt.key();
 		}
 
-		@Override
 		public double getValue() {
 			return valueIt.value();
 		}
 
-		@Override
 		public boolean next() {
 			if( valueIt.hasNext() ) {
 				valueIt.advance();
@@ -149,7 +136,6 @@ public class TroveConceptVector implements IConceptVector, Serializable {
 			return false;
 		}
 
-		@Override
 		public void reset() {
 			valueIt = valueMap.iterator();
 		}

@@ -45,7 +45,6 @@ public class CombinedTerrierESAConceptExtractor implements IConceptExtractor {
 		}
 	}
 
-	@Override
 	public IConceptVector extract( IDocument doc ) {
 		logger.info( "Extracting concepts for document " + doc.getName()+ ", language=" + language );
 		reset( doc.getName() );
@@ -56,7 +55,6 @@ public class CombinedTerrierESAConceptExtractor implements IConceptExtractor {
 		return conceptVectorBuilder.getConceptVector();
 	}
 	
-	@Override
 	public IConceptVector extract( IDocument doc, String... fields ) {
 		logger.info( "Extracting concepts for document " + doc.getName() + ", fields=" + Arrays.toString( fields ) );
 		reset( doc.getName() );
@@ -67,7 +65,6 @@ public class CombinedTerrierESAConceptExtractor implements IConceptExtractor {
 		return conceptVectorBuilder.getConceptVector();
 	}
 
-	@Override
 	public IConceptVector extract( String docName, ITokenStream queryTokenStream ) {
 		logger.info( "Extracting concepts for document " + docName );
 		reset( docName );

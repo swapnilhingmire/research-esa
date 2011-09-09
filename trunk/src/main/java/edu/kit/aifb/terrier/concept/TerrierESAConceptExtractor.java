@@ -37,21 +37,18 @@ public class TerrierESAConceptExtractor implements IConceptExtractor {
 		conceptVectorBuilder = builder;
 	}
 
-	@Override
 	public IConceptVector extract( IDocument doc ) {
 		logger.info( "Extracting concepts for document " + doc.getName() );
 		search.match( doc, language );
 		return buildVector( doc.getName(), search.getResultSet() );
 	}
 	
-	@Override
 	public IConceptVector extract( IDocument doc, String... fields ) {
 		logger.info( "Extracting concepts for document " + doc.getName() );
 		search.match( doc, fields );
 		return buildVector( doc.getName(), search.getResultSet() );
 	}
 
-	@Override
 	public IConceptVector extract( String docName, ITokenStream queryTokenStream ) {
 		logger.info( "Extracting concepts for document " + docName );
 		search.match( queryTokenStream );

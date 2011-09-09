@@ -38,7 +38,7 @@ public class TerrierESAIndex implements IConceptIndex {
 	
 	TerrierIndexFactory terrierIndexFactory;
 	
-	@Autowired  @Override
+	@Autowired  
 	public void setTokenAnalyzer( ITokenAnalyzer analyzer ) {
 		logger.info( "Setting token analyzer: " + analyzer.getClass().getName() );
 		this.analyzer = analyzer;
@@ -49,7 +49,7 @@ public class TerrierESAIndex implements IConceptIndex {
 		terrierIndexFactory = factory;
 	}
 	
-	@Required @Override
+	@Required 
 	public void setLanguage( Language language ) {
 		logger.info( "Setting language: " + language );
 		this.language = language;
@@ -134,7 +134,6 @@ public class TerrierESAIndex implements IConceptIndex {
 		return index;
 	}
 
-	@Override
 	public Language getLanguage() {
 		return language;
 	}

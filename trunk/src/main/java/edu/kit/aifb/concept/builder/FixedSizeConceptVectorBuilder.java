@@ -26,7 +26,6 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		this.size = size;
 	}
 	
-	@Override
 	public void reset( String docName, int maxConceptId ) {
 		this.docName = docName;
 		if( ids == null || maxConceptId != ids.length ) {
@@ -41,14 +40,12 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		}
 	}
 	
-	@Override
 	public void addScores( int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			values[ conceptIds[i] ] += conceptScores[i];
 		}
 	}
 
-	@Override
 	public void addScores( IConceptVector oldCv ) {
 		IConceptIterator it = oldCv.iterator();
 		while( it.next() ) {
@@ -56,7 +53,6 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		}
 	}
 	
-	@Override
 	public IConceptVector getConceptVector() {
 		HeapSort.heapSort( values, ids, size );
 
@@ -67,14 +63,12 @@ public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
 		return newCv;
 	}
 	
-	@Override
 	public IConceptVectorBuilder clone() {
 		FixedSizeConceptVectorBuilder newBuilder = new FixedSizeConceptVectorBuilder();
 		newBuilder.setSize( size );
 		return newBuilder;
 	}
 
-	@Override
 	public IConceptVector getConceptVector( String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count ) {
 		IConceptVector newCv = new TroveConceptVector( docName, maxConceptId );

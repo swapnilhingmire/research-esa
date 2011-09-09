@@ -38,12 +38,10 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 		model = new RtfModel();
 	}
 	
-	@Override
 	public ITermEstimateModel getTermEstimatModel() {
 		return termEstimateModel;
 	}
 
-	@Override
 	public WeightingModel getWeightingModel() {
 		return model;
 	}
@@ -61,7 +59,6 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 		}
 	}
 	
-	@Override
 	public IConceptVector getConceptVector(
 			String docName,
 			String[] queryTerms,
@@ -87,7 +84,6 @@ public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 		return cv;
 	}
 
-	@Override
 	public void setIndex(Index index) {
 		termEstimateModel.setIndex( index );
 	}

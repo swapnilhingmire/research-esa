@@ -30,12 +30,10 @@ abstract public class AbstractMLConcept implements IMLConcept {
 		this.pageTable = pageTable;
 	}
 	
-	@Override
 	public int getId() {
 		return id;
 	}
 
-	@Override
 	public Collection<IPage> getPages( Language lang ) throws SQLException {
 		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlc_page from "
@@ -62,7 +60,6 @@ abstract public class AbstractMLConcept implements IMLConcept {
 		}
 	}
 
-	@Override
 	public Map<Language, Collection<IPage>> getPages() throws SQLException {
 		PreparedStatement pst = factory.getJdbcFactory().prepareStatement(
 				"select mlc_page, mlc_lang from "

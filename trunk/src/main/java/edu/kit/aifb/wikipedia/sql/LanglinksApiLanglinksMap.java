@@ -14,7 +14,6 @@ public class LanglinksApiLanglinksMap implements ILanglinksMap {
 		this.llApi = llApi;;
 	}
 
-	@Override
 	public int map( int sourceId ) {
 		return llApi.getTargetPageId( sourceId );
 	}
