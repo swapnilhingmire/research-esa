@@ -41,32 +41,26 @@ public class ConceptExpertIndex implements IExpertIndex {
 		eds = new ConceptExpertDocumentSet( indexReader );
 	}
 	
-	@Override
 	public int getDocId( String docName ) {
 		return indexReader.getConceptVectorId( docName );
 	}
 
-	@Override
 	public String getDocName( int docId ) {
 		return indexReader.getConceptVectorData( docId ).getDocName();
 	}
 
-	@Override
 	public IExpertDocumentSet getExpertDocumentSet() {
 		return eds;
 	}
 
-	@Override
 	public String getId() {
 		return "ConceptIndex";
 	}
 
-	@Override
 	public boolean isSupportedLanguage( Language language ) {
 		return conceptExtractors.containsKey( language );
 	}
 
-	@Override
 	public ResultSet match( String token, Language language ) {
 		IConceptVector cv = conceptExtractors.get( language ).extract(
 				"query",
@@ -95,7 +89,6 @@ public class ConceptExpertIndex implements IExpertIndex {
 		return rs;
 	}
 
-	@Override
 	public IDocumentExpertIterator getDocumentExpertIterator( int docId ) {
 		return new ConceptDocumentExpertIterator( indexReader.getIndexEntryIterator( docId ) );
 	}
@@ -104,7 +97,6 @@ public class ConceptExpertIndex implements IExpertIndex {
 		conceptExtractors.put( language, extractor );
 	}
 
-	@Override
 	public boolean useTranslations() {
 		return false;
 	}

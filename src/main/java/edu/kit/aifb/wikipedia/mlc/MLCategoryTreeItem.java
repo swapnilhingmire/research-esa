@@ -11,7 +11,6 @@ public class MLCategoryTreeItem implements Comparable<MLCategoryTreeItem> {
 		this.score = score;
 	}
 
-	@Override
 	public int compareTo( MLCategoryTreeItem item ) {
 		double diff = item.score - score;
 		if( diff < 0 )

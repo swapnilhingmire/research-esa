@@ -22,14 +22,12 @@ public class RelativeThresholdConceptVectorBuilder implements IConceptVectorBuil
 		this.threshold = threshold;
 	}
 	
-	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			cv.add( conceptIds[i], conceptScores[i] );
 		}
 	}
 
-	@Override
 	public void addScores( IConceptVector oldCv ) {
 		IConceptIterator it = oldCv.iterator();
 		while( it.next() ) {
@@ -37,7 +35,6 @@ public class RelativeThresholdConceptVectorBuilder implements IConceptVectorBuil
 		}
 	}
 
-	@Override
 	public IConceptVector getConceptVector() {
 		IConceptVector newCv = new TroveConceptVector( cv.getData().getDocName(), cv.size() );
 		IConceptIterator it = cv.orderedIterator();
@@ -52,19 +49,16 @@ public class RelativeThresholdConceptVectorBuilder implements IConceptVectorBuil
 		return newCv;
 	}
 
-	@Override
 	public void reset(String docName, int maxConceptId) {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
 	
-	@Override
 	public IConceptVectorBuilder clone() {
 		RelativeThresholdConceptVectorBuilder newBuilder = new RelativeThresholdConceptVectorBuilder();
 		newBuilder.setThreshold( threshold );
 		return newBuilder;
 	}
 
-	@Override
 	public IConceptVector getConceptVector(String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count) {
 		reset( docName, maxConceptId );

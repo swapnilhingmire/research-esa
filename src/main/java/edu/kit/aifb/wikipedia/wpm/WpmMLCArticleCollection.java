@@ -57,7 +57,6 @@ public class WpmMLCArticleCollection implements ICollection {
 		this.mlcArticleDb = mlcDb;
 	}
 	
-	@Override
 	public IDocument getDocument( String docName ) {
 		int articleId = MLCDatabase.getConceptId( docName );
 		return buildDocument( articleId );
@@ -134,12 +133,10 @@ public class WpmMLCArticleCollection implements ICollection {
 		return doc;
 	}
 
-	@Override
 	public ICollectionIterator iterator() {
 		return new CollectionIterator( mlcArticleDb.getConceptIds() );
 	}
 
-	@Override
 	public int size() {
 		return mlcArticleDb.size();
 	}
@@ -155,12 +152,10 @@ public class WpmMLCArticleCollection implements ICollection {
 			this.conceptIds = conceptIds; 
 		}
 		
-		@Override
 		public IDocument getDocument() {
 			return currentDoc;
 		}
 
-		@Override
 		public boolean next() {
 			m_index++;
 			/*

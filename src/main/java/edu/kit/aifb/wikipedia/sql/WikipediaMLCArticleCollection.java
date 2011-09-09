@@ -27,7 +27,6 @@ public class WikipediaMLCArticleCollection implements ICollection {
 		this.mlcArticleDb = mlcDb;
 	}
 	
-	@Override
 	public IDocument getDocument( String docName ) {
 		int articleId = MLCDatabase.getConceptId( docName );
 		return buildDocument( articleId );
@@ -69,12 +68,10 @@ public class WikipediaMLCArticleCollection implements ICollection {
 		return doc;
 	}
 
-	@Override
 	public ICollectionIterator iterator() {
 		return new WikipediaMLConceptCollectionIterator();
 	}
 
-	@Override
 	public int size() {
 		return mlcArticleDb.size();
 	}
@@ -90,12 +87,10 @@ public class WikipediaMLCArticleCollection implements ICollection {
 			conceptIds = mlcArticleDb.getConceptIds();
 		}
 		
-		@Override
 		public IDocument getDocument() {
 			return currentDoc;
 		}
 
-		@Override
 		public boolean next() {
 			m_index++;
 			/*

@@ -52,7 +52,6 @@ public class WpmMlcPageDescription implements IConceptDescription {
 		}
 	}
 	
-	@Override
 	public String getDescription( String conceptName, Language language ) throws Exception {
 		if( !wpmMap.containsKey( language ) ) {
 			throw new Exception( "Concept description in language " + language + " is not supported." );

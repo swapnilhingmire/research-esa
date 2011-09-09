@@ -43,11 +43,10 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		idMaps = new ArrayList<TIntIntHashMap>();
 	}
 	
-	@Override
 	public void setTokenAnalyzer( ITokenAnalyzer analyzer ) {
 	}
 	
-	@Required @Override
+	@Required
 	public void setLanguage( Language language ) {
 		logger.info( "Setting language: " + language );
 		this.language = language;
@@ -87,14 +86,12 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		}
 	}
 
-	@Override
 	public IConceptExtractor getConceptExtractor() {
 		return new CombinedTerrierESAConceptExtractor(
 				searches, weights, idMaps,
 				builder, language );
 	}
 
-	@Override
 	public int getConceptId( String conceptName ) {
 		try {
 			return metaIndex.getDocument( "docno", conceptName );
@@ -105,7 +102,6 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		}
 	}
 
-	@Override
 	public String getConceptName( int conceptId ) {
 		try {
 			return metaIndex.getItem( "docno", conceptId );
@@ -116,12 +112,10 @@ public class CombinedTerrierESAIndex implements IConceptIndex {
 		}
 	}
 
-	@Override
 	public int size() {
 		return documentIndex.getNumberOfDocuments();
 	}
 
-	@Override
 	public Language getLanguage() {
 		return language;
 	}

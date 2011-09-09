@@ -48,7 +48,6 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 	private boolean compressEntries = false;
 
 	class DeletePriorityComparator implements Comparator<Integer> {
-		@Override
 		public int compare( Integer arg0, Integer arg1 ) {
 			return m_cachedIndexEntries.get( arg1 ).numberOfDocuments()
 			- m_cachedIndexEntries.get( arg0 ).numberOfDocuments();
@@ -178,7 +177,6 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 		return loadEntry( conceptId ).numberOfDocuments();
 	}
 
-	@Override
 	public int getConceptVectorId( String docName ) {
 		return m_cvData.docNameToId.get( docName );
 	}

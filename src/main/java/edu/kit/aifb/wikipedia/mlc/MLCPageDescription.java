@@ -35,7 +35,6 @@ public class MLCPageDescription implements IConceptDescription {
 		}
 	}
 	
-	@Override
 	public String getDescription( String conceptName, Language language ) throws Exception {
 		if( !wpDbMap.containsKey( language ) ) {
 			throw new Exception( "Concept description in language " + language + " is not supported." );

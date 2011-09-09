@@ -41,7 +41,6 @@ public class WikipediaCollection implements ICollection {
 		articleIds = wp.readArticleIds( idTable, idColumn );
 	}
 	
-	@Override
 	public IDocument getDocument( String docName ) {
 		int articleId = getArticleId( docName );
 		return getDocument( articleId );
@@ -81,12 +80,10 @@ public class WikipediaCollection implements ICollection {
 		return doc;
 	}
 
-	@Override
 	public ICollectionIterator iterator() {
 		return new WikipediaCollectioIterator( this );
 	}
 
-	@Override
 	public int size() {
 		return articleIds.size();
 	}
@@ -113,12 +110,10 @@ public class WikipediaCollection implements ICollection {
 			m_col = col;
 		}
 		
-		@Override
 		public IDocument getDocument() {
 			return m_col.getDocument( articleIds.get( m_index ) );
 		}
 
-		@Override
 		public boolean next() {
 			m_index++;
 			

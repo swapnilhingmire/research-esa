@@ -16,7 +16,6 @@ public class WikipediaPageDescription implements IConceptDescription {
 		this.wpDb = wpDb;
 	}
 	
-	@Override
 	public String getDescription( String conceptName, Language language ) throws Exception {
 		Page p = new Page( WikipediaCollection.getArticleId( conceptName ) );
 		wpDb.initializePage( p );

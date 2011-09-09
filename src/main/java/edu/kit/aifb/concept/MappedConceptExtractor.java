@@ -15,17 +15,14 @@ public class MappedConceptExtractor implements IConceptExtractor {
 		m_mapper = mapper;
 	}
 	
-	@Override
 	public IConceptVector extract( IDocument doc ) {
 		return m_mapper.map( m_extractor.extract( doc ) );
 	}
 
-	@Override
 	public IConceptVector extract( IDocument doc, String... fields ) {
 		return m_mapper.map( m_extractor.extract( doc, fields ) );
 	}
 
-	@Override
 	public IConceptVector extract(String docName, ITokenStream queryTokenStream) {
 		return m_mapper.map( m_extractor.extract( docName, queryTokenStream ) );
 	}

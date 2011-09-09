@@ -45,7 +45,6 @@ public abstract class CatTreeVectorBuilder implements
 		this.size = size;
 	}
 	
-	@Override
 	public void addScores( int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<conceptIds.length && i<count; i++ ) {
 			if( conceptScores[i] > 0 ) {
@@ -54,7 +53,6 @@ public abstract class CatTreeVectorBuilder implements
 		}
 	}
 
-	@Override
 	public void addScores( IConceptVector newCv ) {
 		IConceptIterator it = newCv.iterator();
 		while( it.next() ) {
@@ -64,7 +62,6 @@ public abstract class CatTreeVectorBuilder implements
 
 	abstract void propagateScores( double[] scores );
 	
-	@Override
 	public IConceptVector getConceptVector() {
 		IConceptVector cv = new TroveConceptVector( docName, scores.length );
 
@@ -86,18 +83,15 @@ public abstract class CatTreeVectorBuilder implements
 		return cv;
 	}
 
-	@Override
 	public void reset( String docName, int maxConceptId ) {
 		this.docName = docName;
 		scores = new double[maxConceptId];
 	}
 
-	@Override
 	public void setConceptIndex(IConceptIndex conceptIndex) {
 		this.conceptIndex = conceptIndex;
 	}
 
-	@Override
 	public void setApplicationContext( ApplicationContext context )
 			throws BeansException {
 		factory = (MLCFactory)context.getBean( MLCFactory.class );

@@ -159,7 +159,6 @@ public class MLCFactory implements ApplicationContextAware {
 		return createMLArticle( jsb, rs.getInt(1) ); 
 	}*/
 
-	@Override
 	public void setApplicationContext( ApplicationContext context )
 			throws BeansException {
 		this.context = context;

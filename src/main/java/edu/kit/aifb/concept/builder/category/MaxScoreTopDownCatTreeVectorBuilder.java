@@ -40,7 +40,6 @@ public class MaxScoreTopDownCatTreeVectorBuilder extends
 		}
 	}
 
-	@Override
 	public IConceptVector getConceptVector(String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count) {
 		reset( docName, maxConceptId );

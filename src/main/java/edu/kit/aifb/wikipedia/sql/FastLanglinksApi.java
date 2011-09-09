@@ -38,7 +38,6 @@ public class FastLanglinksApi implements ILanglinksApi {
 		this.jsb = jsb;
 	}
 	
-	@Override
 	public Page getTargetPage(Page sourcePage) {
 		int targetPageId = getTargetPageId( sourcePage.getId() );
 		if( targetPageId >= 0 ) {
@@ -47,7 +46,6 @@ public class FastLanglinksApi implements ILanglinksApi {
 		return null;
 	}
 	
-	@Override
 	public int getTargetPageId( int sourcePageId ) {
 		int targetPageId = -1;
 		try {
@@ -78,7 +76,6 @@ public class FastLanglinksApi implements ILanglinksApi {
 		return targetPageId;
 	}
 	
-	@Override
 	public List<Page[]> getCommonCategories(Page a, Page b) {
 		List<Page[]> l = new ArrayList<Page[]>();
 		
@@ -133,7 +130,6 @@ public class FastLanglinksApi implements ILanglinksApi {
 		return null;
 	}
 
-	@Override
 	public int[] getTargetPageIds( int[] sourcePageIds ) {
 		if( logger.isTraceEnabled() )
 			logger.trace( "Building sql command string, #ids=" + sourcePageIds.length );

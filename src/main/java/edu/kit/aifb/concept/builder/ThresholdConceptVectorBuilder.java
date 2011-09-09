@@ -22,7 +22,6 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		this.threshold = threshold;
 	}
 
-	@Override
 	public void addScores(int[] conceptIds, double[] conceptScores, int count ) {
 		for( int i=0; i<count && i<conceptIds.length && conceptScores[i] > 0; i++ ) {
 			if( conceptScores[i] > threshold ) {
@@ -31,7 +30,6 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		}
 	}
 
-	@Override
 	public void addScores(IConceptVector cv) {
 		IConceptIterator it = cv.iterator();
 		while( it.next() ) {
@@ -41,12 +39,10 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		}
 	}
 
-	@Override
 	public IConceptVector getConceptVector() {
 		return cv;
 	}
 
-	@Override
 	public void reset(String docName, int maxConceptId) {
 		cv = new TroveConceptVector( docName, maxConceptId );
 	}
@@ -58,7 +54,6 @@ public class ThresholdConceptVectorBuilder implements IConceptVectorBuilder {
 		return newBuilder;
 	}
 
-	@Override
 	public IConceptVector getConceptVector(String docName, int maxConceptId,
 			int[] conceptIds, double[] conceptScores, int count) {
 		reset( docName, maxConceptId );

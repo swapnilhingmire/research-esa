@@ -58,7 +58,6 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 		updateFilePrefix();
 	}
 
-	@Override
 	public void initialize( String id, int conceptCount ) {
 		this.id = id;
 		updateFilePrefix();
