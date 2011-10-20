@@ -1,6 +1,7 @@
 package edu.kit.aifb.concept.builder;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptIterator;
@@ -11,7 +12,7 @@ import edu.kit.aifb.concept.TroveConceptVector;
 
 public class RankConceptVectorBuilder implements IConceptVectorBuilder {
 
-	private static Logger logger = Logger.getLogger( RankConceptVectorBuilder.class );
+	private static Log logger = LogFactory.getLog( RankConceptVectorBuilder.class );
 	static final String[] REQUIRED_PROPERTIES = {
 		"concepts.builder.rank.size"
 	};

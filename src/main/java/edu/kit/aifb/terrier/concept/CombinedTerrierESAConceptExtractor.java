@@ -3,7 +3,8 @@ package edu.kit.aifb.terrier.concept;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.terrier.matching.ResultSet;
 
 import edu.kit.aifb.concept.IConceptExtractor;
@@ -18,7 +19,7 @@ import gnu.trove.TIntIntHashMap;
 
 public class CombinedTerrierESAConceptExtractor implements IConceptExtractor {
 
-	private static Logger logger = Logger.getLogger( CombinedTerrierESAConceptExtractor.class );
+	private static Log logger = LogFactory.getLog( CombinedTerrierESAConceptExtractor.class );
 	
 	List<TerrierSearch> searches;
 	TDoubleArrayList weights;

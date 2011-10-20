@@ -1,6 +1,7 @@
 package edu.kit.aifb.concept.builder.category;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +22,7 @@ public abstract class CatTreeVectorBuilder implements
 		IConceptVectorBuilder,
 		IConceptIndexAware,
 		ApplicationContextAware {
-	private static Logger logger = Logger.getLogger( CatTreeVectorBuilder.class );
+	private static Log logger = LogFactory.getLog( CatTreeVectorBuilder.class );
 	
 	int rootCategoryId = -1;
 	

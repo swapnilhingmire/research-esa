@@ -2,7 +2,8 @@ package edu.uka.aifb.concept.model;
 
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.structures.Index;
@@ -17,7 +18,7 @@ import edu.kit.aifb.terrier.tem.IdfTermEstimateModel;
 
 public class RtfIdfFixedSizeConceptModel implements IConceptModel {
 
-	static Logger logger = Logger.getLogger( RtfIdfFixedSizeConceptModel.class );
+	static Log logger = LogFactory.getLog( RtfIdfFixedSizeConceptModel.class );
 	
 	ITermEstimateModel termEstimateModel;
 	WeightingModel model;

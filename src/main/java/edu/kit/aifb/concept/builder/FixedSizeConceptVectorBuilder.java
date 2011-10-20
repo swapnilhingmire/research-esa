@@ -2,7 +2,8 @@ package edu.kit.aifb.concept.builder;
 
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.terrier.sorting.HeapSort;
 
@@ -13,7 +14,7 @@ import edu.kit.aifb.concept.TroveConceptVector;
 
 
 public class FixedSizeConceptVectorBuilder implements IConceptVectorBuilder {
-	static Logger logger = Logger.getLogger( FixedSizeConceptVectorBuilder.class );
+	static Log logger = LogFactory.getLog( FixedSizeConceptVectorBuilder.class );
 	
 	int size;
 	String docName;

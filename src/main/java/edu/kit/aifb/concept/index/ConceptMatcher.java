@@ -3,7 +3,8 @@ package edu.kit.aifb.concept.index;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.terrier.matching.CollectionResultSet;
 import org.terrier.matching.ResultSet;
 import org.terrier.utility.HeapSort;
@@ -18,7 +19,7 @@ import edu.kit.aifb.ir.Match;
 
 public class ConceptMatcher {
 
-	static Logger logger = Logger.getLogger( ConceptMatcher.class );
+	static Log logger = LogFactory.getLog( ConceptMatcher.class );
 	
 	ICVIndexReader m_indexReader;
 	IScorer[] m_documentScorers;

@@ -1,7 +1,8 @@
 package demo;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -23,7 +24,7 @@ public class PrintESAVector {
 		//"concept_description_bean",
 	};
 
-	static Logger logger = Logger.getLogger( PrintESAVector.class );
+	static Log logger = LogFactory.getLog( PrintESAVector.class );
 
 	/**
 	 * @param args

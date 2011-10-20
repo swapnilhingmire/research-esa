@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.terrier.matching.models.WeightingModel;
 import org.terrier.structures.CollectionStatistics;
 import org.terrier.structures.DocumentIndex;
@@ -28,7 +29,7 @@ public class TerrierConceptModelExtractor implements IConceptExtractor {
 
 	static final int MAX_DOC_SCORE_CACHE = 500;
 	
-	static Logger logger = Logger.getLogger( TerrierConceptModelExtractor.class );
+	static Log logger = LogFactory.getLog( TerrierConceptModelExtractor.class );
 	
 	private Language language;
 	

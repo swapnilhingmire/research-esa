@@ -5,7 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Formatter;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -15,7 +16,7 @@ import gnu.trove.TIntArrayList;
 
 public class MLCDatabase {
 
-	private static Logger logger = Logger.getLogger( MLCDatabase.class );
+	private static Log logger = LogFactory.getLog( MLCDatabase.class );
 	
 	String mlcTable;
 	String mlcCategorylinksTable;

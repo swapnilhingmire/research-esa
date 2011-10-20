@@ -1,6 +1,7 @@
 package edu.kit.aifb.concept.builder;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptIterator;
@@ -16,7 +17,7 @@ public class SlidingWindowConceptVectorBuilder implements IConceptVectorBuilder 
 		"concepts.builder.sliding_window.window_size"
 	};
 
-	static Logger logger = Logger.getLogger( SlidingWindowConceptVectorBuilder.class );
+	static Log logger = LogFactory.getLog( SlidingWindowConceptVectorBuilder.class );
 	IConceptVector cv;
 	
 	int windowSize;

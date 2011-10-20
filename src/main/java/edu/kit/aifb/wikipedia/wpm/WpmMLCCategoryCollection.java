@@ -1,6 +1,7 @@
 package edu.kit.aifb.wikipedia.wpm;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.document.ICollectionIterator;
@@ -11,7 +12,7 @@ import gnu.trove.TIntArrayList;
 
 public class WpmMLCCategoryCollection extends WpmMLCArticleCollection {
 
-	private static Logger logger = Logger.getLogger( WpmMLCCategoryCollection.class );
+	private static Log logger = LogFactory.getLog( WpmMLCCategoryCollection.class );
 	
 	MLCDatabase mlcCategoryDb;
 	

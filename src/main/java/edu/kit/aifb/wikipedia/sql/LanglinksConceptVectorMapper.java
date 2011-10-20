@@ -1,7 +1,8 @@
 package edu.kit.aifb.wikipedia.sql;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import edu.kit.aifb.concept.IConceptIndex;
 import edu.kit.aifb.concept.IConceptIterator;
@@ -12,7 +13,7 @@ import edu.kit.aifb.nlp.Language;
 
 public class LanglinksConceptVectorMapper implements IConceptVectorMapper {
 
-	static Logger logger = Logger.getLogger( LanglinksConceptVectorMapper.class );
+	static Log logger = LogFactory.getLog( LanglinksConceptVectorMapper.class );
 	
 	private int[] m_idMapping;
 	

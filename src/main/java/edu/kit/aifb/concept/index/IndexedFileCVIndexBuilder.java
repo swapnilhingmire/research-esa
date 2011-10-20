@@ -13,7 +13,8 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptIterator;
@@ -27,7 +28,7 @@ public class IndexedFileCVIndexBuilder implements ICVIndexBuilder {
 		"concepts.builder_cache_size"
 	};
 
-	static Logger logger = Logger.getLogger( IndexedFileCVIndexBuilder.class );
+	static Log logger = LogFactory.getLog( IndexedFileCVIndexBuilder.class );
 
 	private TroveCVIndexEntry[] m_cvIndexEntries; 
 

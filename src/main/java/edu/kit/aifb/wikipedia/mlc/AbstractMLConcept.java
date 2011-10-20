@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import edu.kit.aifb.nlp.Language;
 import edu.kit.aifb.wikipedia.sql.IPage;
@@ -16,14 +17,14 @@ import edu.kit.aifb.wikipedia.sql.Page;
 
 abstract public class AbstractMLConcept implements IMLConcept {
 
-	Logger logger;
+	Log logger;
 	
 	int id;
 	MLCFactory factory;
 	String pageTable;
 	
 	public AbstractMLConcept( MLCFactory factory, int id, String pageTable ) {
-		logger = Logger.getLogger( this.getClass() );
+		logger = LogFactory.getLog( this.getClass() );
 		
 		this.factory = factory;
 		this.id = id;

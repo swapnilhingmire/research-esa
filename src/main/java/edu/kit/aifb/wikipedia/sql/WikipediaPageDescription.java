@@ -1,13 +1,14 @@
 package edu.kit.aifb.wikipedia.sql;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptDescription;
 import edu.kit.aifb.nlp.Language;
 
 public class WikipediaPageDescription implements IConceptDescription {
-	private Logger logger = Logger.getLogger( WikipediaPageDescription.class );
+	private Log logger = LogFactory.getLog( WikipediaPageDescription.class );
 	
 	WikipediaDatabase wpDb;
 	

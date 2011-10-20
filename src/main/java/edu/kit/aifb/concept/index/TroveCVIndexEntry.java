@@ -1,21 +1,22 @@
 package edu.kit.aifb.concept.index;
 
+import gnu.trove.TDoubleArrayList;
+import gnu.trove.TIntArrayList;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
-
-import gnu.trove.TDoubleArrayList;
-import gnu.trove.TIntArrayList;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 public class TroveCVIndexEntry implements Serializable {
 
 	private static final long serialVersionUID = 1347532872147315675L;
 
-	static Logger logger = Logger.getLogger( TroveCVIndexEntry.class );
+	static Log logger = LogFactory.getLog( TroveCVIndexEntry.class );
 	
 	private TIntArrayList m_docIds;
 	private TDoubleArrayList m_values;

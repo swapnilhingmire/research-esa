@@ -3,12 +3,13 @@ package edu.kit.aifb.wikipedia.sql;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 public class WikipediaTools {
 
-	static Logger logger = Logger.getLogger( WikipediaTools.class );
+	static Log logger = LogFactory.getLog( WikipediaTools.class );
 	
 	static Pattern s_templatesPattern = Pattern.compile(
 			"\\{\\{([^\\}]+)\\}\\}" );

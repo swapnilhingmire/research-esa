@@ -1,22 +1,23 @@
 package edu.kit.aifb.wikipedia.mlc;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import org.apache.log4j.Logger;
-
 import edu.kit.aifb.concept.IConceptIndex;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntHashSet;
 import gnu.trove.TIntIntHashMap;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class MLCategoryTree implements Serializable {
 
 	private static final long serialVersionUID = 4290902683258041836L;
 
-	static Logger logger = Logger.getLogger( MLCategoryTree.class );
+	static Log logger = LogFactory.getLog( MLCategoryTree.class );
 	
 	int rootCategoryDocId;
 	

@@ -1,15 +1,15 @@
 package edu.kit.aifb.concept.builder.category;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-
 import edu.kit.aifb.concept.IConceptVector;
-
 import gnu.trove.TIntArrayList;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 public class MeanScoreTopDownCatTreeVectorBuilder extends
 		TopDownCatTreeVectorBuilder {
-	private static Logger logger = Logger.getLogger( MeanScoreTopDownCatTreeVectorBuilder.class );
+	private static Log logger = LogFactory.getLog( MeanScoreTopDownCatTreeVectorBuilder.class );
 
 	@Required @Override
 	public void setSize( int size ) {

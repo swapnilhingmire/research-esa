@@ -5,12 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 public class BufferedLanglinksApi extends FastLanglinksApi {
 
-	private static Logger logger = Logger.getLogger(BufferedLanglinksApi.class);
+	private static Log logger = LogFactory.getLog( BufferedLanglinksApi.class);
 	
 	String llTable;
 	String llSourceColumn;

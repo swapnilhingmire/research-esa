@@ -1,11 +1,12 @@
 package edu.kit.aifb.wikipedia.sql;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class LanglinksApiLanglinksMap implements ILanglinksMap {
 
-	static Logger logger = Logger.getLogger( LanglinksApiLanglinksMap.class );
+	static Log logger = LogFactory.getLog( LanglinksApiLanglinksMap.class );
 	
 	ILanglinksApi llApi;
 	
