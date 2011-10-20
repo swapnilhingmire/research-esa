@@ -7,7 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -16,7 +17,7 @@ import edu.kit.aifb.JdbcFactory;
 
 public class FastLanglinksApi implements ILanglinksApi {
 
-	private static Logger logger = Logger.getLogger(FastLanglinksApi.class);
+	private static Log logger = LogFactory.getLog( FastLanglinksApi.class);
 	
 	WikipediaDatabase sourceWikiApi;
 	WikipediaDatabase targetWikiApi;

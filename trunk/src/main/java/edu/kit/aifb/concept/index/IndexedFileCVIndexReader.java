@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptVectorData;
@@ -23,7 +24,7 @@ public class IndexedFileCVIndexReader implements ICVIndexReader {
 	static final short CV_ENTRY_ITEM_BYTE_SIZE = 12;
 	static final double MAX_CACHE_OVERFLOW = .1;
 	
-	static Logger logger = Logger.getLogger( IndexedFileCVIndexReader.class );
+	static Log logger = LogFactory.getLog( IndexedFileCVIndexReader.class );
 	
 	private IndexedFileCVData m_cvData;
 	private IndexedFilePositions m_positions;

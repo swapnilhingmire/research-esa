@@ -1,6 +1,7 @@
 package edu.kit.aifb.wikipedia.sql;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.document.IDocument;
@@ -10,7 +11,7 @@ import gnu.trove.TIntArrayList;
 
 public class WikipediaMLCCategoryCollection extends WikipediaMLCArticleCollection {
 
-	private static Logger logger = Logger.getLogger( WikipediaMLCCategoryCollection.class );
+	private static Log logger = LogFactory.getLog( WikipediaMLCCategoryCollection.class );
 	
 	MLCDatabase mlcCategoryDb;
 	

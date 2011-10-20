@@ -2,12 +2,13 @@ package edu.kit.aifb.wikipedia.wpm;
 
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Article;
+import org.wikipedia.miner.model.Article.AnchorText;
 import org.wikipedia.miner.model.Redirect;
 import org.wikipedia.miner.model.Wikipedia;
-import org.wikipedia.miner.model.Article.AnchorText;
 import org.wikipedia.miner.util.MarkupStripper;
 import org.wikipedia.miner.util.SortedVector;
 
@@ -21,7 +22,7 @@ import gnu.trove.TIntArrayList;
 
 public class WpmMLCArticleCollection implements ICollection {
 
-	private static Logger logger = Logger.getLogger( WpmMLCArticleCollection.class );
+	private static Log logger = LogFactory.getLog( WpmMLCArticleCollection.class );
 	
 	Wikipedia wp;
 	MLCDatabase mlcArticleDb;

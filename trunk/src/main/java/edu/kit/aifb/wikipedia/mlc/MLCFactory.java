@@ -4,7 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
@@ -15,7 +16,7 @@ import edu.kit.aifb.JdbcFactory;
 import gnu.trove.TIntArrayList;
 
 public class MLCFactory implements ApplicationContextAware {
-	private static Logger logger = Logger.getLogger( MLCFactory.class );
+	private static Log logger = LogFactory.getLog( MLCFactory.class );
 	
 	ApplicationContext context;
 	

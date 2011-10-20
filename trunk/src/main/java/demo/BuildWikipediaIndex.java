@@ -1,7 +1,8 @@
 package demo;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -13,7 +14,7 @@ import edu.kit.aifb.terrier.TerrierIndexFactory;
 
 public class BuildWikipediaIndex {
 
-	static Logger logger = Logger.getLogger( BuildWikipediaIndex.class );
+	static Log logger = LogFactory.getLog( BuildWikipediaIndex.class );
 
 	static final String[] REQUIRED_PROPERTIES = {
 		"collection_bean",

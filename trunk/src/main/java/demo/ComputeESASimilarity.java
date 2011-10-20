@@ -2,7 +2,8 @@ package demo;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -25,7 +26,7 @@ public class ComputeESASimilarity {
 		"text_b"
 	};
 
-	static Logger logger = Logger.getLogger( ComputeESASimilarity.class );
+	static Log logger = LogFactory.getLog( ComputeESASimilarity.class );
 
 	/**
 	 * @param args

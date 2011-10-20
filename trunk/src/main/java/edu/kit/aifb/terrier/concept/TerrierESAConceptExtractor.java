@@ -1,6 +1,7 @@
 package edu.kit.aifb.terrier.concept;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.terrier.matching.ResultSet;
 
@@ -14,7 +15,7 @@ import edu.kit.aifb.terrier.TerrierSearch;
 
 public class TerrierESAConceptExtractor implements IConceptExtractor {
 
-	private static Logger logger = Logger.getLogger( TerrierESAConceptExtractor.class );
+	private static Log logger = LogFactory.getLog( TerrierESAConceptExtractor.class );
 	
 	TerrierSearch search;
 	IConceptVectorBuilder conceptVectorBuilder;

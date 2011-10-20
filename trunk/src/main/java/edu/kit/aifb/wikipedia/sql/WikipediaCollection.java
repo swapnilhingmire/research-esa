@@ -3,7 +3,8 @@ package edu.kit.aifb.wikipedia.sql;
 import java.sql.SQLException;
 import java.util.Formatter;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.document.ICollection;
@@ -14,7 +15,7 @@ import gnu.trove.TIntArrayList;
 
 public class WikipediaCollection implements ICollection {
 
-	private static Logger logger = Logger.getLogger( WikipediaCollection.class );
+	private static Log logger = LogFactory.getLog( WikipediaCollection.class );
 	
 	TIntArrayList articleIds;
 	WikipediaDatabase wp;

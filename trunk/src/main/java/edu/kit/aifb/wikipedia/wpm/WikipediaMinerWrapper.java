@@ -4,7 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Wikipedia;
@@ -12,7 +13,7 @@ import org.wikipedia.miner.model.Wikipedia;
 import edu.kit.aifb.JdbcFactory;
 
 public class WikipediaMinerWrapper {
-	private Logger logger = Logger.getLogger( WikipediaMinerWrapper.class );
+	private Log logger = LogFactory.getLog( WikipediaMinerWrapper.class );
 	
 	JdbcFactory jdbcFactory;
 	String database;

@@ -3,7 +3,8 @@ package edu.uka.aifb.concept.expert;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.terrier.matching.CollectionResultSet;
 import org.terrier.matching.ResultSet;
 import org.terrier.structures.CollectionStatistics;
@@ -25,7 +26,7 @@ import edu.kit.aifb.terrier.concept.TerrierConceptModelExtractor;
 
 public class ConceptExpertIndex implements IExpertIndex {
 
-	static Logger logger = Logger.getLogger( ConceptExpertIndex.class );
+	static Log logger = LogFactory.getLog( ConceptExpertIndex.class );
 	
 	ICVIndexReader indexReader;
 	ResultSet rs;

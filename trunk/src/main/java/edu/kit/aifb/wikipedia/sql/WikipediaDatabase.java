@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -22,7 +23,7 @@ import gnu.trove.TIntArrayList;
 
 public class WikipediaDatabase {
 
-	static Logger logger = Logger.getLogger(WikipediaDatabase.class); 
+	static Log logger = LogFactory.getLog( WikipediaDatabase.class); 
 		
 	String db;
 	JdbcFactory jsb;

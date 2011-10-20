@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.wikipedia.miner.model.Page;
 import org.wikipedia.miner.model.Wikipedia;
@@ -15,7 +16,7 @@ import edu.kit.aifb.wikipedia.mlc.MLCDatabase;
 import gnu.trove.TIntArrayList;
 
 public class WpmMlcPageDescription implements IConceptDescription {
-	private Logger logger = Logger.getLogger( WpmMlcPageDescription.class );
+	private Log logger = LogFactory.getLog( WpmMlcPageDescription.class );
 	
 	MLCDatabase mlcDb;
 	Map<Language,WikipediaMinerWrapper> wpmMap;

@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.terrier.structures.DocumentIndex;
 import org.terrier.structures.Index;
@@ -22,7 +23,7 @@ import gnu.trove.TIntIntHashMap;
 
 public class CombinedTerrierESAIndex implements IConceptIndex {
 
-	private static Logger logger = Logger.getLogger( CombinedTerrierESAIndex.class );
+	private static Log logger = LogFactory.getLog( CombinedTerrierESAIndex.class );
 
 	Index index;
 	DocumentIndex documentIndex;

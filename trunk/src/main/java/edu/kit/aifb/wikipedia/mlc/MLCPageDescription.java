@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptDescription;
@@ -14,7 +15,7 @@ import edu.kit.aifb.wikipedia.sql.WikipediaDatabase;
 import gnu.trove.TIntArrayList;
 
 public class MLCPageDescription implements IConceptDescription {
-	private Logger logger = Logger.getLogger( MLCPageDescription.class );
+	private Log logger = LogFactory.getLog( MLCPageDescription.class );
 	
 	MLCDatabase mlcDb;
 	Map<Language,WikipediaDatabase> wpDbMap;

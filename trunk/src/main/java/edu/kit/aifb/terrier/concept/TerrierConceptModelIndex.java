@@ -1,13 +1,14 @@
 package edu.kit.aifb.terrier.concept;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.kit.aifb.concept.IConceptExtractor;
 
 public class TerrierConceptModelIndex extends TerrierESAIndex {
 
-	private static Logger logger = Logger.getLogger( TerrierConceptModelIndex.class );
+	private static Log logger = LogFactory.getLog( TerrierConceptModelIndex.class );
 		
 	IConceptModel conceptModel;
 	
